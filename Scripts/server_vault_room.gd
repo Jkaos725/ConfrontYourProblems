@@ -5,6 +5,7 @@ const START_LIVES := 3
 @onready var title_label: Label = $TitleLabel
 @onready var meta_label: Label = $MetaLabel
 @onready var professor_line: Label = $ProfessorPanel/ProfessorBox/ProfessorLine
+@onready var professor_portrait: TextureRect = $ProfessorPanel/ProfessorBox/ProfessorPortrait
 @onready var background: ColorRect = $Background
 @onready var top_glow: ColorRect = $TopGlow
 @onready var walkway: ColorRect = $Walkway
@@ -37,6 +38,7 @@ var current_professor: Dictionary = {}
 var professors := [
 	{
 		"name": "Professor Vex",
+		"portrait": "res://Images/angryBot.png",
 		"intro": [
 			"Answer correctly and I may let you pass.",
 			"One lock. One clue. Do not embarrass yourself.",
@@ -70,6 +72,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Hale",
+		"portrait": "res://Images/enutralface.png",
 		"intro": [
 			"Take your time and read the clue carefully.",
 			"This room rewards steady thinking.",
@@ -103,6 +106,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Mira",
+		"portrait": "res://Images/first.png",
 		"intro": [
 			"You can do this. Start with the clue in front of you.",
 			"Take a breath. One careful answer opens the way.",
@@ -197,6 +201,7 @@ func _load_current_room() -> void:
 		current_room = Global.rooms[Global.index]
 
 	current_professor = _select_professor(Global.index)
+	_apply_professor_portrait()
 	title_label.text = ""
 	title_label.visible = false
 	_refresh_meta_label()
@@ -369,6 +374,15 @@ func _professor_line(kind: String) -> String:
 	if lines.is_empty():
 		return professor_name
 	return "%s: %s" % [professor_name, _random_line(lines)]
+
+
+func _apply_professor_portrait() -> void:
+	var portrait_path := str(current_professor.get("portrait", ""))
+	if portrait_path.is_empty():
+		return
+	var texture: Variant = load(portrait_path)
+	if texture is Texture2D:
+		professor_portrait.texture = texture
 
 
 func _random_line(lines: Array) -> String:
