@@ -80,6 +80,13 @@ grow_vertical = 2
 pathToNextScene = "res://Scenes/main.tscn"
 feedBackPrompt = NodePath("../FeedBackPrompt")
 
+[node name="AnswerButton" type="Button" parent="AnswerHTTPRequest" unique_id=472878498]
+offset_left = 497.0
+offset_top = 546.0
+offset_right = 624.0
+offset_bottom = 592.0
+text = "Submit"
+
 [node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_31ma5")]
 
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]

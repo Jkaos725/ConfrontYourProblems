@@ -17,7 +17,9 @@ var hintTwo = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	AnswerButton.pressed.connect(_on_answer_button)
+	for child in get_children():
+		if child is Button:
+			child.pressed.connect(_on_answer_button)
 	
 	var config = ConfigFile.new()
 	var err = config.load("res://config.cfg")
