@@ -4,10 +4,10 @@
 [ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_njm8b"]
 [ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
-[ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scenes/hint_1.gd" id="5_c0yxv"]
+[ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="5_c0yxv"]
 [ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
 [ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_ydjff"]
-[ext_resource type="Script" uid="uid://cyywtb3u4gc6s" path="res://Scripts/answer_http_request.gd" id="8_ek5xw"]
+[ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
 [ext_resource type="PackedScene" uid="uid://bpoetdh2yi5qj" path="res://Scenes/Components/feed_back_prompt.tscn" id="9_aojbq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_njm8b"]
@@ -17,9 +17,10 @@ font_size = 26
 script = ExtResource("1_njm8b")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=313816162]
-offset_left = -42.0
-offset_right = 1105.0
-offset_bottom = 640.0
+offset_left = 1.0
+offset_top = 8.0
+offset_right = 1148.0
+offset_bottom = 648.0
 color = Color(0.24709545, 0.24709545, 0.24709545, 1)
 script = ExtResource("1_axu8e")
 
@@ -116,17 +117,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HTTPRequest2" type="HTTPRequest" parent="." unique_id=1693074219 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt")]
-script = ExtResource("8_ek5xw")
-AnswerButton = NodePath("AnswerButton")
+[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("feedBackPrompt") instance=ExtResource("8_aojbq")]
 feedBackPrompt = NodePath("../FeedBackPrompt")
-
-[node name="AnswerButton" type="Button" parent="HTTPRequest2" unique_id=1489377609]
-offset_left = 437.0
-offset_top = 540.0
-offset_right = 559.0
-offset_bottom = 601.0
-text = "Submit"
 
 [node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_aojbq")]
 
@@ -135,4 +127,3 @@ text = "Submit"
 [connection signal="timeout" from="HTTPRequest/Hint1/Timer" to="HTTPRequest/Hint1" method="_on_timer_timeout"]
 [connection signal="timeout" from="HTTPRequest/Hint2/Timer" to="HTTPRequest/Hint2" method="_on_timer_timeout"]
 [connection signal="timeout" from="HTTPRequest/Hint3/Timer" to="HTTPRequest/Hint3" method="_on_timer_timeout"]
-[connection signal="request_completed" from="HTTPRequest2" to="HTTPRequest2" method="_on_request_completed"]

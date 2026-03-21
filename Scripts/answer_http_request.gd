@@ -5,6 +5,8 @@ var groq_api_key = ""
 var client
 var connected = false
 
+@export var pathToNextScene = "res://Scenes/EssayQuestion.tscn"
+
 var currentQuestion
 
 var hintOne = false
@@ -42,7 +44,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				var content = response["choices"][0]["message"]["content"]
 				print("Response: ", content)
 				if(content == "1"):
-					$feedBackPrompt.Label = content
+					get_tree().change_scene_to_file(pathToNextScene)
 				else:
 					feedBackPrompt.visible = true
 					feedBackPrompt.textBox.text = content
@@ -86,7 +88,7 @@ func _on_answer_button():
 	var prompt_text = "You are a teacher helping a student.
 	Do not give them the answer!!!
 	Only give them hints!
-	If the answer to the correction is correct or close to correct, response with the number 1 only.
+	If the explaination to find the answer is correct or close to correct, response with the number 1 only.
 	If the answer is not correct, give them feedback in a form of a hint.
 	Make sure to give the answer in 60 characters or less.
 	Make sure the hint is only included. Do not include anything else.
