@@ -11,7 +11,9 @@ func _ready() -> void:
 			child.currentQuestion = currentQuestion
 			if ("text" in child):
 				child.text = currentQuestion
-	
+	if !Global.rooms.is_empty():
+		var room: Dictionary = Global.rooms[Global.index]
+		currentQuestion = room["question"]
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

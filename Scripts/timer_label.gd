@@ -6,7 +6,7 @@ func _ready() -> void:
 	if Global.globalTime > 0:
 		text = str(Global.globalTime)
 	else:
-		text = ""
+		text = "hello"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -74,7 +74,7 @@ var current_game_state := "start_intro"
 @onready var unlock_player: AudioStreamPlayer = $UnlockPlayer
 @onready var win_player: AudioStreamPlayer = $WinPlayer
 @onready var lose_player: AudioStreamPlayer = $LosePlayer
-
+@onready var timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel
 
 func _ready() -> void:
 	for index in range(answers_container.get_child_count()):
@@ -224,7 +224,12 @@ func _show_room() -> void:
 	tertiary_button.text = "Next Room"
 	tertiary_button.visible = room_cleared
 	tertiary_button.disabled = not room_cleared
+	quaternary_button.visible = false
+	quaternary_button.disabled = true
 
+func _show_escape_room():
+	Global.rooms = rooms
+	get_tree().change_scene_to_file("res://Scenes/EssayQuestion.tscn")
 
 func _show_end_screen(did_win: bool) -> void:
 	current_game_state = "end"
@@ -390,7 +395,7 @@ func _on_tertiary_pressed() -> void:
 func _on_onquarternary_pressed() -> void:
 	match current_game_state:
 		"upload_ready":
-			_start_game()
+			_show_escape_room()
 		"subject_select":
 			_load_selected_catalog()
 			_start_game()
@@ -1111,7 +1116,6 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	primary_button.text = "Start Uploaded Questions"
 	secondary_button.text = "Choose Different Notes"
 	tertiary_button.text = "Back"
-	quaternary_button.text = "Start Uploaded Escape"
 
 
 func _configure_audio_players() -> void:
