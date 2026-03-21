@@ -3,6 +3,7 @@ extends Node2D
 @export var currentQuestion = "What is the derivative of sin(x)x^2"
 @export var expectedAnswer = ""
 @onready var professor_line: Label = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorLine
+@onready var professor_portrait: TextureRect = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorPortrait
 
 var end_state_triggered := false
 
@@ -135,6 +136,7 @@ func _ready() -> void:
 	
 
 	professor_line.text = _professor_line("intro")
+	_apply_professor_portrait()
 
 
 
@@ -196,3 +198,12 @@ func _random_line(lines: Array) -> String:
 	if lines.is_empty():
 		return ""
 	return str(lines[randi() % lines.size()])
+
+
+func _apply_professor_portrait() -> void:
+	var portrait_path := str(current_professor.get("portrait", ""))
+	if portrait_path.is_empty():
+		return
+	var texture: Variant = load(portrait_path)
+	if texture is Texture2D:
+		professor_portrait.texture = texture

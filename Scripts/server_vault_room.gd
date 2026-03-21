@@ -176,8 +176,8 @@ func _ready() -> void:
 	choice_a.pressed.connect(_on_choice_pressed.bind(0))
 	choice_b.pressed.connect(_on_choice_pressed.bind(1))
 	choice_c.pressed.connect(_on_choice_pressed.bind(2))
-	hint_button.pressed.connect(_on_hint_pressed)
-	back_button.pressed.connect(_return_to_main)
+	#hint_button.pressed.connect(_on_hint_pressed)
+	#back_button.pressed.connect(_return_to_main)
 	_load_current_room()
 
 
