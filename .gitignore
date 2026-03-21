@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
-
 #API Key
 Config.cfg
+Data/groq_api_key.txt
+Data/grog_api_key.txt
