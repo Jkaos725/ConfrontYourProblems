@@ -2,15 +2,23 @@
 
 [ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://Scripts/color_rect.gd" id="1_axu8e"]
 [ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_njm8b"]
-[ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/http_request.gd" id="3_k2xw1"]
+[ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
 [ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scenes/hint_1.gd" id="5_c0yxv"]
+[ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
+[ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_ydjff"]
+[ext_resource type="Script" uid="uid://cyywtb3u4gc6s" path="res://Scripts/answer_http_request.gd" id="8_ek5xw"]
+[ext_resource type="PackedScene" uid="uid://bpoetdh2yi5qj" path="res://Scenes/Components/feed_back_prompt.tscn" id="9_aojbq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_njm8b"]
+font_size = 26
 
 [node name="Question1" type="Node2D" unique_id=433438692]
 script = ExtResource("1_njm8b")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=313816162]
-offset_right = 1147.0
+offset_left = -42.0
+offset_right = 1105.0
 offset_bottom = 640.0
 color = Color(0.24709545, 0.24709545, 0.24709545, 1)
 script = ExtResource("1_axu8e")
@@ -26,17 +34,104 @@ use_threads = true
 script = ExtResource("3_k2xw1")
 
 [node name="Hint1" type="Button" parent="HTTPRequest" unique_id=495878269]
-offset_left = 855.0
-offset_top = 225.0
-offset_right = 1152.0
-offset_bottom = 362.0
+offset_left = 834.0
+offset_top = 190.0
+offset_right = 1131.0
+offset_bottom = 327.0
 disabled = true
 text = "Hint 1"
+autowrap_mode = 3
 script = ExtResource("5_c0yxv")
+timePercentage = 0
 
 [node name="Timer" type="Timer" parent="HTTPRequest/Hint1" unique_id=1927696455]
 autostart = true
 
+[node name="Hint2" type="Button" parent="HTTPRequest" unique_id=562289727]
+offset_left = 834.0
+offset_top = 338.0
+offset_right = 1131.0
+offset_bottom = 475.0
+disabled = true
+text = "Hint 1"
+autowrap_mode = 3
+script = ExtResource("5_c0yxv")
+timePercentage = 0
+
+[node name="Timer" type="Timer" parent="HTTPRequest/Hint2" unique_id=143484336]
+autostart = true
+
+[node name="Hint3" type="Button" parent="HTTPRequest" unique_id=1487073517]
+offset_left = 835.0
+offset_top = 484.0
+offset_right = 1132.0
+offset_bottom = 621.0
+disabled = true
+text = "Hint 1"
+autowrap_mode = 3
+script = ExtResource("5_c0yxv")
+timePercentage = 0
+
+[node name="Timer" type="Timer" parent="HTTPRequest/Hint3" unique_id=1922744650]
+autostart = true
+
+[node name="TimerLabel" parent="." unique_id=1778605306 instance=ExtResource("6_njm8b")]
+label_settings = SubResource("LabelSettings_njm8b")
+
+[node name="QuestionLabel" type="Label" parent="." unique_id=1937359125]
+z_index = 1
+offset_left = 226.0
+offset_top = 254.0
+offset_right = 761.0
+offset_bottom = 383.0
+text = "This is a test"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+script = ExtResource("7_ydjff")
+
+[node name="ColorRect" type="ColorRect" parent="QuestionLabel" unique_id=660500764]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45071962, 0.45071962, 0.45071962, 1)
+
+[node name="Control" type="Control" parent="." unique_id=1289547833]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 234.0
+offset_top = 418.0
+offset_right = 758.0
+offset_bottom = 518.0
+
+[node name="TextEdit" type="TextEdit" parent="Control" unique_id=194617503]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HTTPRequest2" type="HTTPRequest" parent="." unique_id=1693074219 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt")]
+script = ExtResource("8_ek5xw")
+AnswerButton = NodePath("AnswerButton")
+feedBackPrompt = NodePath("../FeedBackPrompt")
+
+[node name="AnswerButton" type="Button" parent="HTTPRequest2" unique_id=1489377609]
+offset_left = 437.0
+offset_top = 540.0
+offset_right = 559.0
+offset_bottom = 601.0
+text = "Submit"
+
+[node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_aojbq")]
+
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]
 [connection signal="pressed" from="HTTPRequest/Hint1" to="HTTPRequest" method="_on_hint_1_pressed"]
 [connection signal="timeout" from="HTTPRequest/Hint1/Timer" to="HTTPRequest/Hint1" method="_on_timer_timeout"]
+[connection signal="timeout" from="HTTPRequest/Hint2/Timer" to="HTTPRequest/Hint2" method="_on_timer_timeout"]
+[connection signal="timeout" from="HTTPRequest/Hint3/Timer" to="HTTPRequest/Hint3" method="_on_timer_timeout"]
