@@ -3,10 +3,11 @@
 [ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_njm8b"]
 [ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
+[ext_resource type="Script" uid="uid://cvgrik6iaumw8" path="res://Scenes/gpu_particles_2d.gd" id="4_aojbq"]
 [ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="5_c0yxv"]
 [ext_resource type="Script" uid="uid://j1nkab67m1np" path="res://Scripts/feed_back_prompt.gd" id="5_ek5xw"]
 [ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
-[ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_ydjff"]
+[ext_resource type="Script" path="res://Scripts/question_label.gd" id="7_ydjff"]
 [ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ek5xw"]
@@ -108,6 +109,19 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_aojbq"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mp8a8"]
+particle_flag_disable_z = true
+angle_min = -1483.0
+angle_max = 1397.0
+inherit_velocity_ratio = 1.0
+direction = Vector3(0, 0, 0)
+spread = 59.173
+initial_velocity_min = 305.75
+initial_velocity_max = 485.61
+gravity = Vector3(0, 0, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcvg4"]
 content_margin_left = 4.0
@@ -379,6 +393,16 @@ timePercentage = 0
 [node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=2138671058]
 autostart = true
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=1337215448]
+material = SubResource("CanvasItemMaterial_aojbq")
+emitting = false
+amount = 100
+lifetime = 0.52
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_mp8a8")
+script = ExtResource("4_aojbq")
+
 [node name="HintCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1162841359]
 custom_minimum_size = Vector2(0, 118)
 layout_mode = 2
@@ -397,6 +421,15 @@ script = ExtResource("5_c0yxv")
 
 [node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=365742750]
 autostart = true
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=1656579220]
+material = SubResource("CanvasItemMaterial_aojbq")
+emitting = false
+amount = 100
+lifetime = 0.52
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_mp8a8")
+script = ExtResource("4_aojbq")
 
 [node name="StatusCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1351471532]
 custom_minimum_size = Vector2(0, 118)
@@ -417,6 +450,15 @@ timePercentage = 20
 
 [node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=876177229]
 autostart = true
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=2049674297]
+material = SubResource("CanvasItemMaterial_aojbq")
+emitting = false
+amount = 100
+lifetime = 0.52
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_mp8a8")
+script = ExtResource("4_aojbq")
 
 [node name="TimerLabel" parent="Control2" unique_id=1778605306 instance=ExtResource("6_njm8b")]
 layout_mode = 0
@@ -554,8 +596,11 @@ pathToNextScene = "res://Scenes/Questionhints.tscn"
 AnswerButton = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1")
 feedBackPrompt = NodePath("../Control2/FeedBackPrompt")
 
+[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/GPUParticles2D" method="_on_hint_1_pressed"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" method="_on_timer_timeout"]
+[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/GPUParticles2D" method="_on_hint_2_pressed"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" method="_on_timer_timeout"]
+[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/GPUParticles2D" method="_on_hint_3_pressed"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" method="_on_timer_timeout"]
 [connection signal="pressed" from="Control2/FeedBackPrompt/Button" to="Control2/FeedBackPrompt" method="_on_button_pressed"]
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]
