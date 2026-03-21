@@ -1,46 +1,105 @@
 [gd_scene format=3 uid="uid://dpexvfyfft0cv"]
 
-[ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_6h0xv"]
+[ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_bot"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 28.0
-content_margin_top = 28.0
-content_margin_right = 28.0
-content_margin_bottom = 28.0
-bg_color = Color(0.117647, 0.141176, 0.196078, 0.92)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
+content_margin_left = 26.0
+content_margin_top = 24.0
+content_margin_right = 26.0
+content_margin_bottom = 24.0
+bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.356863, 0.431373, 0.611765, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.25)
-shadow_size = 8
+border_color = Color(0.698039, 0.521569, 0.278431, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.0509804, 0.0235294, 0.00392157, 0.45)
+shadow_size = 18
 
-[node name="Main" type="Control" unique_id=1416597740]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_question_card"]
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+bg_color = Color(0.439216, 0.337255, 0.223529, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_side_card"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+bg_color = Color(0.203922, 0.141176, 0.0862745, 0.96)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button"]
+bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47451, 0.333333, 0.176471, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button_hover"]
+bg_color = Color(0.25098, 0.176471, 0.101961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.686275, 0.509804, 0.231373, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button_pressed"]
+bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.611765, 0.313726, 1)
+
+[node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_6h0xv")
+script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1661587689]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.12549, 0.141176, 0.196078, 1)
+color = Color(0.101961, 0.0588235, 0.0313726, 1)
 
-[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=1298344070]
+[node name="BackgroundTexture" type="TextureRect" parent="."]
 visible = false
-modulate = Color(1, 1, 1, 0.18)
+modulate = Color(1, 0.690196, 0.352941, 0.08)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,196 +109,303 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2058787877]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 24.0
-offset_right = -32.0
-offset_bottom = -24.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=862560249]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_main_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer" unique_id=989018741]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="TitleBanner" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=787297234]
+[node name="TopRow" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_constants/separation = 16
+
+[node name="TopInfo" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="TitleBanner" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 34
 text = "Escape Room Challenge"
+horizontal_alignment = 1
 
-[node name="MetaLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=529749479]
+[node name="MetaLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
+theme_override_colors/font_color = Color(0.85098, 0.713726, 0.501961, 1)
 text = "Room 1/3   Score 0   Lives 3   Hints 0"
+horizontal_alignment = 1
 
-[node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=868033054]
+[node name="MascotBox" type="CenterContainer" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow"]
+custom_minimum_size = Vector2(190, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Mascot" type="TextureRect" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox"]
+custom_minimum_size = Vector2(170, 90)
+layout_mode = 2
+texture = ExtResource("2_bot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TopSpacer" type="Control" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow"]
+custom_minimum_size = Vector2(140, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CatalogTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1753944291]
+[node name="CatalogTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Question Catalog"
 
-[node name="CatalogHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=536836615]
+[node name="CatalogHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
 text = "Choose a prerecorded subject and quiz set, or switch to the AI notes flow from the source screen."
 autowrap_mode = 3
 
-[node name="SubjectOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=581189494]
+[node name="SubjectOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="QuizLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1639904420]
+[node name="QuizLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Quiz Set"
 
-[node name="QuizOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=947238084]
+[node name="QuizOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CatalogDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=46637190]
+[node name="CatalogDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
 text = "Catalog details"
 autowrap_mode = 3
 
-[node name="UploadBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1810561734]
+[node name="UploadBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="UploadNameLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=804489519]
+[node name="UploadNameLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Custom Catalog Name"
 
-[node name="UploadNameInput" type="LineEdit" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1163133380]
+[node name="UploadNameInput" type="LineEdit" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox"]
 layout_mode = 2
 placeholder_text = "Enter a name for the uploaded module"
 
-[node name="UploadHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1923625155]
+[node name="UploadHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
 text = "Upload TXT or Markdown lecture notes to generate a study quiz, or import a JSON quiz set from the source screen."
 autowrap_mode = 3
 
-[node name="RoomTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1800334654]
+[node name="BodyRow" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
-theme_override_font_sizes/font_size = 32
-text = "Room Title"
+size_flags_vertical = 3
+theme_override_constants/separation = 20
 
-[node name="RoomDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=37581319]
+[node name="LeftColumn" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="RoomTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 26
+text = "Room Title"
+horizontal_alignment = 1
+
+[node name="RoomDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.937255, 0.870588, 0.756863, 1)
 text = "Room description"
+horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="QuestionLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1153794540]
+[node name="QuestionCard" type="PanelContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.952941, 0.694118, 1)
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 136)
+theme_override_styles/panel = SubResource("StyleBoxFlat_question_card")
+
+[node name="QuestionLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.968627, 0.913725, 1)
 theme_override_font_sizes/font_size = 22
 text = "Question goes here"
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="ThemeBadge" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1261679703]
+[node name="StatusLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
-text = "Theme"
+theme_override_colors/font_color = Color(0.937255, 0.870588, 0.756863, 1)
+theme_override_font_sizes/font_size = 18
+text = "Choose the right answer to unlock the next room."
+horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="AnswersContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=674923130]
+[node name="AnswersContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
 layout_mode = 2
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="AnswerButton1" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer" unique_id=1740543791]
-custom_minimum_size = Vector2(0, 52)
+[node name="AnswerButton1" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_answer_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_answer_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_answer_button_pressed")
 text = "Answer 1"
 
-[node name="AnswerButton2" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer" unique_id=1874678383]
-custom_minimum_size = Vector2(0, 52)
+[node name="AnswerButton2" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_answer_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_answer_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_answer_button_pressed")
 text = "Answer 2"
 
-[node name="AnswerButton3" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer" unique_id=2102515823]
-custom_minimum_size = Vector2(0, 52)
+[node name="AnswerButton3" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_answer_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_answer_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_answer_button_pressed")
 text = "Answer 3"
 
-[node name="HintLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1965655228]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.745098, 0.913725, 0.984314, 1)
-autowrap_mode = 3
-
-[node name="StatusLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1620948230]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94902, 0.882353, 0.654902, 1)
-text = "Status"
-autowrap_mode = 3
-
-[node name="ActionRow" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1532386612]
+[node name="ActionRow" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PrimaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=131769333]
+[node name="PrimaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Start Game"
 
-[node name="QuaternaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=904015958]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Next Room"
-
-[node name="SecondaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=331346103]
+[node name="SecondaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Generate Preview"
 
-[node name="TertiaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=862678087]
+[node name="TertiaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Next Room"
 
-[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1410650381]
+[node name="QuaternaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Start Escape"
 
-[node name="ClickPlayer" type="AudioStreamPlayer" parent="." unique_id=1009325855]
+[node name="RightColumn" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow"]
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
 
-[node name="CorrectPlayer" type="AudioStreamPlayer" parent="." unique_id=1880611610]
+[node name="ThemeCard" type="PanelContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn"]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_side_card")
 
-[node name="WrongPlayer" type="AudioStreamPlayer" parent="." unique_id=478983136]
+[node name="ThemeBadge" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.88, 0.88, 1)
+theme_override_font_sizes/font_size = 18
+text = "Hint 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="UnlockPlayer" type="AudioStreamPlayer" parent="." unique_id=1655323924]
+[node name="HintCard" type="PanelContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn"]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_side_card")
 
-[node name="WinPlayer" type="AudioStreamPlayer" parent="." unique_id=83239539]
+[node name="HintLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.88, 0.88, 1)
+theme_override_font_sizes/font_size = 18
+text = "The proctor watches.\nChoose a door.\nBreak the cycle."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="LosePlayer" type="AudioStreamPlayer" parent="." unique_id=2001772983]
+[node name="StatusCard" type="PanelContainer" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn"]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_side_card")
+visible = false
 
-[node name="QuestionFileDialog" type="FileDialog" parent="." unique_id=1589127486]
+[node name="StatusLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.88, 0.88, 1)
+theme_override_font_sizes/font_size = 18
+text = "Hint 3"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="ClickPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="CorrectPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="WrongPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="UnlockPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="WinPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="LosePlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="QuestionFileDialog" type="FileDialog" parent="."]
 title = "Open a File"
 size = Vector2i(900, 560)
 file_mode = 0

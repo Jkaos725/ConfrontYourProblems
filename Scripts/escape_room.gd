@@ -12,12 +12,12 @@ const ROOMS_DATA_PATH := "res://Data/rooms.json"
 const SUBJECTS_DATA_PATH := "res://Data/subjects.json"
 const QUESTIONS_DATA_PATH := "res://Data/questions.json"
 const ANSWERS_DATA_PATH := "res://Data/answers.json"
-const CLICK_SOUND_PATH := "res://Audio/click.wav"
-const CORRECT_SOUND_PATH := "res://Audio/correct.wav"
-const WRONG_SOUND_PATH := "res://Audio/wrong.wav"
-const UNLOCK_SOUND_PATH := "res://Audio/unlock.wav"
-const WIN_SOUND_PATH := "res://Audio/win.wav"
-const LOSE_SOUND_PATH := "res://Audio/lose.wav"
+const CLICK_SOUND_PATH := "res://Audio/Correct SOun/chrisiex1-correct-156911.mp3"
+const CORRECT_SOUND_PATH := "res://Audio/Correct SOun/freesound_community-rightanswer-95219.mp3"
+const WRONG_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-training-program-incorrect2-88735.mp3"
+const UNLOCK_SOUND_PATH := "res://Audio/Correct SOun/u_a5z4rtk6yn-sonido-correcto-331225.mp3"
+const WIN_SOUND_PATH := "res://Audio/Correct SOun/u_y6jn4lst7i-benar-494211.mp3"
+const LOSE_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-fail-jingle-stereo-mix-88784.mp3"
 
 var rooms: Array[Dictionary] = []
 var subjects_db: Array[Dictionary] = []
@@ -45,27 +45,33 @@ var current_game_state := "start_intro"
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
 @onready var margin_container: MarginContainer = $MarginContainer
-@onready var title_banner: Label = $MarginContainer/PanelContainer/VBoxContainer/TitleBanner
-@onready var meta_label: Label = $MarginContainer/PanelContainer/VBoxContainer/MetaLabel
+@onready var title_banner: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/TitleBanner
+@onready var meta_label: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/MetaLabel
 @onready var catalog_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox
 @onready var subject_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/SubjectOption
 @onready var quiz_label: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/QuizLabel
 @onready var quiz_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/QuizOption
 @onready var catalog_description: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/CatalogDescription
 @onready var upload_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/UploadBox
+@onready var upload_name_label: Label = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadNameLabel
 @onready var upload_name_input: LineEdit = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadNameInput
 @onready var upload_help: Label = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadHelp
-@onready var room_title: Label = $MarginContainer/PanelContainer/VBoxContainer/RoomTitle
-@onready var room_description: Label = $MarginContainer/PanelContainer/VBoxContainer/RoomDescription
-@onready var question_label: Label = $MarginContainer/PanelContainer/VBoxContainer/QuestionLabel
-@onready var theme_badge: Label = $MarginContainer/PanelContainer/VBoxContainer/ThemeBadge
-@onready var answers_container: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/AnswersContainer
-@onready var hint_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HintLabel
-@onready var status_label: Label = $MarginContainer/PanelContainer/VBoxContainer/StatusLabel
-@onready var primary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/PrimaryButton
-@onready var secondary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/SecondaryButton
-@onready var tertiary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/TertiaryButton
-@onready var quaternary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/QuaternaryButton
+@onready var room_title: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/RoomTitle
+@onready var room_description: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/RoomDescription
+@onready var question_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard
+@onready var question_label: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard/QuestionLabel
+@onready var right_column: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn
+@onready var theme_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard
+@onready var theme_badge: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/ThemeBadge
+@onready var answers_container: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer
+@onready var hint_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard
+@onready var status_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard
+@onready var hint_label: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/HintLabel
+@onready var status_label: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/StatusLabel
+@onready var primary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/PrimaryButton
+@onready var secondary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/SecondaryButton
+@onready var tertiary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/TertiaryButton
+@onready var quaternary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/QuaternaryButton
 @onready var http_request: HTTPRequest = $HTTPRequest
 @onready var question_file_dialog: FileDialog = $QuestionFileDialog
 @onready var click_player: AudioStreamPlayer = $ClickPlayer
@@ -113,18 +119,25 @@ func _start_game() -> void:
 func _show_start_screen() -> void:
 	current_game_state = "start_intro"
 	room_cleared = false
-	background.color = Color("202432")
-	background_texture.visible = false
+	background.color = Color("0e1423")
+	background_texture.visible = true
+	_apply_intro_emphasis()
+	right_column.visible = false
+	theme_card.visible = false
+	status_card.visible = false
+	hint_card.visible = true
 	title_banner.text = "Confront Your Problems"
-	meta_label.text = "AI-ready escape room study game for university-level practice."
+	meta_label.text = ""
 	catalog_box.visible = false
 	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	room_title.text = "Start Your Escape"
 	room_description.text = "Upload lecture notes to build a quiz set, or choose a prerecorded subject for instant practice."
 	question_label.text = "Press start when you're ready to study."
-	theme_badge.text = "Phase 1: Start"
-	hint_label.text = ""
-	status_label.text = "Current source: %s (%d rooms)." % [active_catalog_name, rooms.size()]
+	theme_badge.text = ""
+	hint_label.text = "The proctor is awake.\nPick a realm.\nSurvive the exam hall."
+	status_label.text = ""
 	_set_answer_buttons_visible(false)
 	primary_button.text = "Start Game"
 	primary_button.visible = true
@@ -138,36 +151,49 @@ func _show_source_selection() -> void:
 	current_game_state = "source_select"
 	background.color = Color("202432")
 	background_texture.visible = false
+	_clear_intro_emphasis()
+	right_column.visible = false
+	theme_card.visible = false
+	status_card.visible = false
+	hint_card.visible = true
 	catalog_box.visible = false
 	upload_box.visible = false
-	room_title.text = "Choose Your Question Source"
-	room_description.text = "Choose a stable prerecorded quiz, generate a quiz from notes, or import a JSON quiz set."
-	question_label.text = "How do you want to start this study session?"
-	theme_badge.text = "Phase 2: Source"
+	upload_name_label.visible = false
+	upload_name_input.visible = false
+	room_title.text = "How do you want to start this study session?"
+	room_description.text = "Choose a prerecorded set or upload your own text file."
+	question_label.text = "Pick the path you want to take."
+	theme_badge.text = ""
 	hint_label.text = ""
-	status_label.text = "Built-in subjects available: %d. Notes upload is the AI-driven path." % subjects_db.size()
+	status_label.text = ""
 	_set_answer_buttons_visible(false)
 	primary_button.text = "Use Prerecorded"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "AI Generate From Notes"
+	secondary_button.text = "Upload My Own Text File"
 	secondary_button.visible = true
 	secondary_button.disabled = false
-	tertiary_button.text = "Upload JSON"
-	tertiary_button.visible = true
-	tertiary_button.disabled = false
+	tertiary_button.visible = false
+	tertiary_button.disabled = true
 
 
 func _show_subject_selection() -> void:
 	current_game_state = "subject_select"
 	background.color = Color("202432")
 	background_texture.visible = false
+	_clear_intro_emphasis()
+	right_column.visible = false
+	theme_card.visible = false
+	status_card.visible = false
+	hint_card.visible = true
 	catalog_box.visible = true
 	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	room_title.text = "Choose A Subject"
 	room_description.text = "Pick a subject, then choose the named quiz set you want to play."
 	question_label.text = "What subject and quiz set do you want to play?"
-	theme_badge.text = "Phase 3: Subject"
+	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = "Selected source: %s." % active_catalog_name
 	_set_answer_buttons_visible(false)
@@ -189,8 +215,15 @@ func _show_room() -> void:
 	current_game_state = "playing"
 	var room: Dictionary = rooms[current_room_index]
 	room_cleared = false
+	_clear_intro_emphasis()
+	right_column.visible = false
+	theme_card.visible = false
+	hint_card.visible = false
+	status_card.visible = false
 	catalog_box.visible = false
 	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	_apply_room_theme(room, current_room_index)
 	title_banner.text = "Escape Room Challenge"
 	meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
@@ -204,7 +237,7 @@ func _show_room() -> void:
 	room_title.text = room["title"]
 	room_description.text = room["description"]
 	question_label.text = room["question"]
-	theme_badge.text = "Theme color %s" % room.get("theme_color", "default")
+	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = DEFAULT_STATUS
 	_set_answer_buttons_visible(true)
@@ -234,10 +267,17 @@ func _show_escape_room():
 func _show_end_screen(did_win: bool) -> void:
 	current_game_state = "end"
 	room_cleared = false
+	_clear_intro_emphasis()
+	right_column.visible = true
+	theme_card.visible = false
+	hint_card.visible = true
+	status_card.visible = false
 	background.color = Color("1f2430") if did_win else Color("342126")
 	background_texture.visible = false
 	catalog_box.visible = false
 	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	if did_win:
 		_play_if_ready(win_player)
 	else:
@@ -254,7 +294,7 @@ func _show_end_screen(did_win: bool) -> void:
 	room_title.text = "You made it out." if did_win else "The doors sealed shut."
 	room_description.text = "Every lock opened and the story can grow from here." if did_win else "You ran out of lives, but the rooms are ready whenever you want another attempt."
 	question_label.text = "What do you want to do next?"
-	theme_badge.text = "Replay or switch catalogs"
+	theme_badge.text = ""
 	hint_label.text = "Next upgrade idea: add story branches, sound, and per-room art."
 	status_label.text = "You can restart or switch catalogs whenever you want."
 	_set_answer_buttons_visible(false)
@@ -271,6 +311,29 @@ func _set_answer_buttons_visible(is_visible: bool) -> void:
 	for child in answers_container.get_children():
 		var button := child as Button
 		button.visible = is_visible
+
+
+func _apply_intro_emphasis() -> void:
+	room_title.add_theme_font_size_override("font_size", 42)
+	question_label.add_theme_font_size_override("font_size", 26)
+	question_card.custom_minimum_size = Vector2(0, 170)
+	primary_button.add_theme_font_size_override("font_size", 24)
+	primary_button.custom_minimum_size = Vector2(0, 78)
+	title_banner.add_theme_font_size_override("font_size", 40)
+	title_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	meta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	room_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	room_description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	question_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+func _clear_intro_emphasis() -> void:
+	room_title.add_theme_font_size_override("font_size", 26)
+	question_label.add_theme_font_size_override("font_size", 22)
+	question_card.custom_minimum_size = Vector2(0, 136)
+	primary_button.add_theme_font_size_override("font_size", 16)
+	primary_button.custom_minimum_size = Vector2.ZERO
+	title_banner.add_theme_font_size_override("font_size", 34)
 
 
 func _on_answer_selected(answer_index: int) -> void:
@@ -367,13 +430,6 @@ func _load_other_game() -> void:
 
 
 func _on_tertiary_pressed() -> void:
-	if current_game_state == "source_select":
-		_play_if_ready(click_player)
-		pending_upload_mode = "json"
-		question_file_dialog.clear_filters()
-		question_file_dialog.add_filter("*.json ; Quiz JSON Files")
-		question_file_dialog.popup_centered_ratio(0.75)
-		return
 	if current_game_state == "subject_select":
 		_play_if_ready(click_player)
 		_show_source_selection()
@@ -406,6 +462,8 @@ func _on_hint_pressed() -> void:
 
 	var room: Dictionary = rooms[current_room_index]
 	hints_used += 1
+	right_column.visible = true
+	hint_card.visible = true
 	hint_label.text = "Hint: %s" % room["hint"]
 	meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
 		active_quiz_name,
@@ -688,14 +746,19 @@ func _on_question_file_selected(path: String) -> void:
 		active_quiz_name = active_catalog_name
 		active_quiz_id = "uploaded_json"
 		current_game_state = "upload_ready"
+		_clear_intro_emphasis()
+		theme_card.visible = false
+		status_card.visible = false
+		upload_name_label.visible = false
+		upload_name_input.visible = false
 		status_label.text = "Loaded uploaded questions from %s (%d rooms)." % [active_catalog_name, rooms.size()]
-		theme_badge.text = "Phase 2: Uploaded"
+		theme_badge.text = ""
 		room_title.text = "Uploaded Questions Ready"
 		room_description.text = "Your custom question file is loaded and ready to play."
 		question_label.text = "Press start to use the uploaded questions."
-		upload_help.text = "Rename this uploaded catalog if you want, then press Start Uploaded Questions."
+		upload_help.text = ""
 		hint_label.text = ""
-		primary_button.text = "Start Uploaded Questions"
+		primary_button.text = "Start"
 		primary_button.visible = true
 		primary_button.disabled = rooms.is_empty()
 		secondary_button.text = "Upload Different File"
@@ -716,17 +779,22 @@ func _on_question_file_selected(path: String) -> void:
 
 	pending_upload_text = file.get_as_text()
 	current_game_state = "module_ready"
+	_clear_intro_emphasis()
+	theme_card.visible = false
+	status_card.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	active_subject = "Uploaded Module"
 	active_quiz_name = active_catalog_name
 	active_quiz_id = "uploaded_module"
-	room_title.text = "AI Notes Upload Ready"
-	room_description.text = "These notes will be sent through AI first, with a local fallback if the model or API is unavailable."
-	question_label.text = "Give the uploaded notes a quiz-set name, then generate questions from them with AI."
-	theme_badge.text = "Phase 2: AI Upload"
-	upload_help.text = "TXT and Markdown notes are supported here. Use topic headings like 'Topic 1: Algorithms'."
+	room_title.text = "Escape Room Is Ready"
+	room_description.text = "Your notes are loaded and ready to become the next challenge."
+	question_label.text = "Choose what you want to do next."
+	theme_badge.text = ""
+	upload_help.text = ""
 	hint_label.text = ""
-	status_label.text = "Uploaded notes loaded. Press Generate Quiz From Notes when ready."
-	primary_button.text = "Generate Quiz From Notes"
+	status_label.text = ""
+	primary_button.text = "Start"
 	primary_button.visible = true
 	primary_button.disabled = pending_upload_text.strip_edges().is_empty()
 	secondary_button.text = "Choose Different Notes"
@@ -1105,15 +1173,16 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	current_game_state = "upload_ready"
 	catalog_box.visible = false
 	upload_box.visible = true
+	upload_name_label.visible = false
+	upload_name_input.visible = false
 	active_subject = "Uploaded Module"
-	var source_label := "AI Study Set" if used_ai else "Study Set Fallback"
-	status_label.text = "Built %d questions for %s." % [rooms.size(), active_catalog_name]
-	room_title.text = "AI Quiz Set Ready" if used_ai else "Quiz Set Ready"
-	room_description.text = "Your notes were converted into a playable quiz set for the escape room."
-	question_label.text = "Press start to use the generated study quiz."
-	theme_badge.text = source_label
-	hint_label.text = "You can rename it and regenerate by uploading different notes."
-	primary_button.text = "Start Uploaded Questions"
+	status_label.text = ""
+	room_title.text = "Escape Room Is Ready"
+	room_description.text = "Your notes were converted into a playable set of challenges."
+	question_label.text = "Choose what you want to do next."
+	theme_badge.text = ""
+	hint_label.text = ""
+	primary_button.text = "Start"
 	secondary_button.text = "Choose Different Notes"
 	tertiary_button.text = "Back"
 
