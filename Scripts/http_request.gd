@@ -10,7 +10,9 @@ var connected = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	for child in get_children():
+		if child is Button:
+			child.pressed.connect(_on_button_pressed)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -36,14 +38,16 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 
 func _on_button_pressed() -> void:
 	var prompt_text = "You are a teacher helping a student.
-	Do not give them the answer.
+	Do not give them the answer!!!
+	Only give them hints!
+	Make sure to give the answer in 60 characters or less.
+	Make sure the hint is only included. Do not include anything else.
 	They are having problems trying to solve this homework.
 	Give them the first step in the right direction for this problem:
 	What is the derivative of x^2?"
-	$"../Sprite2D".visible = false
 	
 	var body = JSON.stringify({
-		"model": "qwen3:8b",
+		"model": "llama3",
 		"prompt": prompt_text,
 		"stream": false
 	})
