@@ -1,0 +1,57 @@
+[
+  {
+    "title": "Room 1: The Locked Study",
+    "theme_color": "#202432",
+    "accent_color": "#f0e4b1",
+    "description": "A wall safe hums behind a framed quote. Dusty books hide three symbols etched into the desk.",
+    "question": "What keyword in programming usually means 'if this is true, do the next thing'?",
+    "answers": ["loop", "branch", "compile"],
+    "correct_index": 1,
+    "hint": "Think about code deciding between paths.",
+    "success": "The safe clicks open and a brass key slides out."
+  },
+  {
+    "title": "Room 2: The Server Hall",
+    "theme_color": "#1d2936",
+    "accent_color": "#8fe6ff",
+    "description": "Rows of monitors flicker to life. One terminal demands that you identify the user-facing layer.",
+    "question": "Which option best describes the front end of a web app?",
+    "answers": ["The part users see and interact with", "The database backup", "The code compiler only"],
+    "correct_index": 0,
+    "hint": "It is the layer that shapes the user's experience.",
+    "success": "The monitors turn green and a hidden door unlocks."
+  },
+  {
+    "title": "Room 3: The Archive Vault",
+    "theme_color": "#2c2636",
+    "accent_color": "#d8c3ff",
+    "description": "Steel drawers line the walls. A note says the right answer keeps information organized and reusable.",
+    "question": "What structure is commonly used to store related values under named keys?",
+    "answers": ["Dictionary", "Texture", "Signal"],
+    "correct_index": 0,
+    "hint": "Think of key-value pairs.",
+    "success": "A drawer slides open and reveals the next access card."
+  },
+  {
+    "title": "Room 4: The Signal Chamber",
+    "theme_color": "#1f2f2b",
+    "accent_color": "#8df0b7",
+    "description": "Copper wires connect old panels to a sealed hatch. A blinking prompt asks what lets nodes react to events.",
+    "question": "In Godot, what feature is used to react when one node notifies another about an event?",
+    "answers": ["Signals", "Shaders", "Sprites"],
+    "correct_index": 0,
+    "hint": "Buttons often use this to tell scripts they were pressed.",
+    "success": "The panel crackles, and the hatch unlocks with a low thud."
+  },
+  {
+    "title": "Room 5: The Reflection Chamber",
+    "theme_color": "#34233a",
+    "accent_color": "#ffd7a8",
+    "description": "Mirrors reflect your progress back at you. The final door asks for the mindset that keeps hard projects moving.",
+    "question": "What helps most when building something challenging step by step?",
+    "answers": ["Testing ideas and improving them", "Waiting for perfection first", "Ignoring feedback"],
+    "correct_index": 0,
+    "hint": "Progress usually beats perfection.",
+    "success": "The final lock opens. You escaped."
+  }
+]
