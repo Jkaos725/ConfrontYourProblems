@@ -398,7 +398,7 @@ func _on_onquarternary_pressed() -> void:
 			_show_escape_room()
 		"subject_select":
 			_load_selected_catalog()
-			_start_game()
+			_show_escape_room()
 
 func _on_hint_pressed() -> void:
 	if current_game_state != "playing":

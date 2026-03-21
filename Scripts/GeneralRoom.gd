@@ -6,14 +6,16 @@ extends Node2D
 func _ready() -> void:
 	var timer = get_tree().get_first_node_in_group("GlobalTimer")
 	timer.timeout.connect(on_timer_timeout)
+	if !Global.rooms.is_empty():
+		var room: Dictionary = Global.rooms[Global.index]
+		currentQuestion = room["question"]
 	for child in get_children():
 		if ("currentQuestion" in child):
 			child.currentQuestion = currentQuestion
 			if ("text" in child):
 				child.text = currentQuestion
-	if !Global.rooms.is_empty():
-		var room: Dictionary = Global.rooms[Global.index]
-		currentQuestion = room["question"]
+	print(Global.rooms)
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

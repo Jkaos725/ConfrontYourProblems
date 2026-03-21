@@ -62,9 +62,10 @@ func _on_button_pressed() -> void:
 	var prompt_text = "You are a teacher helping a student.
 	Do not give them the answer!!!
 	Only give them hints!
-	If the answer to the correction is correct or close to correct, response with the number 1 only.
+	If the answer to the question is correct or close enough to the correct, response with the number 1 only.
+	Check if the answer is turned around or explained in a different way.
+	If it still leads to the answer, respond with the number 1.
 	If the answer is not correct, give them feedback in a form of a hint.
-	Make sure to give the answer in 60 characters or less.
 	Make sure the hint is only included. Do not include anything else.
 	They are providing an answer to this question:\n"
 	

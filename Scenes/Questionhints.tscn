@@ -117,7 +117,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("feedBackPrompt") instance=ExtResource("8_aojbq")]
+[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("8_aojbq")]
+pathToNextScene = "res://Scenes/Questionhints.tscn"
+AnswerButton = NodePath("AnswerButton")
 feedBackPrompt = NodePath("../FeedBackPrompt")
 
 [node name="AnswerButton" type="Button" parent="AnswerHTTPRequest" unique_id=752258348]

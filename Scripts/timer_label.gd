@@ -6,10 +6,14 @@ func _ready() -> void:
 	if Global.globalTime > 0:
 		text = str(Global.globalTime)
 	else:
-		text = "hello"
+		text = "0"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Global.globalTime < int(text):
 		text = str(Global.globalTime)
+	if Global.globalTime < 0:
+		var feedBack = $"../FeedBackPrompt"
+		feedBack.visible = true
+		feedBack.la
