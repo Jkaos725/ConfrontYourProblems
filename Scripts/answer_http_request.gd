@@ -46,6 +46,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				var content = response["choices"][0]["message"]["content"]
 				print("Response: ", content)
 				if(content == "1"):
+					Global.index += 1
 					get_tree().change_scene_to_file(pathToNextScene)
 				else:
 					feedBackPrompt.visible = true
