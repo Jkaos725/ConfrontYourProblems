@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Room 1: Ancient Archive",
+    "theme_color": "#382b22",
+    "accent_color": "#ffd1a6",
+    "description": "Stone tablets line the walls. A voice asks which river valley civilization built pyramids.",
+    "question": "Which ancient civilization is famous for building pyramids?",
+    "answers": ["Egyptians", "Vikings", "Aztecs"],
+    "correct_index": 0,
+    "hint": "Think Nile River.",
+    "success": "A stone panel rises and reveals the path forward."
+  },
+  {
+    "title": "Room 2: Revolution Chamber",
+    "theme_color": "#2b2438",
+    "accent_color": "#dbc0ff",
+    "description": "Flags sway in a hidden breeze. A plaque asks what event started in 1775 in America.",
+    "question": "What major conflict began in 1775 between the American colonies and Britain?",
+    "answers": ["The American Revolution", "World War I", "The Civil War"],
+    "correct_index": 0,
+    "hint": "It led to American independence.",
+    "success": "The plaque glows and unlocks the next archive."
+  },
+  {
+    "title": "Room 3: World History Gate",
+    "theme_color": "#24333a",
+    "accent_color": "#93e5ff",
+    "description": "A world map lights up with trade routes. The gate asks what connected Europe and Asia for trade.",
+    "question": "What network of trade routes connected Europe and Asia?",
+    "answers": ["Silk Road", "Appian Way", "Panama Canal"],
+    "correct_index": 0,
+    "hint": "Silk, spices, and ideas traveled along it.",
+    "success": "Trade routes illuminate the final exit."
+  }

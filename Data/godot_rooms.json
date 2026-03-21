@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Room 1: Scene Workshop",
+    "theme_color": "#1f2d3f",
+    "accent_color": "#8fd1ff",
+    "description": "Blueprints cover the table. A projector asks how reusable screens are saved in Godot.",
+    "question": "What is the reusable building block you save and instance in Godot?",
+    "answers": ["Scene", "Signal", "Theme"],
+    "correct_index": 0,
+    "hint": "You can open it as a `.tscn` file.",
+    "success": "The projector flickers green and the workshop door unlocks."
+  },
+  {
+    "title": "Room 2: Node Gallery",
+    "theme_color": "#243527",
+    "accent_color": "#9df3bf",
+    "description": "Rows of floating panels list node names. One panel asks which node is meant for clickable UI.",
+    "question": "Which Godot node is commonly used for a clickable UI control?",
+    "answers": ["Button", "Sprite2D", "TileMap"],
+    "correct_index": 0,
+    "hint": "It emits a pressed signal.",
+    "success": "A panel slides aside and reveals the next hallway."
+  },
+  {
+    "title": "Room 3: Signal Terminal",
+    "theme_color": "#332541",
+    "accent_color": "#d9b8ff",
+    "description": "A terminal pulses with connection lines between nodes.",
+    "question": "What feature lets one Godot node notify another when something happens?",
+    "answers": ["Signals", "Shaders", "Animations"],
+    "correct_index": 0,
+    "hint": "Buttons and timers use this a lot.",
+    "success": "The terminal accepts your answer and opens the exit gate."
+  }
+]

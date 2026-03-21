@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Room 1: Whiteboard Arena",
+    "theme_color": "#252d3e",
+    "accent_color": "#8fc8ff",
+    "description": "A whiteboard lights up with a coding prompt. The panel asks about time complexity notation.",
+    "question": "What is Big O notation used to describe?",
+    "answers": ["The growth of runtime or space as input grows", "The brand of a laptop", "A UI layout system"],
+    "correct_index": 0,
+    "hint": "It measures efficiency trends, not exact seconds.",
+    "success": "The whiteboard clears and the next interview room unlocks."
+  },
+  {
+    "title": "Room 2: Debug Chamber",
+    "theme_color": "#2d2636",
+    "accent_color": "#d7b9ff",
+    "description": "Error logs float around the room. One screen asks what you should do first when debugging.",
+    "question": "What is usually the best first debugging step?",
+    "answers": ["Reproduce the issue consistently", "Delete half the code", "Ignore the logs"],
+    "correct_index": 0,
+    "hint": "You need a reliable way to observe the bug.",
+    "success": "The logs fade away and the chamber door unlocks."
+  },
+  {
+    "title": "Room 3: System Design Gate",
+    "theme_color": "#23322f",
+    "accent_color": "#9df0c7",
+    "description": "A giant diagram fills the wall. A voice asks what helps a service handle more traffic.",
+    "question": "Which approach helps a service handle more users by adding more machines?",
+    "answers": ["Horizontal scaling", "Lowering resolution", "Deleting indexes"],
+    "correct_index": 0,
+    "hint": "Think scaling out, not just scaling up.",
+    "success": "The system diagram reconfigures and the gate opens."
+  }

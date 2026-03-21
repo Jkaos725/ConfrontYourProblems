@@ -1,0 +1,22 @@
+Computer Science Study Module
+
+Topic 1: Algorithms
+An algorithm is a step-by-step procedure used to solve a problem.
+Good algorithms are clear, finite, and effective.
+
+Topic 2: Data Structures
+A queue follows first-in, first-out order.
+A stack follows last-in, first-out order.
+Arrays store elements in order and allow indexed access.
+
+Topic 3: Binary
+Binary uses only two digits: 0 and 1.
+Computers use binary to represent data and instructions.
+
+Topic 4: Debugging
+A strong first debugging step is reproducing the issue consistently.
+Once the issue is reproducible, you can inspect logs, variables, and program flow.
+
+Topic 5: Efficiency
+Big O notation describes how runtime or memory usage grows as input size increases.
+It helps compare solutions at a high level.

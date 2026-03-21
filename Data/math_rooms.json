@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Room 1: Algebra Vault",
+    "theme_color": "#20304a",
+    "accent_color": "#8fc8ff",
+    "description": "A chalkboard glows with symbols. The lock opens only if you solve for the unknown.",
+    "question": "If 2x + 6 = 14, what is x?",
+    "answers": ["3", "4", "5"],
+    "correct_index": 1,
+    "hint": "Subtract 6 first, then divide by 2.",
+    "success": "The chalkboard clears and the first gate slides open."
+  },
+  {
+    "title": "Room 2: Fraction Bridge",
+    "theme_color": "#243c33",
+    "accent_color": "#9df0c7",
+    "description": "A bridge appears in pieces. A panel asks you to simplify the fraction to complete it.",
+    "question": "What is 12/16 simplified?",
+    "answers": ["3/4", "4/3", "6/8"],
+    "correct_index": 0,
+    "hint": "Divide numerator and denominator by 4.",
+    "success": "The missing bridge section locks into place."
+  },
+  {
+    "title": "Room 3: Graph Chamber",
+    "theme_color": "#37283f",
+    "accent_color": "#dfb8ff",
+    "description": "A moving graph projects on the wall. The door asks for the slope of a simple line.",
+    "question": "What is the slope between points (1, 2) and (3, 6)?",
+    "answers": ["1", "2", "4"],
+    "correct_index": 1,
+    "hint": "Use rise over run.",
+    "success": "The graph stabilizes and reveals the exit."
+  }

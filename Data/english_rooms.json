@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Room 1: Grammar Library",
+    "theme_color": "#2d2437",
+    "accent_color": "#ffd6a8",
+    "description": "Stacks of books whisper clues. A sentence waits for the correct part of speech.",
+    "question": "In the sentence 'She quickly ran home,' what part of speech is 'quickly'?",
+    "answers": ["Adjective", "Adverb", "Noun"],
+    "correct_index": 1,
+    "hint": "It describes how she ran.",
+    "success": "The books hush, and the shelf-door opens."
+  },
+  {
+    "title": "Room 2: Synonym Hall",
+    "theme_color": "#24313a",
+    "accent_color": "#8fe6ff",
+    "description": "Portraits line the hall. One asks for a word closest in meaning to 'brave.'",
+    "question": "Which word is the best synonym for 'brave'?",
+    "answers": ["Timid", "Courageous", "Silent"],
+    "correct_index": 1,
+    "hint": "Think fearless.",
+    "success": "The portraits nod and the next passage unlocks."
+  },
+  {
+    "title": "Room 3: Reading Chamber",
+    "theme_color": "#243626",
+    "accent_color": "#9df0b7",
+    "description": "A paragraph glows on the wall. The room asks what the author's main point is called.",
+    "question": "What do we call the central point of a paragraph or passage?",
+    "answers": ["Main idea", "Footnote", "Caption"],
+    "correct_index": 0,
+    "hint": "It is the big idea the text supports.",
+    "success": "The glowing text fades into an open doorway."
+  }
