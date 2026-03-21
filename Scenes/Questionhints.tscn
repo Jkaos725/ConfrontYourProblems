@@ -33,7 +33,6 @@ offset_bottom = 362.0
 disabled = true
 text = "Hint 1"
 script = ExtResource("5_c0yxv")
-timePercentage = 1
 
 [node name="Timer" type="Timer" parent="HTTPRequest/Hint1" unique_id=1927696455]
 autostart = true
