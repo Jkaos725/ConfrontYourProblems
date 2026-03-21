@@ -57,7 +57,6 @@ disabled = true
 text = "Hint 1"
 autowrap_mode = 3
 script = ExtResource("5_c0yxv")
-timePercentage = 0
 
 [node name="Timer" type="Timer" parent="HTTPRequest/Hint2" unique_id=143484336]
 autostart = true
@@ -71,7 +70,7 @@ disabled = true
 text = "Hint 1"
 autowrap_mode = 3
 script = ExtResource("5_c0yxv")
-timePercentage = 0
+timePercentage = 20
 
 [node name="Timer" type="Timer" parent="HTTPRequest/Hint3" unique_id=1922744650]
 autostart = true
@@ -118,6 +117,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("feedBackPrompt") instance=ExtResource("8_aojbq")]
+pathToNextScene = "res://Scenes/Questionhints.tscn"
 feedBackPrompt = NodePath("../FeedBackPrompt")
 
 [node name="AnswerButton" type="Button" parent="AnswerHTTPRequest" unique_id=752258348]

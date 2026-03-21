@@ -41,6 +41,7 @@ var score := 0
 var lives_remaining := START_LIVES
 var hints_used := 0
 var current_game_state := "start_intro"
+var current_launch_target := "quiz"
 
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
@@ -139,11 +140,12 @@ func _show_start_screen() -> void:
 	hint_label.text = "The proctor is awake.\nPick a realm.\nSurvive the exam hall."
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Start Game"
+	primary_button.text = "Start Quiz Game"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Start Escape Room"
-	secondary_button.visible = false
+	secondary_button.text = "Start Question Hints Game"
+	secondary_button.visible = true
+	secondary_button.disabled = false
 	tertiary_button.visible = false
 
 
@@ -162,7 +164,7 @@ func _show_source_selection() -> void:
 	upload_name_input.visible = false
 	room_title.text = "How do you want to start this study session?"
 	room_description.text = "Choose a prerecorded set or upload your own text file."
-	question_label.text = "Pick the path you want to take."
+	question_label.text = "Pick the path you want to take for the %s." % ("question hints game" if current_launch_target == "question_hints" else "quiz game")
 	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = ""
@@ -262,7 +264,8 @@ func _show_room() -> void:
 
 func _show_escape_room():
 	Global.rooms = rooms
-	get_tree().change_scene_to_file("res://Scenes/EssayQuestion.tscn")
+	Global.index = 0
+	get_tree().change_scene_to_file("res://Scenes/Questionhints.tscn")
 
 func _show_end_screen(did_win: bool) -> void:
 	current_game_state = "end"
@@ -298,11 +301,12 @@ func _show_end_screen(did_win: bool) -> void:
 	hint_label.text = "Next upgrade idea: add story branches, sound, and per-room art."
 	status_label.text = "You can restart or switch catalogs whenever you want."
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Start Game"
+	primary_button.text = "Start Quiz Game"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Start Escape Room"
-	secondary_button.visible = false
+	secondary_button.text = "Start Question Hints Game"
+	secondary_button.visible = true
+	secondary_button.disabled = false
 	tertiary_button.visible = false
 
 
@@ -391,16 +395,23 @@ func _on_primary_pressed() -> void:
 	_play_if_ready(click_player)
 	match current_game_state:
 		"start_intro", "end":
+			current_launch_target = "quiz"
 			_show_source_selection()
 		"source_select":
 			_show_subject_selection()
 		"module_ready":
 			_generate_module_catalog()
 		"upload_ready":
-			_start_game()
+			if current_launch_target == "question_hints":
+				_show_escape_room()
+			else:
+				_start_game()
 		"subject_select":
 			_load_selected_catalog()
-			_start_game()
+			if current_launch_target == "question_hints":
+				_show_escape_room()
+			else:
+				_start_game()
 		"playing":
 			_restart_loaded_catalog()
 
@@ -422,7 +433,8 @@ func _on_secondary_pressed() -> void:
 		"playing":
 			_on_hint_pressed()
 		"start_intro", "end":
-			get_tree().change_scene_to_file("res://Scenes/EssayQuestion.tscn")
+			current_launch_target = "question_hints"
+			_show_source_selection()
 
 
 func _load_other_game() -> void:
@@ -454,7 +466,7 @@ func _on_onquarternary_pressed() -> void:
 			_show_escape_room()
 		"subject_select":
 			_load_selected_catalog()
-			_start_game()
+			_show_escape_room()
 
 func _on_hint_pressed() -> void:
 	if current_game_state != "playing":
