@@ -104,7 +104,6 @@ func _ready() -> void:
 	primary_button.pressed.connect(_on_primary_pressed)
 	secondary_button.pressed.connect(_on_secondary_pressed)
 	tertiary_button.pressed.connect(_on_tertiary_pressed)
-	quaternary_button.pressed.connect(_on_onquarternary_pressed)
 	subject_option.item_selected.connect(_on_subject_selected)
 	quiz_option.item_selected.connect(_on_quiz_selected)
 	question_file_dialog.file_selected.connect(_on_question_file_selected)
@@ -190,8 +189,9 @@ func _show_source_selection() -> void:
 	secondary_button.text = "Upload My Own Text File"
 	secondary_button.visible = true
 	secondary_button.disabled = false
-	tertiary_button.visible = false
-	tertiary_button.disabled = true
+	tertiary_button.text = "Back"
+	tertiary_button.visible = true
+	tertiary_button.disabled = false
 
 
 func _show_subject_selection() -> void:
@@ -224,9 +224,6 @@ func _show_subject_selection() -> void:
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
-	quaternary_button.text = "Start Subject Escape"
-	quaternary_button.visible = true
-	quaternary_button.disabled = false
 
 
 func _show_room() -> void:
@@ -463,6 +460,9 @@ func _on_tertiary_pressed() -> void:
 		_play_if_ready(click_player)
 		_show_source_selection()
 		return
+	if current_game_state == "source_select":
+		current_launch_target = "quiz"
+		_show_source_selection()
 	if current_game_state == "module_ready":
 		_play_if_ready(click_player)
 		_show_source_selection()

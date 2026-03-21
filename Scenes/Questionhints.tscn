@@ -4,10 +4,10 @@
 [ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
 [ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="5_c0yxv"]
+[ext_resource type="Script" uid="uid://j1nkab67m1np" path="res://Scripts/feed_back_prompt.gd" id="5_ek5xw"]
 [ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
 [ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_ydjff"]
 [ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
-[ext_resource type="PackedScene" uid="uid://bpoetdh2yi5qj" path="res://Scenes/Components/feed_back_prompt.tscn" id="9_aojbq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ek5xw"]
 content_margin_left = 26.0
@@ -160,6 +160,42 @@ corner_detail = 5
 [sub_resource type="LabelSettings" id="LabelSettings_njm8b"]
 font_size = 26
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u0fk7"]
+bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47451, 0.333333, 0.176471, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vwdc"]
+bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.611765, 0.313726, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_10hbk"]
+bg_color = Color(0.25098, 0.176471, 0.101961, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.686275, 0.509804, 0.231373, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [node name="Question1" type="Node2D" unique_id=433438692]
 script = ExtResource("1_njm8b")
 
@@ -181,6 +217,7 @@ size_flags_vertical = 3
 color = Color(0.101961, 0.0588235, 0.0313726, 1)
 
 [node name="BackgroundTexture" type="TextureRect" parent="Control2" unique_id=295311144]
+visible = false
 modulate = Color(1, 0.690196, 0.352941, 0.08)
 layout_mode = 1
 anchors_preset = 15
@@ -390,6 +427,68 @@ offset_bottom = 140.0
 size_flags_horizontal = 8
 label_settings = SubResource("LabelSettings_njm8b")
 
+[node name="FeedBackPrompt" type="ColorRect" parent="Control2" unique_id=1855606465]
+visible = false
+z_index = 1
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -100.0
+offset_right = 150.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0.4, 0.4, 0.4, 0)
+script = ExtResource("5_ek5xw")
+
+[node name="PanelContainer" type="PanelContainer" parent="Control2/FeedBackPrompt" unique_id=1977939985]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_ek5xw")
+
+[node name="Button" type="Button" parent="Control2/FeedBackPrompt" unique_id=637666343]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -56.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 47.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_u0fk7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3vwdc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_10hbk")
+text = "X"
+
+[node name="Label" type="Label" parent="Control2/FeedBackPrompt" unique_id=1555189758]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 25.0
+offset_top = -11.5
+offset_right = -18.0
+offset_bottom = 56.5
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
 visible = false
 texture_filter = 1
@@ -453,11 +552,10 @@ grow_vertical = 2
 [node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("8_aojbq")]
 pathToNextScene = "res://Scenes/Questionhints.tscn"
 AnswerButton = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1")
-feedBackPrompt = NodePath("../FeedBackPrompt")
-
-[node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_aojbq")]
+feedBackPrompt = NodePath("../Control2/FeedBackPrompt")
 
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" method="_on_timer_timeout"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" method="_on_timer_timeout"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" method="_on_timer_timeout"]
+[connection signal="pressed" from="Control2/FeedBackPrompt/Button" to="Control2/FeedBackPrompt" method="_on_button_pressed"]
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://ndqsaduffnkn"]
+[gd_scene format=3 uid="uid://ndqsaduffnkn"]
 
 [ext_resource type="Script" uid="uid://dcqc830knep5x" path="res://Scripts/server_vault_room.gd" id="1_8ul41"]
 

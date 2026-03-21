@@ -30,9 +30,16 @@ func _ready() -> void:
 
 	var tween = create_tween()
 	tween.set_loops(0)
-	tween.tween_property($Sprite2D, "position:y", position.y + 100, 1)
-	tween.tween_property($Sprite2D, "position:y", position.y + 150, 1)
-	tween.set_trans(Tween.TRANS_SINE)
+	tween.tween_property(	$Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+,"position:y",position.y +55,1)
+	tween.tween_property(	$Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+,"position:y",position.y -10,1)
+	tween.tween_property(	$Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+,"position:x",position.x +50,0.2)
+	tween.tween_property(	$Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+,"position:x",position.x -40,0.2)
+	tween.tween_property(	$Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+,"position:x",position.x ,0.2)
 	tween.set_ease(Tween.EASE_IN_OUT)
 
 
