@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cc4dbgjwquf8f"
+path="res://.godot/imported/freesound_community-error-83494.mp3-3f5296bca88932368bdb119737a8df5d.mp3str"
+
+[deps]
+
+source_file="res://Audio/Old Sounds/Wrong Answer/freesound_community-error-83494.mp3"
+dest_files=["res://.godot/imported/freesound_community-error-83494.mp3-3f5296bca88932368bdb119737a8df5d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

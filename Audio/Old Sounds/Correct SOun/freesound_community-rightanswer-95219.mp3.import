@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ctfc5n3ry7qx4"
+path="res://.godot/imported/freesound_community-rightanswer-95219.mp3-505b13ea8455d182378ec505ee19e712.mp3str"
+
+[deps]
+
+source_file="res://Audio/Old Sounds/Correct SOun/freesound_community-rightanswer-95219.mp3"
+dest_files=["res://.godot/imported/freesound_community-rightanswer-95219.mp3-505b13ea8455d182378ec505ee19e712.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

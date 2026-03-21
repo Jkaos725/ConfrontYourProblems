@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cv2jif2mgm0vv"
+path="res://.godot/imported/skyscraper_seven-click-buttons-ui-menu-sounds-effects-button-13-205396.mp3-2f3ddfd3c9fbce46c35dea6439359bb0.mp3str"
+
+[deps]
+
+source_file="res://Audio/New Sounds/Random Sound/skyscraper_seven-click-buttons-ui-menu-sounds-effects-button-13-205396.mp3"
+dest_files=["res://.godot/imported/skyscraper_seven-click-buttons-ui-menu-sounds-effects-button-13-205396.mp3-2f3ddfd3c9fbce46c35dea6439359bb0.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

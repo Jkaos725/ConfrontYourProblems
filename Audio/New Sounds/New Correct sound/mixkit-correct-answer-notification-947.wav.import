@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dwimmqwqrbbh"
+path="res://.godot/imported/mixkit-correct-answer-notification-947.wav-92a33ca8068e84e3d86cafc768625941.sample"
+
+[deps]
+
+source_file="res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
+dest_files=["res://.godot/imported/mixkit-correct-answer-notification-947.wav-92a33ca8068e84e3d86cafc768625941.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
