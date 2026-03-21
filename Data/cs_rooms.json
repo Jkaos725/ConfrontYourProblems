@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Room 1: Algorithm Forge",
+    "theme_color": "#1f2f39",
+    "accent_color": "#9ad8ff",
+    "description": "Mechanical arms sort glowing cubes. The system asks what an algorithm is.",
+    "question": "Which option best defines an algorithm?",
+    "answers": ["A step-by-step procedure to solve a problem", "A computer brand", "A display theme"],
+    "correct_index": 0,
+    "hint": "Think method, not machine.",
+    "success": "The forge hums smoothly and the first gate opens."
+  },
+  {
+    "title": "Room 2: Data Tower",
+    "theme_color": "#2b2438",
+    "accent_color": "#d5baff",
+    "description": "Holographic arrays float in the air. A console asks which structure follows FIFO order.",
+    "question": "Which data structure follows first-in, first-out order?",
+    "answers": ["Stack", "Queue", "Tree"],
+    "correct_index": 1,
+    "hint": "Think of a line of people waiting.",
+    "success": "The tower rotates and reveals the next staircase."
+  },
+  {
+    "title": "Room 3: Binary Lock",
+    "theme_color": "#243528",
+    "accent_color": "#9ff2c0",
+    "description": "A keypad flashes in two symbols only. The lock asks how many values a binary digit can hold.",
+    "question": "How many possible values can a single binary digit represent?",
+    "answers": ["2", "8", "10"],
+    "correct_index": 0,
+    "hint": "Think 0 and 1.",
+    "success": "The binary lights settle into a safe green pattern."
+  }

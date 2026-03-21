@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Programming Basics",
+    "subject": "Programming",
+    "path": "res://Data/rooms.json",
+    "description": "Introductory programming and web app escape-room questions."
+  },
+  {
+    "name": "Godot Builder",
+    "subject": "Godot",
+    "path": "res://Data/godot_rooms.json",
+    "description": "Rooms focused on Godot concepts, nodes, scenes, and signals."
+  },
+  {
+    "name": "Math Escape",
+    "subject": "Math",
+    "path": "res://Data/math_rooms.json",
+    "description": "Algebra, fractions, and graph-based puzzle rooms."
+  },
+  {
+    "name": "English Challenge",
+    "subject": "English",
+    "path": "res://Data/english_rooms.json",
+    "description": "Grammar, synonyms, and reading-comprehension style rooms."
+  },
+  {
+    "name": "Computer Science Core",
+    "subject": "Computer Science",
+    "path": "res://Data/cs_rooms.json",
+    "description": "Algorithms, data structures, and binary thinking."
+  },
+  {
+    "name": "Technical Interview Prep",
+    "subject": "Technical Interview",
+    "path": "res://Data/technical_interview_rooms.json",
+    "description": "Big O, debugging, and system design fundamentals."
+  },
+  {
+    "name": "Science Lab",
+    "subject": "Science",
+    "path": "res://Data/science_rooms.json",
+    "description": "Matter, energy, and basic natural science questions."
+  },
+  {
+    "name": "History Passage",
+    "subject": "History",
+    "path": "res://Data/history_rooms.json",
+    "description": "Ancient civilizations, revolutions, and world trade routes."
+  }
+]

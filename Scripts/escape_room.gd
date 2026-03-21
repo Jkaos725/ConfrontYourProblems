@@ -1,10 +1,13 @@
 extends Control
 
 const DEFAULT_STATUS := "Choose the right answer to unlock the next room."
-const OLLAMA_URL := "http://localhost:11434/api/chat"
-const OLLAMA_MODEL := "gemma3:4b"
+const OPENAI_URL := "https://api.openai.com/v1/chat/completions"
+const OPENAI_MODEL := "gpt-4.1-mini"
 const START_LIVES := 3
 const ROOMS_DATA_PATH := "res://Data/rooms.json"
+const SUBJECTS_DATA_PATH := "res://Data/subjects.json"
+const QUESTIONS_DATA_PATH := "res://Data/questions.json"
+const ANSWERS_DATA_PATH := "res://Data/answers.json"
 const CLICK_SOUND_PATH := "res://Audio/click.wav"
 const CORRECT_SOUND_PATH := "res://Audio/correct.wav"
 const WRONG_SOUND_PATH := "res://Audio/wrong.wav"
@@ -13,19 +16,35 @@ const WIN_SOUND_PATH := "res://Audio/win.wav"
 const LOSE_SOUND_PATH := "res://Audio/lose.wav"
 
 var rooms: Array[Dictionary] = []
+var subjects_db: Array[Dictionary] = []
+var questions_db: Array[Dictionary] = []
+var answers_db: Array[Dictionary] = []
+var active_catalog_name := "Custom Upload"
+var active_subject := "Custom"
+var active_subject_id := ""
+var active_request_kind := "room_generation"
+var pending_upload_path := ""
+var pending_upload_text := ""
+var openai_api_key := ""
 
 var current_room_index := 0
 var room_cleared := false
 var score := 0
 var lives_remaining := START_LIVES
 var hints_used := 0
-var current_game_state := "start"
+var current_game_state := "start_intro"
 
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
 @onready var margin_container: MarginContainer = $MarginContainer
 @onready var title_banner: Label = $MarginContainer/PanelContainer/VBoxContainer/TitleBanner
 @onready var meta_label: Label = $MarginContainer/PanelContainer/VBoxContainer/MetaLabel
+@onready var catalog_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox
+@onready var subject_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/SubjectOption
+@onready var catalog_description: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/CatalogDescription
+@onready var upload_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/UploadBox
+@onready var upload_name_input: LineEdit = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadNameInput
+@onready var upload_help: Label = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadHelp
 @onready var room_title: Label = $MarginContainer/PanelContainer/VBoxContainer/RoomTitle
 @onready var room_description: Label = $MarginContainer/PanelContainer/VBoxContainer/RoomDescription
 @onready var question_label: Label = $MarginContainer/PanelContainer/VBoxContainer/QuestionLabel
@@ -37,6 +56,7 @@ var current_game_state := "start"
 @onready var secondary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/SecondaryButton
 @onready var tertiary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/TertiaryButton
 @onready var http_request: HTTPRequest = $HTTPRequest
+@onready var question_file_dialog: FileDialog = $QuestionFileDialog
 @onready var click_player: AudioStreamPlayer = $ClickPlayer
 @onready var correct_player: AudioStreamPlayer = $CorrectPlayer
 @onready var wrong_player: AudioStreamPlayer = $WrongPlayer
@@ -51,11 +71,14 @@ func _ready() -> void:
 		button.pressed.connect(_on_answer_selected.bind(index))
 
 	_configure_audio_players()
-	_load_rooms()
+	_load_subject_database()
+	openai_api_key = OS.get_environment("OPENAI_API_KEY")
 	primary_button.pressed.connect(_on_primary_pressed)
 	secondary_button.pressed.connect(_on_secondary_pressed)
 	tertiary_button.pressed.connect(_on_tertiary_pressed)
-	http_request.request_completed.connect(_on_ollama_request_completed)
+	subject_option.item_selected.connect(_on_subject_selected)
+	question_file_dialog.file_selected.connect(_on_question_file_selected)
+	http_request.request_completed.connect(_on_openai_request_completed)
 	_show_start_screen()
 
 
@@ -75,33 +98,82 @@ func _start_game() -> void:
 
 
 func _show_start_screen() -> void:
-	current_game_state = "start"
+	current_game_state = "start_intro"
 	room_cleared = false
 	background.color = Color("202432")
 	background_texture.visible = false
 	title_banner.text = "Confront Your Problems"
-	meta_label.text = "Escape through %d rooms before you run out of lives." % rooms.size()
+	meta_label.text = "Escape room quiz game with customizable question catalogs."
+	catalog_box.visible = false
+	upload_box.visible = false
 	room_title.text = "Start Your Escape"
-	room_description.text = "Use hints carefully, survive wrong answers, and let Ollama generate fresh puzzles whenever you want a new challenge."
-	question_label.text = "Ready to test the game loop we built?"
-	theme_badge.text = "Dynamic quiz escape room"
-	hint_label.text = "Tip: keep Ollama running in PowerShell if you want dynamic rooms."
-	status_label.text = "You start with %d lives." % START_LIVES
+	room_description.text = "Work through rooms by answering questions, switching subjects, or loading your own question files."
+	question_label.text = "Press start when you're ready."
+	theme_badge.text = "Phase 1: Start"
+	hint_label.text = ""
+	status_label.text = "Current source: %s (%d rooms)." % [active_catalog_name, rooms.size()]
 	_set_answer_buttons_visible(false)
 	primary_button.text = "Start Game"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Generate Preview"
+	secondary_button.visible = false
+	tertiary_button.visible = false
+
+
+func _show_source_selection() -> void:
+	current_game_state = "source_select"
+	background.color = Color("202432")
+	background_texture.visible = false
+	catalog_box.visible = false
+	upload_box.visible = false
+	room_title.text = "Choose Your Question Source"
+	room_description.text = "You can use prerecorded questions or upload your own JSON, TXT, or Markdown module."
+	question_label.text = "Do you want prerecorded questions or do you want to upload questions or a study module?"
+	theme_badge.text = "Phase 2: Source"
+	hint_label.text = ""
+	status_label.text = "Built-in subjects available: %d." % subjects_db.size()
+	_set_answer_buttons_visible(false)
+	primary_button.text = "Use Prerecorded"
+	primary_button.visible = true
+	primary_button.disabled = false
+	secondary_button.text = "Upload Questions"
 	secondary_button.visible = true
 	secondary_button.disabled = false
-	tertiary_button.text = "Show Hint"
-	tertiary_button.visible = false
+	tertiary_button.text = "Back"
+	tertiary_button.visible = true
+	tertiary_button.disabled = false
+
+
+func _show_subject_selection() -> void:
+	current_game_state = "subject_select"
+	background.color = Color("202432")
+	background_texture.visible = false
+	catalog_box.visible = true
+	upload_box.visible = false
+	room_title.text = "Choose A Subject"
+	room_description.text = "Pick the subject you want from the dropdown."
+	question_label.text = "What subject do you want to play?"
+	theme_badge.text = "Phase 3: Subject"
+	hint_label.text = ""
+	status_label.text = "Selected source: %s." % active_catalog_name
+	_set_answer_buttons_visible(false)
+	primary_button.text = "Start Subject"
+	primary_button.visible = true
+	primary_button.disabled = subjects_db.is_empty()
+	secondary_button.text = "Preview Catalog"
+	secondary_button.visible = true
+	secondary_button.disabled = subjects_db.is_empty()
+	tertiary_button.text = "Back"
+	tertiary_button.visible = true
+	tertiary_button.disabled = false
 
 
 func _show_room() -> void:
 	current_game_state = "playing"
 	var room: Dictionary = rooms[current_room_index]
 	room_cleared = false
+	catalog_box.visible = false
+	upload_box.visible = false
 	_apply_room_theme(room, current_room_index)
 	title_banner.text = "Escape Room Challenge"
 	meta_label.text = "Room %d/%d   Score %d   Lives %d   Hints %d" % [
@@ -125,7 +197,7 @@ func _show_room() -> void:
 		button.text = answers[index]
 		button.disabled = false
 
-	primary_button.text = "Generate With Ollama"
+	primary_button.text = "Generate With OpenAI"
 	primary_button.visible = true
 	primary_button.disabled = false
 	secondary_button.text = "Show Hint"
@@ -141,30 +213,31 @@ func _show_end_screen(did_win: bool) -> void:
 	room_cleared = false
 	background.color = Color("1f2430") if did_win else Color("342126")
 	background_texture.visible = false
+	catalog_box.visible = false
+	upload_box.visible = false
 	if did_win:
 		_play_if_ready(win_player)
 	else:
 		_play_if_ready(lose_player)
 	title_banner.text = "Escape Complete" if did_win else "Try Again"
-	meta_label.text = "Final Score %d   Rooms Cleared %d/%d   Hints Used %d" % [
+	meta_label.text = "Final Score %d   Rooms Cleared %d/%d   Hints Used %d   Subject %s" % [
 		score,
 		current_room_index + int(did_win),
 		rooms.size(),
-		hints_used
+		hints_used,
+		active_subject
 	]
 	room_title.text = "You made it out." if did_win else "The doors sealed shut."
 	room_description.text = "Every lock opened and the story can grow from here." if did_win else "You ran out of lives, but the rooms are ready whenever you want another attempt."
 	question_label.text = "What do you want to do next?"
 	theme_badge.text = "Replay or generate new content"
 	hint_label.text = "Next upgrade idea: add story branches, sound, and per-room art."
-	status_label.text = "Ollama can still generate a fresh room set whenever you restart."
+	status_label.text = "You can restart or generate a fresh room set whenever you want."
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Play Again"
+	primary_button.text = "Start Game"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Generate Preview"
-	secondary_button.visible = true
-	secondary_button.disabled = false
+	secondary_button.visible = false
 	tertiary_button.visible = false
 
 
@@ -226,7 +299,16 @@ func _on_answer_selected(answer_index: int) -> void:
 func _on_primary_pressed() -> void:
 	_play_if_ready(click_player)
 	match current_game_state:
-		"start", "end":
+		"start_intro", "end":
+			_show_source_selection()
+		"source_select":
+			_show_subject_selection()
+		"module_ready":
+			_generate_module_catalog()
+		"upload_ready":
+			_start_game()
+		"subject_select":
+			_load_selected_catalog()
 			_start_game()
 		"playing":
 			_on_generate_pressed()
@@ -235,14 +317,37 @@ func _on_primary_pressed() -> void:
 func _on_secondary_pressed() -> void:
 	_play_if_ready(click_player)
 	match current_game_state:
-		"start", "end":
+		"source_select":
+			question_file_dialog.popup_centered_ratio(0.75)
+		"module_ready":
+			question_file_dialog.popup_centered_ratio(0.75)
+		"upload_ready":
+			question_file_dialog.popup_centered_ratio(0.75)
+		"subject_select":
 			_generate_preview_room()
 		"playing":
 			_on_hint_pressed()
 
 
 func _on_tertiary_pressed() -> void:
+	if current_game_state == "source_select":
+		_play_if_ready(click_player)
+		_show_start_screen()
+		return
+	if current_game_state == "subject_select":
+		_play_if_ready(click_player)
+		_show_source_selection()
+		return
+	if current_game_state == "module_ready":
+		_play_if_ready(click_player)
+		_show_source_selection()
+		return
+	if current_game_state == "upload_ready":
+		_play_if_ready(click_player)
+		_show_source_selection()
+		return
 	if current_game_state != "playing":
+		_play_if_ready(click_player)
 		return
 	_play_if_ready(click_player)
 	_on_next_pressed()
@@ -277,13 +382,19 @@ func _on_next_pressed() -> void:
 
 
 func _on_generate_pressed() -> void:
+	active_request_kind = "room_generation"
 	primary_button.disabled = true
-	status_label.text = "Asking Ollama for a new question..."
+	status_label.text = "Asking OpenAI for a new question..."
 	hint_label.text = ""
+
+	if openai_api_key.is_empty():
+		primary_button.disabled = false
+		status_label.text = "OPENAI_API_KEY is not available. Restart Godot after setting it."
+		return
 
 	var prompt := _build_generation_prompt()
 	var payload := {
-		"model": OLLAMA_MODEL,
+		"model": OPENAI_MODEL,
 		"messages": [
 			{
 				"role": "system",
@@ -297,11 +408,14 @@ func _on_generate_pressed() -> void:
 		"stream": false
 	}
 
-	var headers := ["Content-Type: application/json"]
-	var error := http_request.request(OLLAMA_URL, headers, HTTPClient.METHOD_POST, JSON.stringify(payload))
+	var headers := [
+		"Content-Type: application/json",
+		"Authorization: Bearer %s" % openai_api_key
+	]
+	var error := http_request.request(OPENAI_URL, headers, HTTPClient.METHOD_POST, JSON.stringify(payload))
 	if error != OK:
 		primary_button.disabled = false
-		status_label.text = "Could not start the Ollama request. Make sure Ollama is running."
+		status_label.text = "Could not start the OpenAI request."
 
 
 func _generate_preview_room() -> void:
@@ -312,10 +426,10 @@ func _generate_preview_room() -> void:
 	var preview_index: int = clamp(current_room_index, 0, rooms.size() - 1)
 	var preview_room: Dictionary = rooms[preview_index]
 	_apply_room_theme(preview_room, preview_index)
-	title_banner.text = "Ollama Preview Mode"
-	meta_label.text = "Model %s   Preview room %d" % [OLLAMA_MODEL, preview_index + 1]
+	title_banner.text = "Generated Preview Mode"
+	meta_label.text = "Catalog %s   Subject %s   Preview room %d" % [active_catalog_name, active_subject, preview_index + 1]
 	room_title.text = preview_room["title"]
-	room_description.text = "This is the room template that Ollama will replace when you generate new content."
+	room_description.text = "This is the room template that OpenAI will replace when you generate new content."
 	question_label.text = preview_room["question"]
 	theme_badge.text = "Preview theme %s" % preview_room.get("theme_color", "default")
 	hint_label.text = "Hint preview: %s" % preview_room["hint"]
@@ -328,33 +442,73 @@ func _generate_preview_room() -> void:
 		button.disabled = true
 
 
-func _on_ollama_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+func _on_openai_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	primary_button.disabled = false
 
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
-		status_label.text = "Ollama request failed. Check that the local server is running on port 11434."
+		status_label.text = "OpenAI request failed. Check your API key and internet connection."
+		hint_label.text = body.get_string_from_utf8()
 		return
 
 	var response_text := body.get_string_from_utf8()
-	var parsed_response = JSON.parse_string(response_text)
+	var parsed_response: Variant = JSON.parse_string(response_text)
 	if parsed_response == null:
-		status_label.text = "Could not read Ollama's response."
+		status_label.text = "Could not read OpenAI's response."
 		return
 
-	var message: Dictionary = parsed_response.get("message", {})
-	var content: String = message.get("content", "")
-	var generated_room = JSON.parse_string(_extract_json_content(content))
-	if generated_room == null:
-		status_label.text = "Ollama replied, but not in the JSON format the app expected."
+	var parsed_dict: Dictionary = parsed_response
+	var choices: Array = parsed_dict.get("choices", [])
+	if choices.is_empty():
+		status_label.text = "OpenAI returned no choices."
+		hint_label.text = response_text
+		return
+
+	var first_choice: Dictionary = choices[0]
+	var message: Dictionary = first_choice.get("message", {})
+	var content: String = str(message.get("content", ""))
+	var parsed_content: Variant = JSON.parse_string(_extract_json_content(content))
+	if parsed_content == null:
+		status_label.text = "OpenAI replied, but not in the JSON format the app expected."
 		hint_label.text = content
 		return
 
+	if active_request_kind == "module_generation":
+		var generated_rooms: Array = _extract_generated_rooms(parsed_content)
+		if generated_rooms.is_empty():
+			status_label.text = "OpenAI returned invalid module data."
+			hint_label.text = content
+			return
+
+		rooms.clear()
+		for entry in generated_rooms:
+			if entry is Dictionary and _is_valid_generated_room(entry):
+				rooms.append(_normalize_generated_room(entry))
+
+		if rooms.is_empty():
+			status_label.text = "OpenAI could not build a usable module from that upload."
+			return
+
+		current_game_state = "upload_ready"
+		catalog_box.visible = false
+		upload_box.visible = true
+		status_label.text = "Generated %d questions for %s." % [rooms.size(), active_catalog_name]
+		room_title.text = "Uploaded Module Ready"
+		room_description.text = "Your study module was converted into a playable question set."
+		question_label.text = "Press start to use the generated module questions."
+		theme_badge.text = "Uploaded Module"
+		hint_label.text = "You can rename it and regenerate by uploading a different module."
+		primary_button.text = "Start Uploaded Questions"
+		secondary_button.text = "Upload Different File"
+		tertiary_button.text = "Back"
+		return
+
+	var generated_room: Dictionary = parsed_content
 	if not _is_valid_generated_room(generated_room):
-		status_label.text = "Ollama returned incomplete puzzle data."
+		status_label.text = "OpenAI returned incomplete puzzle data."
 		return
 
 	rooms[current_room_index] = _normalize_generated_room(generated_room)
-	status_label.text = "New puzzle loaded from Ollama."
+	status_label.text = "New puzzle loaded from OpenAI."
 	if current_game_state == "playing":
 		_show_room()
 	else:
@@ -415,27 +569,6 @@ func _normalize_generated_room(room: Dictionary) -> Dictionary:
 		"background_image": str(room.get("background_image", ""))
 	}
 
-func _load_rooms() -> void:
-	rooms.clear()
-
-	var file: FileAccess = FileAccess.open(ROOMS_DATA_PATH, FileAccess.READ)
-	if file == null:
-		push_error("Could not open room data at %s" % ROOMS_DATA_PATH)
-		return
-
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed == null or not (parsed is Array):
-		push_error("Room data is not a valid JSON array.")
-		return
-
-	for entry in parsed:
-		if entry is Dictionary and _is_valid_generated_room(entry):
-			rooms.append(_normalize_generated_room(entry))
-
-	if rooms.is_empty():
-		push_error("No valid rooms were loaded from %s" % ROOMS_DATA_PATH)
-
-
 func _apply_room_theme(room: Dictionary, room_index: int) -> void:
 	var fallback_palette := [
 		Color("202432"),
@@ -477,6 +610,255 @@ func _color_from_string(value: String, fallback: Color) -> Color:
 		return Color(value)
 
 	return fallback
+
+
+func _load_subject_database() -> void:
+	subjects_db.clear()
+	questions_db.clear()
+	answers_db.clear()
+	subject_option.clear()
+
+	var subjects_file: FileAccess = FileAccess.open(SUBJECTS_DATA_PATH, FileAccess.READ)
+	var questions_file: FileAccess = FileAccess.open(QUESTIONS_DATA_PATH, FileAccess.READ)
+	var answers_file: FileAccess = FileAccess.open(ANSWERS_DATA_PATH, FileAccess.READ)
+	if subjects_file == null or questions_file == null or answers_file == null:
+		push_error("Could not open subject/question/answer database files.")
+		catalog_description.text = "Database files are missing."
+		return
+
+	var parsed_subjects: Variant = JSON.parse_string(subjects_file.get_as_text())
+	var parsed_questions: Variant = JSON.parse_string(questions_file.get_as_text())
+	var parsed_answers: Variant = JSON.parse_string(answers_file.get_as_text())
+	if parsed_subjects == null or not (parsed_subjects is Array) or parsed_questions == null or not (parsed_questions is Array) or parsed_answers == null or not (parsed_answers is Array):
+		push_error("Database files are not valid JSON arrays.")
+		catalog_description.text = "Database files are invalid."
+		return
+
+	for entry in parsed_subjects:
+		if entry is Dictionary and entry.has("id") and entry.has("name"):
+			var subject: Dictionary = entry
+			subjects_db.append(subject)
+			subject_option.add_item(str(subject["name"]))
+
+	for entry in parsed_questions:
+		if entry is Dictionary:
+			questions_db.append(entry)
+
+	for entry in parsed_answers:
+		if entry is Dictionary:
+			answers_db.append(entry)
+
+	if subjects_db.is_empty():
+		catalog_description.text = "No prerecorded subjects found."
+		return
+
+	subject_option.select(0)
+	_update_catalog_details(0)
+
+
+func _on_subject_selected(index: int) -> void:
+	_update_catalog_details(index)
+
+
+func _update_catalog_details(index: int) -> void:
+	if index < 0 or index >= subjects_db.size():
+		return
+
+	var subject: Dictionary = subjects_db[index]
+	active_catalog_name = str(subject["name"])
+	active_subject = str(subject["name"])
+	active_subject_id = str(subject["id"])
+	catalog_description.text = str(subject.get("description", "No description available."))
+	theme_badge.text = "Subject: %s" % active_subject
+
+
+func _load_selected_catalog() -> void:
+	if subjects_db.is_empty():
+		return
+
+	var selected_index: int = subject_option.get_selected_id()
+	if selected_index < 0 or selected_index >= subjects_db.size():
+		selected_index = 0
+
+	var subject: Dictionary = subjects_db[selected_index]
+	active_catalog_name = str(subject["name"])
+	active_subject = str(subject["name"])
+	active_subject_id = str(subject["id"])
+	_build_rooms_for_subject(active_subject_id)
+
+
+func _on_question_file_selected(path: String) -> void:
+	pending_upload_path = path
+	active_catalog_name = path.get_file().get_basename()
+	upload_name_input.text = active_catalog_name
+	catalog_box.visible = false
+	upload_box.visible = true
+
+	var extension := path.get_extension().to_lower()
+	if extension == "json":
+		_load_rooms_from_path(path)
+		active_subject = "Uploaded"
+		current_game_state = "upload_ready"
+		status_label.text = "Loaded uploaded questions from %s (%d rooms)." % [active_catalog_name, rooms.size()]
+		theme_badge.text = "Phase 2: Uploaded"
+		room_title.text = "Uploaded Questions Ready"
+		room_description.text = "Your custom question file is loaded and ready to play."
+		question_label.text = "Press start to use the uploaded questions."
+		upload_help.text = "Rename this uploaded catalog if you want, then press Start Uploaded Questions."
+		hint_label.text = ""
+		primary_button.text = "Start Uploaded Questions"
+		primary_button.visible = true
+		primary_button.disabled = rooms.is_empty()
+		secondary_button.text = "Upload Different File"
+		secondary_button.visible = true
+		secondary_button.disabled = false
+		tertiary_button.text = "Back"
+		tertiary_button.visible = true
+		tertiary_button.disabled = false
+		return
+
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		status_label.text = "Could not open the uploaded module."
+		return
+
+	pending_upload_text = file.get_as_text()
+	current_game_state = "module_ready"
+	active_subject = "Uploaded Module"
+	room_title.text = "Study Module Ready"
+	room_description.text = "This file will be turned into a question set with OpenAI."
+	question_label.text = "Give the uploaded module a name, then generate questions from it."
+	theme_badge.text = "Phase 2: Module Upload"
+	upload_help.text = "TXT and Markdown files are supported here. PDF parsing is not built yet."
+	hint_label.text = ""
+	status_label.text = "Uploaded module loaded. Press Generate Module Questions when ready."
+	primary_button.text = "Generate Module Questions"
+	primary_button.visible = true
+	primary_button.disabled = pending_upload_text.strip_edges().is_empty()
+	secondary_button.text = "Upload Different File"
+	secondary_button.visible = true
+	secondary_button.disabled = false
+	tertiary_button.text = "Back"
+	tertiary_button.visible = true
+	tertiary_button.disabled = false
+
+
+func _load_rooms_from_path(path: String) -> void:
+	rooms.clear()
+
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Could not open room data at %s" % path)
+		return
+
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if parsed == null or not (parsed is Array):
+		push_error("Room data is not a valid JSON array.")
+		return
+
+	for entry in parsed:
+		if entry is Dictionary and _is_valid_generated_room(entry):
+			rooms.append(_normalize_generated_room(entry))
+
+	if rooms.is_empty():
+		push_error("No valid rooms were loaded from %s" % path)
+
+
+func _build_rooms_for_subject(subject_id: String) -> void:
+	rooms.clear()
+
+	for question in questions_db:
+		if str(question.get("subject_id", "")) != subject_id:
+			continue
+
+		var room_answers: Array = []
+		var correct_index := -1
+		for answer in answers_db:
+			if str(answer.get("question_id", "")) != str(question.get("id", "")):
+				continue
+			room_answers.append(str(answer.get("text", "")))
+			if bool(answer.get("is_correct", false)):
+				correct_index = room_answers.size() - 1
+
+		if room_answers.size() == 3 and correct_index >= 0:
+			var room := {
+				"title": str(question.get("title", "")),
+				"description": str(question.get("description", "")),
+				"question": str(question.get("question", "")),
+				"answers": room_answers,
+				"correct_index": correct_index,
+				"hint": str(question.get("hint", "")),
+				"success": str(question.get("success", "")),
+				"theme_color": str(question.get("theme_color", "")),
+				"accent_color": str(question.get("accent_color", "")),
+				"background_image": str(question.get("background_image", ""))
+			}
+			rooms.append(_normalize_generated_room(room))
+
+
+func _generate_module_catalog() -> void:
+	active_request_kind = "module_generation"
+	active_catalog_name = upload_name_input.text.strip_edges()
+	if active_catalog_name.is_empty():
+		active_catalog_name = "Uploaded Module"
+		upload_name_input.text = active_catalog_name
+
+	primary_button.disabled = true
+	status_label.text = "Asking OpenAI to turn the module into questions..."
+	hint_label.text = ""
+
+	if openai_api_key.is_empty():
+		primary_button.disabled = false
+		status_label.text = "OPENAI_API_KEY is not available. Restart Godot after setting it."
+		return
+
+	var trimmed_text := pending_upload_text.strip_edges()
+	if trimmed_text.length() > 6000:
+		trimmed_text = trimmed_text.substr(0, 6000)
+
+	var prompt := "Return only valid JSON. Prefer either an array of 3 room objects or an object with a rooms array of 3 room objects. " \
+		+ "Each room object must have keys title, description, question, answers, correct_index, hint, success. " \
+		+ "Answers must contain exactly 3 choices and correct_index must be 0, 1, or 2. " \
+		+ "theme_color and accent_color are optional. Keep each answer short. " \
+		+ "Build the questions from this uploaded study material. " \
+		+ "Use the catalog name '%s'. Study material:\n%s" % [active_catalog_name, trimmed_text]
+
+	var payload := {
+		"model": OPENAI_MODEL,
+		"messages": [
+			{
+				"role": "system",
+				"content": "You convert study materials into concise multiple-choice escape-room questions. Return JSON only with no markdown."
+			},
+			{
+				"role": "user",
+				"content": prompt
+			}
+		],
+		"stream": false
+	}
+
+	var headers := [
+		"Content-Type: application/json",
+		"Authorization: Bearer %s" % openai_api_key
+	]
+	var error := http_request.request(OPENAI_URL, headers, HTTPClient.METHOD_POST, JSON.stringify(payload))
+	if error != OK:
+		primary_button.disabled = false
+		status_label.text = "Could not start module generation with OpenAI."
+
+
+func _extract_generated_rooms(parsed_content: Variant) -> Array:
+	if parsed_content is Array:
+		return parsed_content
+
+	if parsed_content is Dictionary:
+		var parsed_dict: Dictionary = parsed_content
+		var possible_rooms: Variant = parsed_dict.get("rooms", [])
+		if possible_rooms is Array:
+			return possible_rooms
+
+	return []
 
 
 func _configure_audio_players() -> void:
