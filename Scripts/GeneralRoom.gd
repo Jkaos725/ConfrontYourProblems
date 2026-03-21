@@ -14,10 +14,28 @@ func _ready() -> void:
 	if !Global.rooms.is_empty():
 		var room: Dictionary = Global.rooms[Global.index]
 		currentQuestion = room["question"]
-
+		
+	var tween = create_tween()
+	tween.set_loops(0)
+	tween.tween_property($Sprite2D,"position:y",position.y +100 ,1)
+	tween.tween_property($Sprite2D,"position:y",position.y +150,1)
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
 
 func on_timer_timeout():
 	Global.globalTime -= 1
+
+
+func _on_answer_button_mouse_entered() -> void:
+	var tween = create_tween()
+	tween.tween_property($AnswerHTTPRequest/AnswerButton,"scale",Vector2(1.1,1.1),0.01)
+	pass # Replace with function body.
+
+
+func _on_answer_button_mouse_exited() -> void:
+	var tween = create_tween()
+	tween.tween_property($AnswerHTTPRequest/AnswerButton,"scale",Vector2(1,1),0.01)
+	pass # Replace with function body.
