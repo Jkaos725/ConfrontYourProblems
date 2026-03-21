@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dpexvfyfft0cv"]
 
 [ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_6h0xv"]
-[ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="2_bo1nx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 28.0

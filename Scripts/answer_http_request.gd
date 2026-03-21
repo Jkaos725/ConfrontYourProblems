@@ -5,6 +5,8 @@ var groq_api_key = ""
 var client
 var connected = false
 
+@export var pathToNextScene = "res://Scenes/EssayQuestion.tscn"
+
 var currentQuestion
 
 var hintOne = false
@@ -42,9 +44,9 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				var content = response["choices"][0]["message"]["content"]
 				print("Response: ", content)
 				if(content == "1"):
-					$feedBackPrompt.Label = content
+					get_tree().change_scene_to_file(pathToNextScene)
 				else:
-					feedBackPrompt.visible
+					feedBackPrompt.visible = true
 					feedBackPrompt.textBox.text = content
 		else:
 			print("JSON parse error")
@@ -52,23 +54,50 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		print("HTTP Error: ", response_code, " - ", body.get_string_from_utf8())
 
 
-func _on_answer_button():
+
+func _on_button_pressed() -> void:
 	var prompt_text = "You are a teacher helping a student.
-	They are working
+	Do not give them the answer!!!
+	Only give them hints!
+	If the answer to the correction is correct or close to correct, response with the number 1 only.
+	If the answer is not correct, give them feedback in a form of a hint.
+	Make sure to give the answer in 60 characters or less.
 	Make sure the hint is only included. Do not include anything else.
-	They are having problems trying to solve this homework\n"
-	
-	if hintOne:
-		prompt_text += "You have already given a hint so far: " + $Hint1.text + "\n"
-		prompt_text += "What is the second hint?\n"
-	else:
-		prompt_text += " Give them the first step in the right direction for this problem: "
-		
-	if hintTwo:
-		prompt_text += "You have given this hint as well: " + $Hint2.text + "\n"
-		prompt_text += "What is the thrid hint?\n"
+	They are providing an answer to this question:\n"
 	
 	prompt_text += currentQuestion
+	
+	prompt_text += "\n This is the answer they gave:\n"
+	prompt_text += $"../Control/TextEdit".text
+	
+	var body = JSON.stringify({
+		"model": "llama-3.3-70b-versatile",
+		"messages": [{"role": "user", "content": prompt_text}],
+		"max_tokens": 40,
+		"temperature": 0.5
+	})
+	
+	var headers = ["Content-Type: application/json", "Authorization: Bearer " + groq_api_key]
+	print(prompt_text)
+	var result = request(groq_url, headers, HTTPClient.METHOD_POST, body)
+	
+	if result != OK:
+		print("Error starting request")
+
+func _on_answer_button():
+	var prompt_text = "You are a teacher helping a student.
+	Do not give them the answer!!!
+	Only give them hints!
+	If the explaination to find the answer is correct or close to correct, response with the number 1 only.
+	If the answer is not correct, give them feedback in a form of a hint.
+	Make sure to give the answer in 60 characters or less.
+	Make sure the hint is only included. Do not include anything else.
+	They are providing an answer to this question:\n"
+	
+	prompt_text += currentQuestion
+	
+	prompt_text += "\n This is the answer they gave:\n"
+	prompt_text += $"../Control/TextEdit".text
 	
 	var body = JSON.stringify({
 		"model": "llama-3.3-70b-versatile",

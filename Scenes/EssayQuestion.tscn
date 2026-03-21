@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://tqs210aywdqi"]
+
+[ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_owgtr"]
+[ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://Scripts/color_rect.gd" id="2_im0qi"]
+[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_0aj3j"]
+[ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="4_hjodr"]
+[ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_p8eyc"]
+[ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_vgylc"]
+[ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_tlm1n"]
+[ext_resource type="PackedScene" uid="uid://bpoetdh2yi5qj" path="res://Scenes/Components/feed_back_prompt.tscn" id="9_31ma5"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8lvsb"]
+font_size = 26
+
+[node name="EssayQuestion" type="Node2D" unique_id=253327148]
+script = ExtResource("1_owgtr")
+currentQuestion = "How would you find the derivative of n^2?"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1730809285]
+offset_left = 1.0
+offset_top = 8.0
+offset_right = 1148.0
+offset_bottom = 648.0
+color = Color(0.24709545, 0.24709545, 0.24709545, 1)
+script = ExtResource("2_im0qi")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=818843894]
+texture_filter = 1
+position = Vector2(561, 101)
+scale = Vector2(8, 8)
+texture = ExtResource("3_0aj3j")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=949810557]
+use_threads = true
+script = ExtResource("4_hjodr")
+
+[node name="TimerLabel" parent="." unique_id=1778605306 instance=ExtResource("6_p8eyc")]
+label_settings = SubResource("LabelSettings_8lvsb")
+
+[node name="QuestionLabel" type="Label" parent="." unique_id=1234115349]
+z_index = 1
+offset_left = 226.0
+offset_top = 254.0
+offset_right = 906.0
+offset_bottom = 383.0
+text = "This is a test"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+script = ExtResource("7_vgylc")
+
+[node name="ColorRect" type="ColorRect" parent="QuestionLabel" unique_id=1660893890]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.45071962, 0.45071962, 0.45071962, 1)
+
+[node name="Control" type="Control" parent="." unique_id=448488400]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 234.0
+offset_top = 418.0
+offset_right = 758.0
+offset_bottom = 518.0
+
+[node name="TextEdit" type="TextEdit" parent="Control" unique_id=1574096730]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 143.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("feedBackPrompt") instance=ExtResource("8_tlm1n")]
+pathToNextScene = "res://Scenes/main.tscn"
+feedBackPrompt = NodePath("../FeedBackPrompt")
+
+[node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_31ma5")]
+
+[connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]
