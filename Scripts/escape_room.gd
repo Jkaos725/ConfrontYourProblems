@@ -65,6 +65,7 @@ var current_game_state := "start_intro"
 @onready var primary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/PrimaryButton
 @onready var secondary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/SecondaryButton
 @onready var tertiary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/TertiaryButton
+@onready var quaternary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/ActionRow/QuaternaryButton
 @onready var http_request: HTTPRequest = $HTTPRequest
 @onready var question_file_dialog: FileDialog = $QuestionFileDialog
 @onready var click_player: AudioStreamPlayer = $ClickPlayer
@@ -85,6 +86,7 @@ func _ready() -> void:
 	primary_button.pressed.connect(_on_primary_pressed)
 	secondary_button.pressed.connect(_on_secondary_pressed)
 	tertiary_button.pressed.connect(_on_tertiary_pressed)
+	quaternary_button.pressed.connect(_on_onquarternary_pressed)
 	subject_option.item_selected.connect(_on_subject_selected)
 	quiz_option.item_selected.connect(_on_quiz_selected)
 	question_file_dialog.file_selected.connect(_on_question_file_selected)
@@ -127,6 +129,7 @@ func _show_start_screen() -> void:
 	primary_button.text = "Start Game"
 	primary_button.visible = true
 	primary_button.disabled = false
+	secondary_button.text = "Start Escape Room"
 	secondary_button.visible = false
 	tertiary_button.visible = false
 
@@ -177,6 +180,9 @@ func _show_subject_selection() -> void:
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
+	quaternary_button.text = "Start Subject Escape"
+	quaternary_button.visible = true
+	quaternary_button.disabled = false
 
 
 func _show_room() -> void:
@@ -250,6 +256,7 @@ func _show_end_screen(did_win: bool) -> void:
 	primary_button.text = "Start Game"
 	primary_button.visible = true
 	primary_button.disabled = false
+	secondary_button.text = "Start Escape Room"
 	secondary_button.visible = false
 	tertiary_button.visible = false
 
@@ -346,6 +353,12 @@ func _on_secondary_pressed() -> void:
 			_generate_preview_room()
 		"playing":
 			_on_hint_pressed()
+		"start_intro", "end":
+			get_tree().change_scene_to_file("res://Scenes/EssayQuestion.tscn")
+
+
+func _load_other_game() -> void:
+	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
 func _on_tertiary_pressed() -> void:
@@ -366,7 +379,7 @@ func _on_tertiary_pressed() -> void:
 		return
 	if current_game_state == "upload_ready":
 		_play_if_ready(click_player)
-		_show_source_selection()
+		_load_other_game()
 		return
 	if current_game_state != "playing":
 		_play_if_ready(click_player)
@@ -374,6 +387,13 @@ func _on_tertiary_pressed() -> void:
 	_play_if_ready(click_player)
 	_on_next_pressed()
 
+func _on_onquarternary_pressed() -> void:
+	match current_game_state:
+		"upload_ready":
+			_start_game()
+		"subject_select":
+			_load_selected_catalog()
+			_start_game()
 
 func _on_hint_pressed() -> void:
 	if current_game_state != "playing":
@@ -679,6 +699,9 @@ func _on_question_file_selected(path: String) -> void:
 		tertiary_button.text = "Back"
 		tertiary_button.visible = true
 		tertiary_button.disabled = false
+		quaternary_button.text = "Start Uploaded Escape"
+		quaternary_button.visible = true
+		quaternary_button.disabled = false
 		return
 
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
@@ -1088,6 +1111,7 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	primary_button.text = "Start Uploaded Questions"
 	secondary_button.text = "Choose Different Notes"
 	tertiary_button.text = "Back"
+	quaternary_button.text = "Start Uploaded Escape"
 
 
 func _configure_audio_players() -> void:
