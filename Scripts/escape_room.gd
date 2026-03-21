@@ -87,7 +87,18 @@ func _ready() -> void:
 	for index in range(answers_container.get_child_count()):
 		var button := answers_container.get_child(index) as Button
 		button.pressed.connect(_on_answer_selected.bind(index))
-
+		
+#Mascot animation
+	var tween = create_tween()
+	
+	tween.set_loops(0)
+	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:y",position.y +55,1)
+	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:y",position.y -10,1)
+	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x +50,0.2)
+	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x -40,0.2)
+	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x ,0.2)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	
 	_configure_audio_players()
 	_load_subject_database()
 	primary_button.pressed.connect(_on_primary_pressed)
@@ -114,7 +125,11 @@ func _start_game() -> void:
 	room_cleared = false
 	current_game_state = "playing"
 	margin_container.visible = true
-	_show_room()
+	Global.rooms = rooms.duplicate(true)
+	Global.active_subject = active_subject
+	Global.active_quiz_name = active_quiz_name if not active_quiz_name.is_empty() else active_catalog_name
+	Global.reset_quiz_session()
+	get_tree().change_scene_to_file("res://Scenes/ServerVaultRoom.tscn")
 
 
 func _show_start_screen() -> void:
@@ -1248,3 +1263,6 @@ func _read_key_file(path: String) -> String:
 		return ""
 
 	return file.get_as_text().strip_edges()
+
+
+	

@@ -1,0 +1,2 @@
+[application]
+groq_api_key="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"
