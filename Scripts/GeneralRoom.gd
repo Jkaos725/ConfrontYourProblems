@@ -11,6 +11,7 @@ var current_professor: Dictionary = {}
 var professors := [
 	{
 		"name": "Professor Vex",
+		"portrait": "res://Images/angryBot.png",
 		"intro": [
 			"Answer correctly and I may let you pass.",
 			"One lock. One clue. Do not embarrass yourself.",
@@ -44,6 +45,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Hale",
+		"portrait": "res://Images/enutralface.png",
 		"intro": [
 			"Take your time and read the clue carefully.",
 			"This room rewards steady thinking.",
@@ -77,6 +79,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Mira",
+		"portrait": "res://Images/first.png",
 		"intro": [
 			"You can do this. Start with the clue in front of you.",
 			"Take a breath. One careful answer opens the way.",
