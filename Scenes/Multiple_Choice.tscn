@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://2pd5dhsb6b0a"]
+
+[ext_resource type="Texture2D" uid="uid://b2uyfg53sa6ky" path="res://Images/MQ.png" id="1_wafgi"]
+[ext_resource type="Script" uid="uid://brsg8ncve8nln" path="res://Scenes/MQ.gd" id="2_e6dj7"]
+
+[node name="MultipleChoice" type="Node2D" unique_id=1413343636]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1702434361]
+position = Vector2(579.75, 322.5)
+scale = Vector2(1.6961932, 1.6796875)
+texture = ExtResource("1_wafgi")
+script = ExtResource("2_e6dj7")
+
+[node name="A" type="Button" parent="Sprite2D" unique_id=1910420407]
+offset_left = -243.33902
+offset_top = 9.227905
+offset_right = -149.01016
+offset_bottom = 107.46045
+flat = true
+
+[node name="B" type="Button" parent="Sprite2D" unique_id=1560310043]
+offset_left = -64.70372
+offset_top = 4.4651146
+offset_right = 29.625137
+offset_bottom = 102.69766
+flat = true
+
+[node name="C" type="Button" parent="Sprite2D" unique_id=124765766]
+offset_left = 126.31224
+offset_top = 7.441859
+offset_right = 220.6411
+offset_bottom = 105.6744
+flat = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1511670902]
+
+[node name="LabelA" type="Label" parent="CanvasLayer" unique_id=274318610]
+visible = false
+anchors_preset = -1
+anchor_right = 0.035
+offset_left = 110.0
+offset_top = 282.0
+offset_right = 394.68
+offset_bottom = 514.0
+text = "ANSWER A"
+
+[node name="LabelB" type="Label" parent="CanvasLayer" unique_id=681048363]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+text = "ANSWER B"
+
+[node name="LabelC" type="Label" parent="CanvasLayer" unique_id=1712073606]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+text = "ANSWER C"
+
+[connection signal="mouse_entered" from="Sprite2D/A" to="Sprite2D" method="_on_a_mouse_entered"]
+[connection signal="mouse_entered" from="Sprite2D/A" to="Sprite2D" method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="Sprite2D/A" to="Sprite2D" method="_on_a_mouse_exited"]
+[connection signal="pressed" from="Sprite2D/A" to="Sprite2D" method="_on_a_pressed"]
+[connection signal="mouse_entered" from="Sprite2D/B" to="Sprite2D" method="_on_b_mouse_entered"]
+[connection signal="mouse_exited" from="Sprite2D/B" to="Sprite2D" method="_on_b_mouse_exited"]
+[connection signal="pressed" from="Sprite2D/B" to="Sprite2D" method="_on_b_pressed"]
