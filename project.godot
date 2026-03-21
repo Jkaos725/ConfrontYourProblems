@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 
 Global="*uid://hsaxpgapeh0r"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [file_customization]
 
 folder_colors={

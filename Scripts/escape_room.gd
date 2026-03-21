@@ -64,7 +64,7 @@ var current_launch_target := "quiz"
 @onready var right_column: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn
 @onready var theme_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard
 @onready var theme_badge: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/ThemeBadge
-@onready var answers_container: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer
+@onready var answers_container: HBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswersContainer
 @onready var hint_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard
 @onready var status_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard
 @onready var hint_label: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/HintLabel
@@ -194,7 +194,8 @@ func _show_subject_selection() -> void:
 	upload_name_input.visible = false
 	room_title.text = "Choose A Subject"
 	room_description.text = "Pick a subject, then choose the named quiz set you want to play."
-	question_label.text = "What subject and quiz set do you want to play?"
+	question_label.text = ""
+	question_card.visible = false
 	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = "Selected source: %s." % active_catalog_name
@@ -249,7 +250,8 @@ func _show_room() -> void:
 		var button := answers_container.get_child(index) as Button
 		button.text = answers[index]
 		button.disabled = false
-
+	
+	question_card.visible = true
 	primary_button.text = "Restart Catalog"
 	primary_button.visible = true
 	primary_button.disabled = false
@@ -1197,6 +1199,7 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	primary_button.text = "Start"
 	secondary_button.text = "Choose Different Notes"
 	tertiary_button.text = "Back"
+	question_card.visible = true
 
 
 func _configure_audio_players() -> void:
