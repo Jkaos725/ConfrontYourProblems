@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
 [ext_resource type="Script" uid="uid://cvgrik6iaumw8" path="res://Scenes/gpu_particles_2d.gd" id="4_aojbq"]
 [ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="5_c0yxv"]
-[ext_resource type="Script" uid="uid://j1nkab67m1np" path="res://Scripts/feed_back_prompt.gd" id="5_ek5xw"]
+[ext_resource type="Script" path="res://Scripts/feed_back_prompt.gd" id="5_ek5xw"]
 [ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
 [ext_resource type="Script" path="res://Scripts/question_label.gd" id="7_ydjff"]
 [ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
@@ -114,11 +114,13 @@ corner_detail = 5
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mp8a8"]
 particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 1.0
 angle_min = -1483.0
 angle_max = 1397.0
 inherit_velocity_ratio = 1.0
-direction = Vector3(0, 0, 0)
-spread = 59.173
+direction = Vector3(0, -30, 0)
+spread = 180.0
 initial_velocity_min = 305.75
 initial_velocity_max = 485.61
 gravity = Vector3(0, 0, 0)
@@ -395,6 +397,7 @@ autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=1337215448]
 material = SubResource("CanvasItemMaterial_aojbq")
+position = Vector2(114, 36)
 emitting = false
 amount = 100
 lifetime = 0.52
@@ -424,6 +427,7 @@ autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=1656579220]
 material = SubResource("CanvasItemMaterial_aojbq")
+position = Vector2(126, 40)
 emitting = false
 amount = 100
 lifetime = 0.52
@@ -453,6 +457,7 @@ autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=2049674297]
 material = SubResource("CanvasItemMaterial_aojbq")
+position = Vector2(124, 42)
 emitting = false
 amount = 100
 lifetime = 0.52
