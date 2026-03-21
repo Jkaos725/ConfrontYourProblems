@@ -14,7 +14,6 @@ config/name="ConfrontYourProblems"
 run/main_scene="uid://cgjlxhbirlucc"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
-<<<<<<<Updatedupstreamrun/main_scene="uid://cgjlxhbirlucc"
 
 [file_customization]
 

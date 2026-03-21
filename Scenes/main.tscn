@@ -1,31 +1,102 @@
-[gd_scene format=3 uid="uid://dpexvfyfft0cv"]
+[gd_scene load_steps=2 format=3 uid="uid://cgjlxhbirlucc"]
 
-[ext_resource type="Script" uid="uid://csltgb74wrgg6" path="res://background.gd" id="1_ig7tw"]
+[ext_resource type="Script" path="res://Scripts/escape_room.gd" id="1_6h0xv"]
 
-[node name="Node2D" type="Node2D" unique_id=1951156727]
-position = Vector2(7, 5)
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6h0xv")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1429647511]
-offset_left = 59.0
-offset_top = 100.0
-offset_right = 957.0
-offset_bottom = 326.0
-script = ExtResource("1_ig7tw")
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0901961, 0.109804, 0.14902, 1)
 
-[node name="ColorRect" type="ColorRect" parent="ColorRect" unique_id=596905746]
-layout_mode = 0
-offset_left = 351.0
-offset_top = 85.0
-offset_right = 514.0
-offset_bottom = 125.0
-color = Color(0, 1, 1, 1)
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = 36.0
+offset_right = -48.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
-[node name="Button" type="Button" parent="ColorRect" unique_id=2066070913]
-layout_mode = 0
-offset_left = 36.0
-offset_top = 130.0
-offset_right = 110.0
-offset_bottom = 202.0
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
 
-[connection signal="button_down" from="ColorRect/Button" to="ColorRect" method="_on_button_button_down"]
-[connection signal="button_up" from="ColorRect/Button" to="ColorRect" method="_on_button_button_up"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RoomTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Room Title"
+
+[node name="RoomDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+autowrap_mode = 3
+text = "Room description"
+
+[node name="QuestionLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 3
+text = "Question goes here"
+
+[node name="AnswersContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AnswerButton1" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 52)
+text = "Answer 1"
+
+[node name="AnswerButton2" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 52)
+text = "Answer 2"
+
+[node name="AnswerButton3" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/AnswersContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 52)
+text = "Answer 3"
+
+[node name="HintLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+autowrap_mode = 3
+text = ""
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+autowrap_mode = 3
+text = "Status"
+
+[node name="ActionRow" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HintButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow"]
+layout_mode = 2
+text = "Show Hint"
+
+[node name="NextButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow"]
+layout_mode = 2
+text = "Next Room"
+visible = false
