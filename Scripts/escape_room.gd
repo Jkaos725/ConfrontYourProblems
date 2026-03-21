@@ -125,7 +125,11 @@ func _start_game() -> void:
 	room_cleared = false
 	current_game_state = "playing"
 	margin_container.visible = true
-	_show_room()
+	Global.rooms = rooms.duplicate(true)
+	Global.active_subject = active_subject
+	Global.active_quiz_name = active_quiz_name if not active_quiz_name.is_empty() else active_catalog_name
+	Global.reset_quiz_session()
+	get_tree().change_scene_to_file("res://Scenes/ServerVaultRoom.tscn")
 
 
 func _show_start_screen() -> void:
