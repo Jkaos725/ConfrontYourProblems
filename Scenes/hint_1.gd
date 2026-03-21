@@ -5,7 +5,8 @@ var waitTime
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	waitTime = Global.globalTime * 0.01 * timePercentage
+	waitTime = int(Global.globalTime * 0.01 * timePercentage)
+	text = name + " - " + str(waitTime)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

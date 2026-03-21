@@ -5,9 +5,8 @@ var globalTime = 180
 var timer = Timer.new()  
   
 func _ready():  
-	add_child(timer)  
+
+	add_child(timer)
+	timer.add_to_group("GlobalTimer")
 	timer.start(1)  
 	#timer.connect("timeout", self, "on_global_timer_timeout")  
-
-func on_global_timer_timeout():
-	print("foo")
