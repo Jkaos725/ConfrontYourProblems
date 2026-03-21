@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://Scripts/color_rect.gd" id="1_axu8e"]
 [ext_resource type="Script" uid="uid://cpd8mbcyrjuwg" path="res://Scripts/button.gd" id="2_k2xw1"]
 [ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/http_request.gd" id="3_k2xw1"]
-[ext_resource type="Texture2D" uid="uid://dpbtfcudx7yk2" path="res://Images/download.jpg" id="3_vjxhn"]
+[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
 
 [node name="Question1" type="Node2D" unique_id=433438692]
 
@@ -29,7 +29,9 @@ offset_bottom = 166.0
 script = ExtResource("2_k2xw1")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
-position = Vector2(244, 394)
+texture_filter = 1
+position = Vector2(561, 101)
+scale = Vector2(8, 8)
 texture = ExtResource("3_vjxhn")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1494205287]
@@ -37,10 +39,10 @@ use_threads = true
 script = ExtResource("3_k2xw1")
 
 [node name="Hint1" type="Label" parent="HTTPRequest" unique_id=1292994235]
-offset_left = 898.0
-offset_top = 182.0
-offset_right = 1116.0
-offset_bottom = 261.0
+offset_left = 453.0
+offset_top = 350.0
+offset_right = 671.0
+offset_bottom = 429.0
 text = "Hint 1"
 
 [connection signal="pressed" from="ColorRect/Button" to="ColorRect" method="_on_button_pressed"]
