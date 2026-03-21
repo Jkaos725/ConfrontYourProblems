@@ -38,7 +38,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.12549, 0.141176, 0.196078, 1)
 
-[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=480817789]
+[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=1298344070]
 visible = false
 modulate = Color(1, 1, 1, 0.18)
 layout_mode = 1
@@ -78,60 +78,69 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="TitleBanner" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=503334759]
+[node name="TitleBanner" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=787297234]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 theme_override_font_sizes/font_size = 18
 text = "Escape Room Challenge"
 
-[node name="MetaLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1216051178]
+[node name="MetaLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=529749479]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
 text = "Room 1/3   Score 0   Lives 3   Hints 0"
 
-[node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1351245144]
+[node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=868033054]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CatalogTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1558329738]
+[node name="CatalogTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1753944291]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Question Catalog"
 
-[node name="CatalogHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1712983773]
+[node name="CatalogHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=536836615]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
-text = "Choose a prerecorded subject or upload your own JSON question file."
+text = "Choose a prerecorded subject and quiz set, or switch to the AI notes flow from the source screen."
 autowrap_mode = 3
 
-[node name="SubjectOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1270494705]
+[node name="SubjectOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=581189494]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CatalogDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1126454266]
+[node name="QuizLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
+text = "Quiz Set"
+
+[node name="QuizOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CatalogDescription" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=46637190]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
 text = "Catalog details"
 autowrap_mode = 3
 
-[node name="UploadBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=802268886]
+[node name="UploadBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1810561734]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="UploadNameLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=319991087]
+[node name="UploadNameLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=804489519]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Custom Catalog Name"
 
-[node name="UploadNameInput" type="LineEdit" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1001033780]
+[node name="UploadNameInput" type="LineEdit" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1163133380]
 layout_mode = 2
 placeholder_text = "Enter a name for the uploaded module"
 
-[node name="UploadHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1752233718]
+[node name="UploadHelp" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1923625155]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
-text = "Upload a JSON question catalog or a TXT/MD study module. TXT/MD files will be turned into questions with OpenAI."
+text = "Upload TXT or Markdown lecture notes to generate a study quiz, or import a JSON quiz set from the source screen."
 autowrap_mode = 3
 
 [node name="RoomTitle" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1800334654]
@@ -153,7 +162,7 @@ theme_override_font_sizes/font_size = 22
 text = "Question goes here"
 autowrap_mode = 3
 
-[node name="ThemeBadge" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1862960222]
+[node name="ThemeBadge" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1261679703]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
 text = "Theme"
@@ -195,38 +204,36 @@ autowrap_mode = 3
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PrimaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=229621789]
+[node name="PrimaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=131769333]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Start Game"
 
-[node name="SecondaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=1695679055]
+[node name="SecondaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=331346103]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Generate Preview"
 
-[node name="TertiaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=555686078]
+[node name="TertiaryButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/ActionRow" unique_id=862678087]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Next Room"
 
 [node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1410650381]
 
-[node name="ClickPlayer" type="AudioStreamPlayer" parent="." unique_id=477405928]
+[node name="ClickPlayer" type="AudioStreamPlayer" parent="." unique_id=1009325855]
 
-[node name="CorrectPlayer" type="AudioStreamPlayer" parent="." unique_id=638690995]
+[node name="CorrectPlayer" type="AudioStreamPlayer" parent="." unique_id=1880611610]
 
-[node name="WrongPlayer" type="AudioStreamPlayer" parent="." unique_id=1409925110]
+[node name="WrongPlayer" type="AudioStreamPlayer" parent="." unique_id=478983136]
 
-[node name="UnlockPlayer" type="AudioStreamPlayer" parent="." unique_id=767191027]
+[node name="UnlockPlayer" type="AudioStreamPlayer" parent="." unique_id=1655323924]
 
-[node name="WinPlayer" type="AudioStreamPlayer" parent="." unique_id=501788695]
+[node name="WinPlayer" type="AudioStreamPlayer" parent="." unique_id=83239539]
 
-[node name="LosePlayer" type="AudioStreamPlayer" parent="." unique_id=1009653427]
+[node name="LosePlayer" type="AudioStreamPlayer" parent="." unique_id=2001772983]
 
-[node name="LosePlayer2" type="AudioStreamPlayer" parent="." unique_id=78492464]
-
-[node name="QuestionFileDialog" type="FileDialog" parent="." unique_id=1542753126]
+[node name="QuestionFileDialog" type="FileDialog" parent="." unique_id=1589127486]
 title = "Open a File"
 size = Vector2i(900, 560)
 file_mode = 0
