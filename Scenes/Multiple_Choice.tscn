@@ -1,41 +1,61 @@
 [gd_scene format=3 uid="uid://2pd5dhsb6b0a"]
 
-[ext_resource type="Texture2D" uid="uid://b2uyfg53sa6ky" path="res://Images/MQ.png" id="1_wafgi"]
-[ext_resource type="Script" uid="uid://brsg8ncve8nln" path="res://Scripts/MQ.gd" id="2_e6dj7"]
+[ext_resource type="Script" uid="uid://yp4w3uofo25r" path="res://Scripts/MQ (2).gd" id="1_e6dj7"]
+[ext_resource type="Texture2D" uid="uid://bfohfqma4sjo3" path="res://Images/A.png" id="2_wdrmb"]
+[ext_resource type="Texture2D" uid="uid://jbxyhhml6vct" path="res://Images/B.jpg" id="3_kpgty"]
+[ext_resource type="Texture2D" uid="uid://dx7iejnv5mjn8" path="res://Images/C.jpg" id="4_2sprd"]
 
 [node name="MultipleChoice" type="Node2D" unique_id=1413343636]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1702434361]
-position = Vector2(579.75, 322.5)
-scale = Vector2(1.6961932, 1.6796875)
-texture = ExtResource("1_wafgi")
-script = ExtResource("2_e6dj7")
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1239360775]
+offset_right = 1146.0
+offset_bottom = 635.0
+color = Color(0, 0.2509804, 0, 1)
+script = ExtResource("1_e6dj7")
 
-[node name="A" type="Button" parent="Sprite2D" unique_id=1910420407]
-offset_left = -243.33902
-offset_top = 9.227905
-offset_right = -149.01016
-offset_bottom = 107.46045
+[node name="A" type="Button" parent="ColorRect" unique_id=730333202]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.037
+anchor_bottom = 0.031000001
+offset_left = 169.0
+offset_top = 309.0
+offset_right = 224.59799
+offset_bottom = 425.315
+icon = ExtResource("2_wdrmb")
 flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="B" type="Button" parent="Sprite2D" unique_id=1560310043]
-offset_left = -64.70372
-offset_top = 4.4651146
-offset_right = 29.625137
-offset_bottom = 102.69766
+[node name="B" type="Button" parent="ColorRect" unique_id=1155478904]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.037
+anchor_bottom = 0.031000001
+offset_left = 507.0
+offset_top = 306.0
+offset_right = 552.598
+offset_bottom = 430.315
+icon = ExtResource("3_kpgty")
 flat = true
+expand_icon = true
 
-[node name="C" type="Button" parent="Sprite2D" unique_id=124765766]
-offset_left = 126.31224
-offset_top = 7.441859
-offset_right = 220.6411
-offset_bottom = 105.6744
+[node name="C" type="Button" parent="ColorRect" unique_id=1841542765]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.037
+anchor_bottom = 0.031000001
+offset_left = 836.0
+offset_top = 314.0
+offset_right = 874.598
+offset_bottom = 437.315
+icon = ExtResource("4_2sprd")
 flat = true
+expand_icon = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1511670902]
 
 [node name="LabelA" type="Label" parent="CanvasLayer" unique_id=274318610]
-visible = false
 anchors_preset = -1
 anchor_right = 0.035
 offset_left = 110.0
@@ -45,19 +65,17 @@ offset_bottom = 514.0
 text = "ANSWER A"
 
 [node name="LabelB" type="Label" parent="CanvasLayer" unique_id=681048363]
-visible = false
-offset_left = 469.0
-offset_top = 292.0
-offset_right = 562.0
-offset_bottom = 350.0
+offset_left = 448.0
+offset_top = 276.0
+offset_right = 541.0
+offset_bottom = 334.0
 text = "ANSWER B"
 
 [node name="LabelC" type="Label" parent="CanvasLayer" unique_id=1712073606]
-visible = false
-offset_left = 808.0
-offset_top = 310.0
-offset_right = 889.0
-offset_bottom = 333.0
+offset_left = 744.0
+offset_top = 284.0
+offset_right = 881.0
+offset_bottom = 330.0
 text = "ANSWER C"
 
 [node name="Question" type="Label" parent="CanvasLayer" unique_id=67176808]
@@ -67,13 +85,12 @@ offset_right = 504.0
 offset_bottom = 78.0
 text = "Explain Quantum Mechanics in 3 words"
 
-[connection signal="mouse_entered" from="Sprite2D/A" to="Sprite2D" method="_on_a_mouse_entered"]
-[connection signal="mouse_entered" from="Sprite2D/A" to="Sprite2D" method="_on_button_mouse_entered"]
-[connection signal="mouse_exited" from="Sprite2D/A" to="Sprite2D" method="_on_a_mouse_exited"]
-[connection signal="pressed" from="Sprite2D/A" to="Sprite2D" method="_on_a_pressed"]
-[connection signal="mouse_entered" from="Sprite2D/B" to="Sprite2D" method="_on_b_mouse_entered"]
-[connection signal="mouse_exited" from="Sprite2D/B" to="Sprite2D" method="_on_b_mouse_exited"]
-[connection signal="pressed" from="Sprite2D/B" to="Sprite2D" method="_on_b_pressed"]
-[connection signal="mouse_entered" from="Sprite2D/C" to="Sprite2D" method="_on_c_mouse_entered"]
-[connection signal="mouse_exited" from="Sprite2D/C" to="Sprite2D" method="_on_c_mouse_exited"]
-[connection signal="pressed" from="Sprite2D/C" to="Sprite2D" method="_on_c_pressed"]
+[connection signal="mouse_entered" from="ColorRect/A" to="ColorRect" method="_on_a_mouse_entered"]
+[connection signal="mouse_exited" from="ColorRect/A" to="ColorRect" method="_on_a_mouse_exited"]
+[connection signal="pressed" from="ColorRect/A" to="ColorRect" method="_on_a_pressed"]
+[connection signal="mouse_entered" from="ColorRect/B" to="ColorRect" method="_on_b_mouse_entered"]
+[connection signal="mouse_exited" from="ColorRect/B" to="ColorRect" method="_on_b_mouse_exited"]
+[connection signal="pressed" from="ColorRect/B" to="ColorRect" method="_on_b_pressed"]
+[connection signal="mouse_entered" from="ColorRect/C" to="ColorRect" method="_on_c_mouse_entered"]
+[connection signal="mouse_exited" from="ColorRect/C" to="ColorRect" method="_on_c_mouse_exited"]
+[connection signal="pressed" from="ColorRect/C" to="ColorRect" method="_on_c_pressed"]

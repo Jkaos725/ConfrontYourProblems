@@ -14,6 +14,7 @@ config/name="ConfrontYourProblems"
 run/main_scene="uid://dpexvfyfft0cv"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+<<<<<<<Updatedupstreamrun/main_scene="uid://cgjlxhbirlucc"
 
 [autoload]
 
@@ -22,6 +23,7 @@ Global="*uid://hsaxpgapeh0r"
 [file_customization]
 
 folder_colors={
+"res://Audio/": "orange",
 "res://Images/": "red",
 "res://Scenes/": "blue",
 "res://Scripts/": "green"
@@ -38,3 +40,5 @@ GlobalTimer=""
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
