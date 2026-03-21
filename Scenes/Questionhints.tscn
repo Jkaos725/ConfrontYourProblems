@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://cgjlxhbirlucc"]
 
-[ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://Scripts/color_rect.gd" id="1_axu8e"]
 [ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_njm8b"]
 [ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
@@ -10,75 +9,407 @@
 [ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
 [ext_resource type="PackedScene" uid="uid://bpoetdh2yi5qj" path="res://Scenes/Components/feed_back_prompt.tscn" id="9_aojbq"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ek5xw"]
+content_margin_left = 26.0
+content_margin_top = 24.0
+content_margin_right = 26.0
+content_margin_bottom = 24.0
+bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.698039, 0.521569, 0.278431, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.0509804, 0.0235294, 0.00392157, 0.45)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aojbq"]
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+bg_color = Color(0.439216, 0.337255, 0.223529, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0bw7"]
+bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47451, 0.333333, 0.176471, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mj1qt"]
+bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.611765, 0.313726, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jdan8"]
+bg_color = Color(0.25098, 0.176471, 0.101961, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.686275, 0.509804, 0.231373, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ab12h"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+bg_color = Color(0.203922, 0.141176, 0.0862745, 0.96)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_byvrh"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp8a8"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcvg4"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4acn0"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hrsk6"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_odnec"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
 [sub_resource type="LabelSettings" id="LabelSettings_njm8b"]
 font_size = 26
 
 [node name="Question1" type="Node2D" unique_id=433438692]
 script = ExtResource("1_njm8b")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=313816162]
-offset_left = -59.0
-offset_top = -29.0
-offset_right = 1201.0
-offset_bottom = 719.0
-color = Color(0.24709545, 0.24709545, 0.24709545, 1)
-script = ExtResource("1_axu8e")
+[node name="Control2" type="Control" parent="." unique_id=1999696929]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 645.0
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
+[node name="Background" type="ColorRect" parent="Control2" unique_id=1800686952]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.101961, 0.0588235, 0.0313726, 1)
+
+[node name="BackgroundTexture" type="TextureRect" parent="Control2" unique_id=295311144]
+modulate = Color(1, 0.690196, 0.352941, 0.08)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="Control2" unique_id=2014160864]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -108.0
+offset_bottom = 108.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Control2/MarginContainer" unique_id=2133322384]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_ek5xw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer" unique_id=1416615820]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="TopRow" type="HBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=1754729004]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="MascotBox" type="CenterContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1619204497]
+custom_minimum_size = Vector2(190, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Mascot" type="TextureRect" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox" unique_id=2081870564]
 texture_filter = 1
-position = Vector2(559, 157)
-scale = Vector2(8, 8)
+custom_minimum_size = Vector2(170, 90)
+layout_mode = 2
 texture = ExtResource("3_vjxhn")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1494205287]
-use_threads = true
-script = ExtResource("3_k2xw1")
+[node name="UploadBox" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=1298865747]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
 
-[node name="Hint1" type="Button" parent="HTTPRequest" unique_id=495878269]
-offset_left = 808.0
-offset_top = 191.0
-offset_right = 1105.0
-offset_bottom = 328.0
+[node name="UploadNameLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=261315805]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
+text = "Custom Catalog Name"
+
+[node name="UploadNameInput" type="LineEdit" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1177897039]
+layout_mode = 2
+placeholder_text = "Enter a name for the uploaded module"
+
+[node name="UploadHelp" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1293337152]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
+text = "Upload TXT or Markdown lecture notes to generate a study quiz, or import a JSON quiz set from the source screen."
+autowrap_mode = 3
+
+[node name="BodyRow" type="HBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=205106739]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="LeftColumn" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow" unique_id=470767527]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="QuestionCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=264814051]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_aojbq")
+
+[node name="QuestionLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard" unique_id=725201016]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.968627, 0.913725, 1)
+theme_override_font_sizes/font_size = 22
+text = "Question goes here"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="StatusLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=2050364416]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.937255, 0.870588, 0.756863, 1)
+theme_override_font_sizes/font_size = 18
+text = "Choose the right answer to unlock the next room."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Control" type="Control" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=191274882]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control" unique_id=1624157675]
+custom_minimum_size = Vector2(650, 100)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -325.0
+offset_top = -25.0
+offset_right = 325.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/background_color = Color(0.30897447, 0.23211238, 0.14893678, 1)
+
+[node name="AnswerButton1" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=1550356470]
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_d0bw7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_mj1qt")
+theme_override_styles/hover = SubResource("StyleBoxFlat_jdan8")
+text = "Submit"
+
+[node name="RightColumn" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow" unique_id=1102362458]
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ThemeCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=964831141]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+
+[node name="Hint1" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard" unique_id=1622545699]
+layout_mode = 2
+theme_override_colors/font_disabled_color = Color(16.638432, 16.638432, 16.638432, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_byvrh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_mp8a8")
 disabled = true
 text = "Hint 1"
 autowrap_mode = 3
 script = ExtResource("5_c0yxv")
 timePercentage = 0
 
-[node name="Timer" type="Timer" parent="HTTPRequest/Hint1" unique_id=1927696455]
+[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=2138671058]
 autostart = true
 
-[node name="Hint2" type="Button" parent="HTTPRequest" unique_id=562289727]
-offset_left = 804.0
-offset_top = 337.0
-offset_right = 1101.0
-offset_bottom = 474.0
+[node name="HintCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1162841359]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+
+[node name="Hint2" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard" unique_id=1525138738]
+layout_mode = 2
+theme_override_colors/font_disabled_color = Color(18.892157, 18.892157, 18.892157, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_hcvg4")
+theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_4acn0")
 disabled = true
-text = "Hint 1"
+text = "Hint 2"
 autowrap_mode = 3
 script = ExtResource("5_c0yxv")
 
-[node name="Timer" type="Timer" parent="HTTPRequest/Hint2" unique_id=143484336]
+[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=365742750]
 autostart = true
 
-[node name="Hint3" type="Button" parent="HTTPRequest" unique_id=1487073517]
-offset_left = 807.0
-offset_top = 487.0
-offset_right = 1104.0
-offset_bottom = 624.0
+[node name="StatusCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1351471532]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+
+[node name="Hint3" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard" unique_id=845258701]
+layout_mode = 2
+theme_override_colors/font_disabled_color = Color(18.892157, 18.892157, 18.892157, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_hrsk6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_odnec")
 disabled = true
-text = "Hint 1"
+text = "Hint 3"
 autowrap_mode = 3
 script = ExtResource("5_c0yxv")
 timePercentage = 20
 
-[node name="Timer" type="Timer" parent="HTTPRequest/Hint3" unique_id=1922744650]
+[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=876177229]
 autostart = true
 
-[node name="TimerLabel" parent="." unique_id=1778605306 instance=ExtResource("6_njm8b")]
+[node name="TimerLabel" parent="Control2" unique_id=1778605306 instance=ExtResource("6_njm8b")]
+layout_mode = 0
+offset_left = 1045.0
+offset_top = 104.0
+offset_right = 1126.0
+offset_bottom = 140.0
+size_flags_horizontal = 8
+label_settings = SubResource("LabelSettings_njm8b")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
+visible = false
+texture_filter = 1
+position = Vector2(559, 157)
+scale = Vector2(8, 8)
+texture = ExtResource("3_vjxhn")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1494205287 node_paths=PackedStringArray("Hint1", "Hint2", "Hint3")]
+use_threads = true
+script = ExtResource("3_k2xw1")
+Hint1 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1")
+Hint2 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2")
+Hint3 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3")
+
+[node name="TimerLabel" parent="." unique_id=2013740105 instance=ExtResource("6_njm8b")]
+visible = false
 label_settings = SubResource("LabelSettings_njm8b")
 
 [node name="QuestionLabel" type="Label" parent="." unique_id=1937359125]
+visible = false
 z_index = 1
 offset_left = 226.0
 offset_top = 254.0
@@ -91,6 +422,7 @@ autowrap_mode = 3
 script = ExtResource("7_ydjff")
 
 [node name="ColorRect" type="ColorRect" parent="QuestionLabel" unique_id=660500764]
+visible = false
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
@@ -101,6 +433,7 @@ grow_vertical = 2
 color = Color(0.45071962, 0.45071962, 0.45071962, 1)
 
 [node name="Control" type="Control" parent="." unique_id=1289547833]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 234.0
@@ -109,6 +442,7 @@ offset_right = 758.0
 offset_bottom = 518.0
 
 [node name="TextEdit" type="TextEdit" parent="Control" unique_id=194617503]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -116,23 +450,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("feedBackPrompt") instance=ExtResource("8_aojbq")]
+[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("8_aojbq")]
 pathToNextScene = "res://Scenes/Questionhints.tscn"
+AnswerButton = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1")
 feedBackPrompt = NodePath("../FeedBackPrompt")
-
-[node name="AnswerButton" type="Button" parent="AnswerHTTPRequest" unique_id=752258348]
-offset_left = 448.0
-offset_top = 542.0
-offset_right = 575.0
-offset_bottom = 588.0
-text = "Submit"
 
 [node name="FeedBackPrompt" parent="." unique_id=1855606465 instance=ExtResource("9_aojbq")]
 
+[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" method="_on_timer_timeout"]
+[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" method="_on_timer_timeout"]
+[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" method="_on_timer_timeout"]
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]
-[connection signal="pressed" from="HTTPRequest/Hint1" to="HTTPRequest" method="_on_hint_1_pressed"]
-[connection signal="timeout" from="HTTPRequest/Hint1/Timer" to="HTTPRequest/Hint1" method="_on_timer_timeout"]
-[connection signal="timeout" from="HTTPRequest/Hint2/Timer" to="HTTPRequest/Hint2" method="_on_timer_timeout"]
-[connection signal="timeout" from="HTTPRequest/Hint3/Timer" to="HTTPRequest/Hint3" method="_on_timer_timeout"]
-[connection signal="mouse_entered" from="AnswerHTTPRequest/AnswerButton" to="." method="_on_answer_button_mouse_entered"]
-[connection signal="mouse_exited" from="AnswerHTTPRequest/AnswerButton" to="." method="_on_answer_button_mouse_exited"]

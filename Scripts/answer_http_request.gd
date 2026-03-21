@@ -12,9 +12,7 @@ var expectedAnswer := ""
 
 
 func _ready() -> void:
-	for child in get_children():
-		if child is Button:
-			child.pressed.connect(_on_answer_button)
+	AnswerButton.pressed.connect(_on_answer_button)
 
 	var config: ConfigFile = ConfigFile.new()
 	var err: int = config.load("res://config.cfg")
@@ -75,7 +73,7 @@ func _build_answer_check_prompt(student_answer: String) -> String:
 
 
 func _submit_answer() -> void:
-	var student_answer: String = $"../Control/TextEdit".text.strip_edges()
+	var student_answer: String = $"../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control/TextEdit".text.strip_edges()
 	var prompt_text: String = _build_answer_check_prompt(student_answer)
 
 	var body: String = JSON.stringify({

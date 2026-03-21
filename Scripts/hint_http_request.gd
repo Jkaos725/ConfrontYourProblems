@@ -10,11 +10,15 @@ var currentQuestion
 var hintOne = false
 var hintTwo = false
 
+@export var Hint1 : Button
+@export var Hint2 : Button
+@export var Hint3 : Button
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	for child in get_children():
-		if child is Button:
-			child.pressed.connect(_on_button_pressed)
+	Hint1.pressed.connect(_on_button_pressed)
+	Hint2.pressed.connect(_on_button_pressed)
+	Hint3.pressed.connect(_on_button_pressed)
 	
 	var config = ConfigFile.new()
 	var err = config.load("res://config.cfg")
@@ -41,12 +45,12 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 				var content = response["choices"][0]["message"]["content"]
 				print("Response: ", content)
 				if hintTwo:
-					$Hint3.text = content
+					Hint3.text = content
 				elif hintOne:
-					$Hint2.text = content
+					Hint2.text = content
 					hintTwo = true
 				else:
-					$Hint1.text = content
+					Hint1.text = content
 					hintOne = true
 		else:
 			print("JSON parse error")
@@ -64,13 +68,13 @@ func _on_button_pressed() -> void:
 	They are having problems trying to solve this homework\n"
 	
 	if hintOne:
-		prompt_text += "You have already given a hint so far: " + $Hint1.text + "\n"
+		prompt_text += "You have already given a hint so far: " + Hint1.text + "\n"
 		prompt_text += "What is the second hint?\n"
 	else:
 		prompt_text += " Give them the first step in the right direction for this problem: "
 		
 	if hintTwo:
-		prompt_text += "You have given this hint as well: " + $Hint2.text + "\n"
+		prompt_text += "You have given this hint as well: " + Hint2.text + "\n"
 		prompt_text += "What is the thrid hint?\n"
 	
 	prompt_text += currentQuestion

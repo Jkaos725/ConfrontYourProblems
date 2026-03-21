@@ -26,6 +26,7 @@ func _ready() -> void:
 			child.expectedAnswer = expectedAnswer
 		if child.name == "QuestionLabel" and "text" in child:
 			child.text = currentQuestion
+		$Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard/QuestionLabel.text = currentQuestion
 
 	var tween = create_tween()
 	tween.set_loops(0)

@@ -7,6 +7,7 @@ var waitTime
 func _ready() -> void:
 	waitTime = int(Global.globalTime * 0.01 * timePercentage)
 	text = name + " - " + str(waitTime)
+	pressed.connect(_on_pressed)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -21,3 +22,6 @@ func _on_timer_timeout() -> void:
 		$Timer.stop()
 		disabled = false
 		text = "Hint Available!"
+
+func _on_pressed():
+	disabled = true
