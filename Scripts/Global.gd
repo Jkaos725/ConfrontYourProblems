@@ -11,6 +11,11 @@ var lives = 3
 var hints_used = 0
 var active_subject = ""
 var active_quiz_name = ""
+var selected_professor = "Professor Vex"
+var last_quiz_score = 0
+var last_quiz_total = 0
+var last_quiz_name = ""
+var last_result = ""
 
 
 func reset_quiz_session() -> void:
@@ -26,6 +31,13 @@ func clear_quiz_session() -> void:
 	active_subject = ""
 	active_quiz_name = ""
 	reset_quiz_session()
+
+
+func store_quiz_result(result: String) -> void:
+	last_quiz_score = score
+	last_quiz_total = max(rooms.size(), 0)
+	last_quiz_name = active_quiz_name
+	last_result = result
   
 func _ready():  
 	add_child(timer)

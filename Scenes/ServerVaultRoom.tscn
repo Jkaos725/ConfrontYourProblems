@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ndqsaduffnkn"]
 
 [ext_resource type="Script" uid="uid://dcqc830knep5x" path="res://Scripts/server_vault_room.gd" id="1_8ul41"]
+[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_prof"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_clue_panel"]
 bg_color = Color(0.192157, 0.137255, 0.0823529, 0.96)
@@ -162,9 +163,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -360.0
-offset_top = -338.0
+offset_top = -308.0
 offset_right = 360.0
-offset_bottom = -286.0
+offset_bottom = -256.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.992157, 0.933333, 0.788235, 1)
@@ -180,15 +181,50 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -360.0
-offset_top = -286.0
+offset_top = -248.0
 offset_right = 360.0
-offset_bottom = -248.0
+offset_bottom = -216.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.94902, 0.862745, 0.721569, 1)
 theme_override_font_sizes/font_size = 18
 text = "Realm Escape   Room 1/4   Lives 3   Score 0"
 horizontal_alignment = 1
+
+[node name="ProfessorPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -470.0
+offset_top = -218.0
+offset_right = -260.0
+offset_bottom = -66.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_clue_panel")
+
+[node name="ProfessorBox" type="VBoxContainer" parent="ProfessorPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ProfessorPortrait" type="TextureRect" parent="ProfessorPanel/ProfessorBox"]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+texture = ExtResource("2_prof")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ProfessorLine" type="Label" parent="ProfessorPanel/ProfessorBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
+theme_override_font_sizes/font_size = 14
+text = "Professor Vex: One lock. Three chances."
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="DoorPanel" type="ColorRect" parent="Door"]
 layout_mode = 1
@@ -296,41 +332,41 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -390.0
+offset_left = -360.0
 offset_top = 150.0
-offset_right = 390.0
+offset_right = 360.0
 offset_bottom = 310.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 28
+theme_override_constants/separation = 18
 alignment = 1
 
 [node name="ChoiceA" type="Button" parent="Choices"]
-custom_minimum_size = Vector2(210, 130)
+custom_minimum_size = Vector2(190, 118)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.992157, 0.933333, 0.788235, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
 text = "Array"
 
 [node name="ChoiceB" type="Button" parent="Choices"]
-custom_minimum_size = Vector2(210, 130)
+custom_minimum_size = Vector2(190, 118)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.992157, 0.933333, 0.788235, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
 text = "Hash Map"
 
 [node name="ChoiceC" type="Button" parent="Choices"]
-custom_minimum_size = Vector2(210, 130)
+custom_minimum_size = Vector2(190, 118)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.992157, 0.933333, 0.788235, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
 text = "Stack"

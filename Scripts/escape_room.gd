@@ -18,6 +18,11 @@ const WRONG_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-training
 const UNLOCK_SOUND_PATH := "res://Audio/Correct SOun/u_a5z4rtk6yn-sonido-correcto-331225.mp3"
 const WIN_SOUND_PATH := "res://Audio/Correct SOun/u_y6jn4lst7i-benar-494211.mp3"
 const LOSE_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-fail-jingle-stereo-mix-88784.mp3"
+const PROFESSOR_OPTIONS := [
+	{"name": "Professor Vex", "description": "Harsh, intense, and quick to challenge you."},
+	{"name": "Professor Hale", "description": "Calm, neutral, and focused on precision."},
+	{"name": "Professor Mira", "description": "Kind, encouraging, and patient with mistakes."}
+]
 
 var rooms: Array[Dictionary] = []
 var subjects_db: Array[Dictionary] = []
@@ -34,6 +39,7 @@ var groq_api_key := ""
 var pending_upload_mode := "notes"
 var pending_upload_path := ""
 var pending_upload_text := ""
+var current_professor_name := "Professor Vex"
 
 var current_room_index := 0
 var room_cleared := false
@@ -49,6 +55,8 @@ var current_launch_target := "quiz"
 @onready var title_banner: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/TitleBanner
 @onready var meta_label: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/MetaLabel
 @onready var catalog_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox
+@onready var catalog_title: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/CatalogTitle
+@onready var catalog_help: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/CatalogHelp
 @onready var subject_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/SubjectOption
 @onready var quiz_label: Label = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/QuizLabel
 @onready var quiz_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox/QuizOption
@@ -109,7 +117,10 @@ func _ready() -> void:
 	question_file_dialog.file_selected.connect(_on_question_file_selected)
 	http_request.request_completed.connect(_on_http_request_completed)
 	groq_api_key = _load_groq_api_key()
-	_show_start_screen()
+	if Global.last_result == "victory":
+		_show_quiz_victory_screen()
+	else:
+		_show_start_screen()
 
 
 func _start_game() -> void:
@@ -137,6 +148,9 @@ func _show_start_screen() -> void:
 	background.color = Color("0e1423")
 	background_texture.visible = true
 	_apply_intro_emphasis()
+	room_title.visible = true
+	room_description.visible = true
+	question_card.visible = true
 	right_column.visible = false
 	theme_card.visible = false
 	status_card.visible = false
@@ -144,6 +158,9 @@ func _show_start_screen() -> void:
 	title_banner.text = "Confront Your Problems"
 	meta_label.text = ""
 	catalog_box.visible = false
+	catalog_title.visible = true
+	catalog_help.visible = true
+	quiz_label.visible = true
 	upload_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
@@ -163,16 +180,66 @@ func _show_start_screen() -> void:
 	tertiary_button.visible = false
 
 
+func _show_professor_selection() -> void:
+	current_game_state = "professor_select"
+	background.color = Color("202432")
+	background_texture.visible = false
+	_clear_intro_emphasis()
+	room_title.visible = false
+	room_description.visible = false
+	question_card.visible = false
+	right_column.visible = false
+	theme_card.visible = false
+	status_card.visible = false
+	hint_card.visible = true
+	catalog_box.visible = true
+	catalog_title.visible = true
+	catalog_title.text = "Choose A Professor"
+	catalog_help.visible = true
+	catalog_help.text = "Pick the professor who will guide your escape."
+	quiz_label.visible = false
+	quiz_option.visible = false
+	catalog_description.visible = true
+	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
+	meta_label.text = ""
+	question_label.text = ""
+	theme_badge.text = ""
+	hint_label.text = ""
+	status_label.text = ""
+	_set_answer_buttons_visible(false)
+	_populate_professor_options()
+	primary_button.text = "Continue"
+	primary_button.visible = true
+	primary_button.disabled = false
+	secondary_button.visible = false
+	secondary_button.disabled = true
+	tertiary_button.text = "Back"
+	tertiary_button.visible = true
+	tertiary_button.disabled = false
+	quaternary_button.visible = false
+	quaternary_button.disabled = true
+
+
 func _show_source_selection() -> void:
 	current_game_state = "source_select"
 	background.color = Color("202432")
 	background_texture.visible = false
 	_clear_intro_emphasis()
+	room_title.visible = true
+	room_description.visible = true
+	question_card.visible = true
 	right_column.visible = false
 	theme_card.visible = false
 	status_card.visible = false
 	hint_card.visible = true
 	catalog_box.visible = false
+	catalog_title.visible = true
+	catalog_help.visible = true
+	quiz_label.visible = true
+	quiz_option.visible = true
+	catalog_description.visible = true
 	upload_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
@@ -199,21 +266,31 @@ func _show_subject_selection() -> void:
 	background.color = Color("202432")
 	background_texture.visible = false
 	_clear_intro_emphasis()
+	room_title.visible = false
+	room_description.visible = false
+	question_card.visible = false
 	right_column.visible = false
 	theme_card.visible = false
 	status_card.visible = false
 	hint_card.visible = true
 	catalog_box.visible = true
+	catalog_title.visible = true
+	catalog_title.text = "Choose A Subject"
+	catalog_help.visible = true
+	catalog_help.text = "Pick a subject, then choose the quiz set you want to enter."
+	quiz_label.visible = true
+	quiz_option.visible = true
+	catalog_description.visible = true
 	upload_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
-	room_title.text = "Choose A Subject"
-	room_description.text = "Pick a subject, then choose the named quiz set you want to play."
+	meta_label.text = ""
+	room_title.text = ""
+	room_description.text = ""
 	question_label.text = ""
-	question_card.visible = false
 	theme_badge.text = ""
 	hint_label.text = ""
-	status_label.text = "Selected source: %s." % active_catalog_name
+	status_label.text = ""
 	_set_answer_buttons_visible(false)
 	primary_button.text = "Start Subject"
 	primary_button.visible = true
@@ -224,6 +301,8 @@ func _show_subject_selection() -> void:
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
+	quaternary_button.visible = false
+	quaternary_button.disabled = true
 
 
 func _show_room() -> void:
@@ -231,6 +310,9 @@ func _show_room() -> void:
 	var room: Dictionary = rooms[current_room_index]
 	room_cleared = false
 	_clear_intro_emphasis()
+	room_title.visible = true
+	room_description.visible = true
+	question_card.visible = true
 	right_column.visible = false
 	theme_card.visible = false
 	hint_card.visible = false
@@ -285,6 +367,9 @@ func _show_end_screen(did_win: bool) -> void:
 	current_game_state = "end"
 	room_cleared = false
 	_clear_intro_emphasis()
+	room_title.visible = true
+	room_description.visible = true
+	question_card.visible = true
 	right_column.visible = true
 	theme_card.visible = false
 	hint_card.visible = true
@@ -322,6 +407,49 @@ func _show_end_screen(did_win: bool) -> void:
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
+
+
+func _show_quiz_victory_screen() -> void:
+	current_game_state = "end"
+	room_cleared = false
+	background.color = Color("2a1d11")
+	background_texture.visible = false
+	_clear_intro_emphasis()
+	room_title.visible = true
+	room_description.visible = true
+	question_card.visible = true
+	right_column.visible = false
+	theme_card.visible = false
+	status_card.visible = false
+	hint_card.visible = true
+	catalog_box.visible = false
+	upload_box.visible = false
+	upload_name_label.visible = false
+	upload_name_input.visible = false
+	_set_answer_buttons_visible(false)
+
+	title_banner.text = "Escape Complete"
+	meta_label.text = "Quiz %s   Score %d/%d" % [
+		Global.last_quiz_name if not Global.last_quiz_name.is_empty() else "Escape",
+		Global.last_quiz_score,
+		Global.last_quiz_total
+	]
+	room_title.text = "The final door opens."
+	room_description.text = "You made it through every chamber and escaped Professor Vex's trial."
+	question_label.text = "What do you want to do next?"
+	hint_label.text = "Every solved room becomes part of your archive."
+	status_label.text = ""
+
+	primary_button.text = "Start Quiz Game"
+	primary_button.visible = true
+	primary_button.disabled = false
+	secondary_button.text = "Start Question Hints Game"
+	secondary_button.visible = true
+	secondary_button.disabled = false
+	tertiary_button.visible = false
+	quaternary_button.visible = false
+
+	Global.last_result = ""
 
 
 func _set_answer_buttons_visible(is_visible: bool) -> void:
@@ -410,6 +538,8 @@ func _on_primary_pressed() -> void:
 	match current_game_state:
 		"start_intro", "end":
 			current_launch_target = "quiz"
+			_show_professor_selection()
+		"professor_select":
 			_show_source_selection()
 		"source_select":
 			_show_subject_selection()
@@ -448,7 +578,7 @@ func _on_secondary_pressed() -> void:
 			_on_hint_pressed()
 		"start_intro", "end":
 			current_launch_target = "question_hints"
-			_show_source_selection()
+			_show_professor_selection()
 
 
 func _load_other_game() -> void:
@@ -461,8 +591,13 @@ func _on_tertiary_pressed() -> void:
 		_show_source_selection()
 		return
 	if current_game_state == "source_select":
-		current_launch_target = "quiz"
-		_show_source_selection()
+		_play_if_ready(click_player)
+		_show_professor_selection()
+		return
+	if current_game_state == "professor_select":
+		_play_if_ready(click_player)
+		_show_start_screen()
+		return
 	if current_game_state == "module_ready":
 		_play_if_ready(click_player)
 		_show_source_selection()
@@ -687,6 +822,9 @@ func _load_subject_database() -> void:
 
 
 func _on_subject_selected(index: int) -> void:
+	if current_game_state == "professor_select":
+		_update_professor_selection(index)
+		return
 	_update_subject_selection(index)
 
 
@@ -703,6 +841,28 @@ func _update_subject_selection(index: int) -> void:
 	active_subject = str(subject["name"])
 	active_subject_id = str(subject["id"])
 	_populate_quiz_options(active_subject_id)
+
+
+func _populate_professor_options() -> void:
+	subject_option.clear()
+	for professor in PROFESSOR_OPTIONS:
+		subject_option.add_item(str(professor.get("name", "Professor")))
+	var selected_index := 0
+	for index in range(PROFESSOR_OPTIONS.size()):
+		if str(PROFESSOR_OPTIONS[index].get("name", "")) == current_professor_name:
+			selected_index = index
+			break
+	subject_option.select(selected_index)
+	_update_professor_selection(selected_index)
+
+
+func _update_professor_selection(index: int) -> void:
+	if index < 0 or index >= PROFESSOR_OPTIONS.size():
+		return
+	var professor: Dictionary = PROFESSOR_OPTIONS[index]
+	current_professor_name = str(professor.get("name", "Professor Vex"))
+	Global.selected_professor = current_professor_name
+	catalog_description.text = str(professor.get("description", ""))
 
 
 func _populate_quiz_options(subject_id: String) -> void:
@@ -737,7 +897,7 @@ func _update_quiz_selection(index: int) -> void:
 		if str(subject_dict.get("id", "")) == active_subject_id:
 			subject_description = str(subject_dict.get("description", "No description available."))
 			break
-	catalog_description.text = "%s\nSelected quiz: %s" % [subject_description, active_quiz_name]
+	catalog_description.text = subject_description
 	theme_badge.text = "Subject: %s   Quiz: %s" % [active_subject, active_quiz_name]
 
 
@@ -959,8 +1119,8 @@ func _build_rooms_from_module_text(module_text: String, catalog_name: String) ->
 
 		var room := {
 			"title": "%s: %s" % [catalog_name, str(section.get("title", "Topic"))],
-			"description": "A study clue from your uploaded module points to the next lock.",
-			"question": "Which topic matches this clue?\n\n%s" % clue_text,
+			"description": "",
+			"question": clue_text,
 			"answers": answers,
 			"correct_index": int(answer_data.get("correct_index", 0)),
 			"hint": "Match the clue text to the most relevant topic title.",

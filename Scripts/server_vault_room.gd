@@ -4,6 +4,7 @@ const START_LIVES := 3
 
 @onready var title_label: Label = $TitleLabel
 @onready var meta_label: Label = $MetaLabel
+@onready var professor_line: Label = $ProfessorPanel/ProfessorBox/ProfessorLine
 @onready var background: ColorRect = $Background
 @onready var top_glow: ColorRect = $TopGlow
 @onready var walkway: ColorRect = $Walkway
@@ -31,6 +32,109 @@ var door_closed_top := 14.0
 var door_closed_bottom := -14.0
 var player_start_position := Vector2.ZERO
 var player_exit_position := Vector2.ZERO
+var active_room_tween: Tween
+var current_professor: Dictionary = {}
+var professors := [
+	{
+		"name": "Professor Vex",
+		"intro": [
+			"Answer correctly and I may let you pass.",
+			"One lock. One clue. Do not embarrass yourself.",
+			"The door listens only to sharp minds.",
+			"Solve it quickly, or remain in my hall."
+		],
+		"wrong": [
+			"Wrong. Look closer.",
+			"No. Think before you touch the lock.",
+			"Careless. Try again.",
+			"That is not the mechanism I asked for."
+		],
+		"hint": [
+			"I will offer one clue. Do not waste it.",
+			"Very well. Here is your hint.",
+			"A small clue, nothing more.",
+			"Even now I am being generous."
+		],
+		"success": [
+			"Hm. Acceptable.",
+			"You may proceed.",
+			"Better. The next chamber awaits.",
+			"Correct. Move before I change my mind."
+		],
+		"defeat": [
+			"Then remain here with your mistakes.",
+			"The hall closes on the unprepared.",
+			"You were not ready for this trial.",
+			"The chamber keeps what it defeats."
+		]
+	},
+	{
+		"name": "Professor Hale",
+		"intro": [
+			"Take your time and read the clue carefully.",
+			"This room rewards steady thinking.",
+			"The right answer is here if you follow the pattern.",
+			"Stay calm. The door will open for the prepared."
+		],
+		"wrong": [
+			"Not quite. Try another angle.",
+			"Close reading will help here.",
+			"That choice does not fit. Try again.",
+			"Almost. Focus on the key idea."
+		],
+		"hint": [
+			"Here is a nudge in the right direction.",
+			"Use the clue, not your first guess.",
+			"Look for the strongest match.",
+			"Think about what the room is really asking."
+		],
+		"success": [
+			"Good. Keep going.",
+			"Nicely reasoned.",
+			"That opened it. Onward.",
+			"Well done. The next chamber is ready."
+		],
+		"defeat": [
+			"You ran out of time, but the lesson is still there.",
+			"This round is over. Return when you are ready.",
+			"The room wins for now.",
+			"You will get another chance."
+		]
+	},
+	{
+		"name": "Professor Mira",
+		"intro": [
+			"You can do this. Start with the clue in front of you.",
+			"Take a breath. One careful answer opens the way.",
+			"The exit is closer than it looks.",
+			"Trust what you know and move step by step."
+		],
+		"wrong": [
+			"Not this one. Try again.",
+			"That was a good attempt. Look once more.",
+			"Keep going. The right answer is near.",
+			"Almost there. Read the clue again."
+		],
+		"hint": [
+			"Here is a clue to help you forward.",
+			"Look for the concept that fits best.",
+			"Use the strongest keyword in the clue.",
+			"You already have what you need."
+		],
+		"success": [
+			"Nice work. The door is opening.",
+			"Yes, that was it.",
+			"Great job. Keep moving.",
+			"You solved it beautifully."
+		],
+		"defeat": [
+			"It is okay. Try again from the start.",
+			"This room can be beaten next time.",
+			"You made progress. Come back stronger.",
+			"The trial ends here, but not your journey."
+		]
+	}
+]
 var room_palettes := [
 	{
 		"background": Color("140d07"),
@@ -74,6 +178,10 @@ func _ready() -> void:
 
 
 func _load_current_room() -> void:
+	if active_room_tween != null:
+		active_room_tween.kill()
+		active_room_tween = null
+
 	if Global.rooms.is_empty():
 		current_room = {
 			"title": "The Server Vault",
@@ -88,20 +196,17 @@ func _load_current_room() -> void:
 		Global.index = clamp(Global.index, 0, max(Global.rooms.size() - 1, 0))
 		current_room = Global.rooms[Global.index]
 
-	title_label.text = str(current_room.get("title", "The Server Vault"))
-	meta_label.text = "Realm %s   Room %d/%d   Lives %d   Score %d" % [
-		Global.active_quiz_name if not Global.active_quiz_name.is_empty() else "Escape",
-		Global.index + 1,
-		max(Global.rooms.size(), 1),
-		Global.lives,
-		Global.score
-	]
-	clue_label.text = str(current_room.get("question", "Which structure stores values by key for fast retrieval?"))
+	current_professor = _select_professor(Global.index)
+	title_label.text = ""
+	title_label.visible = false
+	_refresh_meta_label()
+	clue_label.text = _format_clue_text(str(current_room.get("question", "Which structure stores values by key for fast retrieval?")))
 	var answers: Array = current_room.get("answers", ["Array", "Hash Map", "Stack"])
-	choice_a.text = str(answers[0]) if answers.size() > 0 else "Module A"
-	choice_b.text = str(answers[1]) if answers.size() > 1 else "Module B"
-	choice_c.text = str(answers[2]) if answers.size() > 2 else "Module C"
-	status_label.text = str(current_room.get("description", "Three brass modules hum beneath the vault. Pick one."))
+	choice_a.text = _format_choice_text(str(answers[0])) if answers.size() > 0 else "Module A"
+	choice_b.text = _format_choice_text(str(answers[1])) if answers.size() > 1 else "Module B"
+	choice_c.text = _format_choice_text(str(answers[2])) if answers.size() > 2 else "Module C"
+	status_label.text = ""
+	professor_line.text = _professor_line("intro")
 	hint_label.text = ""
 	correct_choice = int(current_room.get("correct_index", 1))
 	solved = false
@@ -125,19 +230,24 @@ func _on_choice_pressed(choice_index: int) -> void:
 	if choice_index == correct_choice:
 		solved = true
 		Global.score += 1
+		_refresh_meta_label()
 		status_label.text = "The exit unlocks. Move through the door to reach the next room."
+		professor_line.text = _professor_line("success")
 		_disable_choices()
 		_open_vault()
 		_advance_after_delay()
 	else:
 		Global.lives -= 1
+		_refresh_meta_label()
 		if Global.lives <= 0:
 			status_label.text = "The vault seals shut. You are out of time and chances."
+			professor_line.text = _professor_line("defeat")
 			_disable_choices()
 			await get_tree().create_timer(1.2).timeout
 			_return_to_main()
 			return
-		status_label.text = "Wrong module. The lock rejects the signal. Lives left: %d" % Global.lives
+		status_label.text = "Try again."
+		professor_line.text = _professor_line("wrong")
 
 
 func _disable_choices() -> void:
@@ -147,31 +257,32 @@ func _disable_choices() -> void:
 
 
 func _open_vault() -> void:
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(door, "color", Color(0.568627, 0.407843, 0.180392, 1), 0.25)
-	tween.parallel().tween_property(doorway, "color", Color(0.729412, 0.65098, 0.34902, 0.9), 0.25)
-	tween.parallel().tween_property(door_panel, "offset_top", -150.0, 0.8)
-	tween.parallel().tween_property(door_panel, "offset_bottom", -178.0, 0.8)
-	tween.parallel().tween_property(door_label, "modulate:a", 0.0, 0.4)
-	tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 236.0), 0.22)
-	tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 170.0), 0.22)
-	tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 104.0), 0.22)
-	tween.tween_property(player_marker, "position", player_exit_position, 0.35)
-	tween.parallel().tween_property(player_marker, "scale", Vector2(0.42, 0.42), 0.32)
-	tween.parallel().tween_property(player_marker, "modulate:a", 0.25, 0.32)
+	active_room_tween = create_tween()
+	active_room_tween.set_trans(Tween.TRANS_SINE)
+	active_room_tween.set_ease(Tween.EASE_OUT)
+	active_room_tween.parallel().tween_property(door, "color", Color(0.568627, 0.407843, 0.180392, 1), 0.25)
+	active_room_tween.parallel().tween_property(doorway, "color", Color(0.729412, 0.65098, 0.34902, 0.9), 0.25)
+	active_room_tween.parallel().tween_property(door_panel, "offset_top", -150.0, 0.8)
+	active_room_tween.parallel().tween_property(door_panel, "offset_bottom", -178.0, 0.8)
+	active_room_tween.parallel().tween_property(door_label, "modulate:a", 0.0, 0.4)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 236.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 170.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 104.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", player_exit_position, 0.35)
+	active_room_tween.parallel().tween_property(player_marker, "scale", Vector2(0.42, 0.42), 0.32)
+	active_room_tween.parallel().tween_property(player_marker, "modulate:a", 0.25, 0.32)
 
 
 func _on_hint_pressed() -> void:
 	Global.hints_used += 1
 	hint_label.text = "Clue: %s" % str(current_room.get("hint", "Inspect the machinery more closely."))
+	professor_line.text = _professor_line("hint")
 
 
 func _advance_after_delay() -> void:
-	await get_tree().create_timer(1.25).timeout
+	await get_tree().create_timer(1.9).timeout
 	if Global.rooms.is_empty() or Global.index >= Global.rooms.size() - 1:
-		_return_to_main()
+		_show_victory_screen()
 		return
 
 	Global.index += 1
@@ -180,6 +291,11 @@ func _advance_after_delay() -> void:
 
 func _return_to_main() -> void:
 	Global.clear_quiz_session()
+	get_tree().change_scene_to_file("res://Scenes/main.tscn")
+
+
+func _show_victory_screen() -> void:
+	Global.store_quiz_result("victory")
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
@@ -192,3 +308,70 @@ func _apply_palette(room_index: int) -> void:
 	step_2.color = palette["step2"]
 	step_3.color = palette["step3"]
 	door.color = palette["door"]
+
+
+func _format_choice_text(choice_text: String) -> String:
+	if choice_text.length() <= 24:
+		return choice_text
+
+	var words: PackedStringArray = choice_text.split(" ")
+	var lines: Array[String] = []
+	var current_line := ""
+
+	for word in words:
+		var proposed := word if current_line.is_empty() else "%s %s" % [current_line, word]
+		if proposed.length() > 24 and not current_line.is_empty():
+			lines.append(current_line)
+			current_line = word
+		else:
+			current_line = proposed
+
+	if not current_line.is_empty():
+		lines.append(current_line)
+
+	return "\n".join(lines)
+
+
+func _format_clue_text(question_text: String) -> String:
+	var cleaned := question_text.strip_edges()
+	var module_prefix := "Which topic matches this clue?"
+	if cleaned.begins_with(module_prefix):
+		cleaned = cleaned.trim_prefix(module_prefix).strip_edges()
+	if cleaned.begins_with("Which concept is described here?"):
+		cleaned = cleaned.trim_prefix("Which concept is described here?").strip_edges()
+	if cleaned.begins_with("Which answer is correct?"):
+		cleaned = cleaned.trim_prefix("Which answer is correct?").strip_edges()
+	return cleaned
+
+
+func _refresh_meta_label() -> void:
+	meta_label.text = "Room %d/%d   Lives %d   Score %d" % [
+		Global.index + 1,
+		max(Global.rooms.size(), 1),
+		Global.lives,
+		Global.score
+	]
+
+
+func _select_professor(room_index: int) -> Dictionary:
+	var selected_name := str(Global.selected_professor)
+	for professor in professors:
+		var professor_dict: Dictionary = professor
+		if str(professor_dict.get("name", "")) == selected_name:
+			return professor_dict
+	return professors[room_index % professors.size()]
+
+
+func _professor_line(kind: String) -> String:
+	var professor_name := str(current_professor.get("name", "Professor"))
+	var lines_variant: Variant = current_professor.get(kind, [])
+	var lines: Array = lines_variant if lines_variant is Array else []
+	if lines.is_empty():
+		return professor_name
+	return "%s: %s" % [professor_name, _random_line(lines)]
+
+
+func _random_line(lines: Array) -> String:
+	if lines.is_empty():
+		return ""
+	return str(lines[randi() % lines.size()])
