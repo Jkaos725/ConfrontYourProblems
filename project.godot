@@ -11,7 +11,11 @@ config_version=5
 [application]
 
 config/name="ConfrontYourProblems"
+<<<<<<< Updated upstream
 run/main_scene="uid://cgjlxhbirlucc"
+=======
+run/main_scene="res://main.tscn"
+>>>>>>> Stashed changes
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
