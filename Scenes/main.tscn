@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dpexvfyfft0cv"]
 
 [ext_resource type="Texture2D" uid="uid://bvr2s03jnhrhw" path="res://Images/classroom.png" id="1_8gbba"]
-[ext_resource type="Script" uid="uid://bi0how3fdkgds" path="res://Scenes/download.gd" id="2_jjvhh"]
+[ext_resource type="Script" uid="uid://bi0how3fdkgds" path="res://Scripts/download.gd" id="2_jjvhh"]
 
 [node name="Node2D" type="Node2D" unique_id=1951156727]
 position = Vector2(7, 5)

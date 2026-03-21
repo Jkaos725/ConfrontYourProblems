@@ -43,3 +43,19 @@ func _on_b_mouse_exited() -> void:
 func _on_b_pressed() -> void:
 	#CHoose answer B
 	pass # Replace with function body.
+	
+	
+
+#Show answer C
+func _on_c_mouse_entered() -> void:
+	$"../CanvasLayer/LabelC".visible = true
+	pass # Replace with function body.
+
+func _on_c_mouse_exited() -> void:
+	$"../CanvasLayer/LabelC".visible = false
+	pass # Replace with function body.
+
+#Choose C
+func _on_c_pressed() -> void:
+	#Code to choose C
+	pass # Replace with function body.
