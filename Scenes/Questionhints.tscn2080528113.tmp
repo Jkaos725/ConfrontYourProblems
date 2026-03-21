@@ -212,6 +212,8 @@ corner_radius_bottom_left = 5
 
 [node name="Question1" type="Node2D" unique_id=433438692]
 script = ExtResource("1_njm8b")
+currentQuestion = null
+expectedAnswer = null
 
 [node name="Control2" type="Control" parent="." unique_id=1999696929]
 layout_mode = 3
