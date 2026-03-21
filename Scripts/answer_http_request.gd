@@ -69,6 +69,8 @@ func _build_answer_check_prompt(student_answer: String) -> String:
 	prompt_text += "- If the answer is wrong, return one short hint only.\n"
 	prompt_text += "- If the answer ie empty, return saying 'You need to provide an answer'\n"
 	prompt_text += "- Never reveal the final answer or a full solution.\n"
+	prompt_text += "- Do not repeat hints\n"
+	prompt_text += "- Do not say to re-read the book\n"
 	prompt_text += "- Keep the hint under 60 characters."
 	return prompt_text
 
