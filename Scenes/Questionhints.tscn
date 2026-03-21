@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cgjlxhbirlucc"]
 
-[ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://color_rect.gd" id="1_wtcfe"]
-[ext_resource type="Script" uid="uid://cpd8mbcyrjuwg" path="res://button.gd" id="2_0e48y"]
+[ext_resource type="Script" uid="uid://cxmyy6hfff84m" path="res://Scripts/color_rect.gd" id="1_pbauv"]
+[ext_resource type="Script" uid="uid://cpd8mbcyrjuwg" path="res://Scripts/button.gd" id="2_tp2ca"]
 
 [node name="Node2D" type="Node2D" unique_id=433438692]
 
@@ -9,7 +9,7 @@
 offset_right = 1147.0
 offset_bottom = 640.0
 color = Color(0.24709545, 0.24709545, 0.24709545, 1)
-script = ExtResource("1_wtcfe")
+script = ExtResource("1_pbauv")
 
 [node name="ColorRect" type="ColorRect" parent="ColorRect" unique_id=1333416453]
 layout_mode = 0
@@ -24,6 +24,6 @@ offset_left = 165.0
 offset_top = 105.0
 offset_right = 391.0
 offset_bottom = 166.0
-script = ExtResource("2_0e48y")
+script = ExtResource("2_tp2ca")
 
 [connection signal="pressed" from="ColorRect/Button" to="ColorRect" method="_on_button_pressed"]
