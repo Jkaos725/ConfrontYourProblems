@@ -23,6 +23,11 @@ const PROFESSOR_OPTIONS := [
 	{"name": "Professor Hale", "description": "Calm, neutral, and focused on precision."},
 	{"name": "Professor Mira", "description": "Kind, encouraging, and patient with mistakes."}
 ]
+const PROFESSOR_PORTRAITS := {
+	"Professor Vex": "res://Images/angryBot.png",
+	"Professor Hale": "res://Images/enutralface.png",
+	"Professor Mira": "res://Images/first.png"
+}
 
 var rooms: Array[Dictionary] = []
 var subjects_db: Array[Dictionary] = []
@@ -48,6 +53,8 @@ var lives_remaining := START_LIVES
 var hints_used := 0
 var current_game_state := "start_intro"
 var current_launch_target := "quiz"
+var mascot_home_position := Vector2.ZERO
+var mascot_tween: Tween
 
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
@@ -94,23 +101,14 @@ var current_launch_target := "quiz"
 @onready var win_player: AudioStreamPlayer = $WinPlayer
 @onready var lose_player: AudioStreamPlayer = $LosePlayer
 @onready var timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel
+@onready var mascot: TextureRect = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot
 
 func _ready() -> void:
 	for index in range(answers_container.get_child_count()):
 		var button := answers_container.get_child(index) as Button
 		button.pressed.connect(_on_answer_selected.bind(index))
-		
-#Mascot animation
-	var tween = create_tween()
-	
-	tween.set_loops(0)
-	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:y",position.y +55,1)
-	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:y",position.y -10,1)
-	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x +50,0.2)
-	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x -40,0.2)
-	tween.tween_property($MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot,"position:x",position.x ,0.2)
-	tween.set_ease(Tween.EASE_IN_OUT)
-	
+
+	mascot_home_position = mascot.position
 	_configure_audio_players()
 	_load_subject_database()
 	primary_button.pressed.connect(_on_primary_pressed)
@@ -121,6 +119,8 @@ func _ready() -> void:
 	question_file_dialog.file_selected.connect(_on_question_file_selected)
 	http_request.request_completed.connect(_on_http_request_completed)
 	groq_api_key = _load_groq_api_key()
+	_apply_selected_professor_visual()
+	_start_mascot_motion()
 	if Global.last_result == "victory":
 		_show_quiz_victory_screen()
 	else:
@@ -896,6 +896,37 @@ func _update_professor_selection(index: int) -> void:
 	current_professor_name = str(professor.get("name", "Professor Vex"))
 	Global.selected_professor = current_professor_name
 	catalog_description.text = str(professor.get("description", ""))
+	_apply_selected_professor_visual()
+	_start_mascot_motion()
+
+
+func _apply_selected_professor_visual() -> void:
+	var portrait_path := str(PROFESSOR_PORTRAITS.get(current_professor_name, "res://Images/angryBot.png"))
+	var texture: Variant = load(portrait_path)
+	if texture is Texture2D:
+		mascot.texture = texture
+
+
+func _start_mascot_motion() -> void:
+	if mascot_tween != null:
+		mascot_tween.kill()
+	mascot.position = mascot_home_position
+	mascot.rotation = 0.0
+
+	mascot_tween = create_tween()
+	mascot_tween.set_loops()
+	mascot_tween.set_ease(Tween.EASE_IN_OUT)
+	mascot_tween.set_trans(Tween.TRANS_SINE)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-34, -10), 0.55)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -6.0, 0.55)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(26, 16), 0.7)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 5.0, 0.7)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(42, -6), 0.45)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 0.0, 0.45)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-18, 12), 0.55)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -3.0, 0.55)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position, 0.55)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 0.0, 0.55)
 
 
 func _populate_quiz_options(subject_id: String) -> void:

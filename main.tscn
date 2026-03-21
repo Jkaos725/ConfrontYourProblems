@@ -12,4 +12,4 @@ position = Vector2(13, -10)
 texture = ExtResource("3_1bvp3")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1392697255]
-position = Vector2(14, 3)
+position = Vector2(-66, -154)
