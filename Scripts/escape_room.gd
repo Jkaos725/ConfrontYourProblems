@@ -52,6 +52,10 @@ var current_launch_target := "quiz"
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
 @onready var margin_container: MarginContainer = $MarginContainer
+@onready var main_panel: PanelContainer = $MarginContainer/PanelContainer
+@onready var main_vbox: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer
+@onready var body_row: HBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow
+@onready var left_column: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn
 @onready var title_banner: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/TitleBanner
 @onready var meta_label: Label = $MarginContainer/PanelContainer/VBoxContainer/TopRow/TopInfo/MetaLabel
 @onready var catalog_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/CatalogBox
@@ -80,7 +84,7 @@ var current_launch_target := "quiz"
 @onready var primary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/PrimaryButton
 @onready var secondary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/SecondaryButton
 @onready var tertiary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/TertiaryButton
-@onready var quaternary_button: Button = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/QuaternaryButton
+@onready var quaternary_button: Button = get_node_or_null("MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/ActionRow/QuaternaryButton") as Button
 @onready var http_request: HTTPRequest = $HTTPRequest
 @onready var question_file_dialog: FileDialog = $QuestionFileDialog
 @onready var click_player: AudioStreamPlayer = $ClickPlayer
@@ -147,6 +151,7 @@ func _show_start_screen() -> void:
 	room_cleared = false
 	background.color = Color("0e1423")
 	background_texture.visible = true
+	_apply_full_panel_layout()
 	_apply_intro_emphasis()
 	room_title.visible = true
 	room_description.visible = true
@@ -184,6 +189,7 @@ func _show_professor_selection() -> void:
 	current_game_state = "professor_select"
 	background.color = Color("202432")
 	background_texture.visible = false
+	_apply_compact_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = false
 	room_description.visible = false
@@ -218,14 +224,14 @@ func _show_professor_selection() -> void:
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
-	quaternary_button.visible = false
-	quaternary_button.disabled = true
+	_set_quaternary_button(false, true)
 
 
 func _show_source_selection() -> void:
 	current_game_state = "source_select"
 	background.color = Color("202432")
 	background_texture.visible = false
+	_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = true
 	room_description.visible = true
@@ -265,6 +271,7 @@ func _show_subject_selection() -> void:
 	current_game_state = "subject_select"
 	background.color = Color("202432")
 	background_texture.visible = false
+	_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = false
 	room_description.visible = false
@@ -301,14 +308,14 @@ func _show_subject_selection() -> void:
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
-	quaternary_button.visible = false
-	quaternary_button.disabled = true
+	_set_quaternary_button(false, true)
 
 
 func _show_room() -> void:
 	current_game_state = "playing"
 	var room: Dictionary = rooms[current_room_index]
 	room_cleared = false
+	_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = true
 	room_description.visible = true
@@ -355,8 +362,7 @@ func _show_room() -> void:
 	tertiary_button.text = "Next Room"
 	tertiary_button.visible = room_cleared
 	tertiary_button.disabled = not room_cleared
-	quaternary_button.visible = false
-	quaternary_button.disabled = true
+	_set_quaternary_button(false, true)
 
 func _show_escape_room():
 	Global.rooms = rooms
@@ -366,6 +372,7 @@ func _show_escape_room():
 func _show_end_screen(did_win: bool) -> void:
 	current_game_state = "end"
 	room_cleared = false
+	_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = true
 	room_description.visible = true
@@ -414,6 +421,7 @@ func _show_quiz_victory_screen() -> void:
 	room_cleared = false
 	background.color = Color("2a1d11")
 	background_texture.visible = false
+	_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = true
 	room_description.visible = true
@@ -447,7 +455,7 @@ func _show_quiz_victory_screen() -> void:
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
-	quaternary_button.visible = false
+	_set_quaternary_button(false, true)
 
 	Global.last_result = ""
 
@@ -457,6 +465,31 @@ func _set_answer_buttons_visible(is_visible: bool) -> void:
 	for child in answers_container.get_children():
 		var button := child as Button
 		button.visible = is_visible
+
+
+func _set_quaternary_button(is_visible: bool, is_disabled: bool) -> void:
+	if quaternary_button == null:
+		return
+	quaternary_button.visible = is_visible
+	quaternary_button.disabled = is_disabled
+
+
+func _apply_compact_panel_layout() -> void:
+	margin_container.offset_top = 70.0
+	margin_container.offset_bottom = -130.0
+	main_panel.size_flags_vertical = 0
+	main_vbox.size_flags_vertical = 0
+	body_row.size_flags_vertical = 0
+	left_column.size_flags_vertical = 0
+
+
+func _apply_full_panel_layout() -> void:
+	margin_container.offset_top = -108.0
+	margin_container.offset_bottom = 108.0
+	main_panel.size_flags_vertical = 4
+	main_vbox.size_flags_vertical = 4
+	body_row.size_flags_vertical = 3
+	left_column.size_flags_vertical = 3
 
 
 func _apply_intro_emphasis() -> void:
@@ -956,9 +989,9 @@ func _on_question_file_selected(path: String) -> void:
 		tertiary_button.text = "Back"
 		tertiary_button.visible = true
 		tertiary_button.disabled = false
-		quaternary_button.text = "Start Uploaded Escape"
-		quaternary_button.visible = true
-		quaternary_button.disabled = false
+		if quaternary_button != null:
+			quaternary_button.text = "Start Uploaded Escape"
+		_set_quaternary_button(true, false)
 		return
 
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
