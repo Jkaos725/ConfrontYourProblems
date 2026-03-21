@@ -108,12 +108,12 @@ autowrap_mode = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="QuizLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
+[node name="QuizLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=1639904420]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
 text = "Quiz Set"
 
-[node name="QuizOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox"]
+[node name="QuizOption" type="OptionButton" parent="MarginContainer/PanelContainer/VBoxContainer/CatalogBox" unique_id=947238084]
 layout_mode = 2
 size_flags_horizontal = 3
 

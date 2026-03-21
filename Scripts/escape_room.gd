@@ -2,7 +2,7 @@ extends Control
 
 const DEFAULT_STATUS := "Choose the right answer to unlock the next room."
 const GROQ_URL := "https://api.groq.com/openai/v1/chat/completions"
-const GROQ_MODEL := "llama-3.1-8b-instant"
+const GROQ_MODEL := "llama-3.3-70b-versatile"
 const GROQ_KEY_FILE_PATH := "res://Data/groq_api_key.txt"
 const GROQ_LEGACY_KEY_FILE_PATH := "res://Data/grog_api_key.txt"
 const GROQ_USER_KEY_FILE_PATH := "user://groq_api_key.txt"
@@ -1116,19 +1116,15 @@ func _play_if_ready(player: AudioStreamPlayer) -> void:
 
 
 func _load_groq_api_key() -> String:
-	var env_key := OS.get_environment("GROQ_API_KEY").strip_edges()
-	if not env_key.is_empty():
-		return env_key
-
-	var user_key := _read_key_file(GROQ_USER_KEY_FILE_PATH)
-	if not user_key.is_empty():
-		return user_key
-
-	var project_key := _read_key_file(GROQ_KEY_FILE_PATH)
-	if not project_key.is_empty():
-		return project_key
-
-	return _read_key_file(GROQ_LEGACY_KEY_FILE_PATH)
+	var config = ConfigFile.new()
+	var err = config.load("res://config.cfg")
+	if err == OK:
+		groq_api_key = config.get_value("application", "groq_api_key", "")
+		print("API key loaded: ", groq_api_key.length(), " chars")
+	else:
+		print("Failed to load config: ", err)
+	
+	return groq_api_key
 
 
 func _read_key_file(path: String) -> String:

@@ -4,20 +4,6 @@
 
 [node name="AnswerHTTPRequest" type="HTTPRequest" unique_id=406351491 node_paths=PackedStringArray("AnswerButton")]
 script = ExtResource("1_jqkjw")
-AnswerButton = NodePath("AnswerButton")
-
-[node name="AnswerButton" type="Button" parent="." unique_id=1923492296]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -61.0
-offset_top = -111.0
-offset_right = 61.0
-offset_bottom = -50.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "Submit"
+AnswerButton = NodePath("")
 
 [connection signal="request_completed" from="." to="." method="_on_request_completed"]
