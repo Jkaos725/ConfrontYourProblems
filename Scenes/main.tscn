@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_bot"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/settings_menu.tscn" id="3_smenu"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/theme_toggle.tscn" id="4_ttog"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
 content_margin_left = 26.0
@@ -180,6 +181,9 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
 text = "Settings"
+
+[node name="ThemeToggle" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" instance=ExtResource("4_ttog")]
+layout_mode = 2
 
 [node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1255099477]
 layout_mode = 2

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://b3y7m2n6k8p4r"]
+
+[ext_resource type="Script" path="res://Scripts/theme_toggle.gd" id="1_ttog"]
+
+[node name="ThemeToggle" type="Button"]
+custom_minimum_size = Vector2(120, 36)
+size_flags_vertical = 4
+script = ExtResource("1_ttog")
+text = "Light Mode"

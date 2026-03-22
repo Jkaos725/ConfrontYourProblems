@@ -137,6 +137,8 @@ func _ready() -> void:
 	_populate_session_setup_options()
 	_apply_selected_professor_visual()
 	_start_mascot_motion()
+	ThemeManager.theme_changed.connect(_apply_theme)
+	_apply_theme(ThemeManager.is_dark_mode)
 	if Global.last_result == "victory":
 		_show_quiz_victory_screen()
 	else:
@@ -1558,6 +1560,56 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	secondary_button.text = "Choose Different Notes"
 	tertiary_button.text = "Back"
 	question_card.visible = true
+
+
+func _apply_theme(is_dark: bool = true) -> void:
+	var p := ThemeManager.palette()
+
+	background.color = p["background"]
+
+	var panel_s := main_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if panel_s:
+		panel_s.bg_color = p["panel_bg"]
+		panel_s.border_color = p["panel_border"]
+
+	var q_s := question_card.get_theme_stylebox("panel") as StyleBoxFlat
+	if q_s:
+		q_s.bg_color = p["question_bg"]
+
+	var side_s := theme_card.get_theme_stylebox("panel") as StyleBoxFlat
+	if side_s:
+		side_s.bg_color = p["side_card_bg"]
+
+	title_banner.add_theme_color_override("font_color", p["text_primary"])
+	meta_label.add_theme_color_override("font_color", p["text_secondary"])
+	catalog_title.add_theme_color_override("font_color", p["text_content"])
+	catalog_help.add_theme_color_override("font_color", p["text_hint"])
+	catalog_description.add_theme_color_override("font_color", p["text_accent"])
+	session_setup_title.add_theme_color_override("font_color", p["text_content"])
+	session_setup_help.add_theme_color_override("font_color", p["text_hint"])
+	lives_label.add_theme_color_override("font_color", p["text_content"])
+	hint_timer_label.add_theme_color_override("font_color", p["text_content"])
+	room_title.add_theme_color_override("font_color", p["text_primary"])
+	room_description.add_theme_color_override("font_color", p["text_body"])
+	question_label.add_theme_color_override("font_color", p["text_question"])
+	status_label.add_theme_color_override("font_color", p["text_body"])
+	theme_badge.add_theme_color_override("font_color", p["text_card"])
+	hint_label.add_theme_color_override("font_color", p["text_card"])
+
+	if answers_container.get_child_count() > 0:
+		var first_btn := answers_container.get_child(0) as Button
+		if first_btn:
+			var btn_n := first_btn.get_theme_stylebox("normal") as StyleBoxFlat
+			if btn_n:
+				btn_n.bg_color = p["button_bg"]
+				btn_n.border_color = p["button_border"]
+			var btn_h := first_btn.get_theme_stylebox("hover") as StyleBoxFlat
+			if btn_h:
+				btn_h.bg_color = p["button_hover"]
+				btn_h.border_color = p["button_border"]
+	for btn in answers_container.get_children():
+		if btn is Button:
+			btn.add_theme_color_override("font_color", p["text_primary"])
 
 
 func _configure_audio_players() -> void:
