@@ -5,3 +5,4 @@
 Config.cfg
 Data/groq_api_key.txt
 Data/grog_api_key.txt
+.claude/
