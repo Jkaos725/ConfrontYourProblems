@@ -596,6 +596,8 @@ func _apply_intro_emphasis() -> void:
 	question_card.custom_minimum_size = Vector2(0, 170)
 	primary_button.add_theme_font_size_override("font_size", 24)
 	primary_button.custom_minimum_size = Vector2(0, 78)
+	secondary_button.add_theme_font_size_override("font_size", 24)
+	secondary_button.custom_minimum_size = Vector2(0, 78)
 	title_banner.add_theme_font_size_override("font_size", 40)
 	title_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	meta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -610,6 +612,8 @@ func _clear_intro_emphasis() -> void:
 	question_card.custom_minimum_size = Vector2(0, 136)
 	primary_button.add_theme_font_size_override("font_size", 16)
 	primary_button.custom_minimum_size = Vector2.ZERO
+	secondary_button.add_theme_font_size_override("font_size", 16)
+	secondary_button.custom_minimum_size = Vector2.ZERO
 	secondary_button.custom_minimum_size = Vector2.ZERO
 	tertiary_button.custom_minimum_size = Vector2.ZERO
 	title_banner.add_theme_font_size_override("font_size", 34)
