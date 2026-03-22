@@ -212,10 +212,10 @@ func _show_start_screen() -> void:
 	hint_label.text = "The proctor is awake.\nPick a realm.\nSurvive the exam hall."
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Enter Trial"
+	primary_button.text = "Escape Mode"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Enter Clue Trial"
+	secondary_button.text = "Clue Mode"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
@@ -460,10 +460,10 @@ func _show_end_screen(did_win: bool) -> void:
 	hint_label.text = "Next upgrade idea: add story branches, sound, and per-room art."
 	status_label.text = "You can restart or switch catalogs whenever you want."
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Enter Trial"
+	primary_button.text = "Escape Mode"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Enter Clue Trial"
+	secondary_button.text = "Clue Mode"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
@@ -505,10 +505,10 @@ func _show_quiz_victory_screen() -> void:
 	hint_label.text = "Every cleared chamber becomes part of your record."
 	status_label.text = ""
 
-	primary_button.text = "Enter Trial"
+	primary_button.text = "Escape Mode"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Enter Clue Trial"
+	secondary_button.text = "Clue Mode"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
