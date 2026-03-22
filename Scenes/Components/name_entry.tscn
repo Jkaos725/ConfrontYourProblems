@@ -7,12 +7,12 @@ content_margin_left = 28.0
 content_margin_top = 24.0
 content_margin_right = 28.0
 content_margin_bottom = 28.0
-bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.97)
+bg_color = Color(0.122, 0.176, 0.239, 0.97)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.698039, 0.521569, 0.278431, 1)
+border_color = Color(0.102, 0.737, 0.612, 1.0)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -21,36 +21,36 @@ shadow_color = Color(0, 0, 0, 0.45)
 shadow_size = 18
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
+bg_color = Color(0.204, 0.286, 0.369, 1.0)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.698039, 0.521569, 0.278431, 1)
+border_color = Color(0.204, 0.596, 0.859, 1.0)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.25098, 0.176471, 0.101961, 1)
+bg_color = Color(0.161, 0.502, 0.725, 1.0)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.698039, 0.521569, 0.278431, 1)
+border_color = Color(0.204, 0.596, 0.859, 1.0)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
+bg_color = Color(0.102, 0.322, 0.463, 1.0)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.8, 0.611765, 0.313726, 1)
+border_color = Color(0.102, 0.737, 0.612, 1.0)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -92,25 +92,25 @@ theme_override_constants/separation = 14
 
 [node name="TitleLabel" type="Label" parent="Overlay/Center/Panel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
 theme_override_font_sizes/font_size = 26
 text = "New Record!"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="Overlay/Center/Panel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.788235, 0.972549, 1)
+theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1.0)
 theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 
 [node name="Sep" type="HSeparator" parent="Overlay/Center/Panel/Margin/VBox"]
 layout_mode = 2
-modulate = Color(0.698039, 0.521569, 0.278431, 0.6)
+modulate = Color(0.102, 0.737, 0.612, 0.6)
 
 [node name="PromptLabel" type="Label" parent="Overlay/Center/Panel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
+theme_override_colors/font_color = Color(0.741, 0.765, 0.780, 1.0)
 theme_override_font_sizes/font_size = 16
 text = "Enter your name:"
 
@@ -130,7 +130,7 @@ horizontal_alignment = 1
 [node name="SubmitButton" type="Button" parent="Overlay/Center/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")

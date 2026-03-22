@@ -6,42 +6,45 @@ const SAVE_PATH := "user://display_settings.cfg"
 
 var is_dark_mode: bool = true
 
+# Flat UI Colors palette — https://flatuicolors.com/palette/defo
+# Dark:  Midnight Blue base, Turquoise accents, Clouds text
+# Light: Clouds base, Peter River accents, Midnight Blue text
 const DARK := {
-	"background":    Color(0.101961, 0.0588235, 0.0313726, 1.0),
-	"panel_bg":      Color(0.137255, 0.0941176, 0.0588235, 0.95),
-	"panel_border":  Color(0.698039, 0.521569,  0.278431,  1.0),
-	"text_primary":  Color(0.988235, 0.933333,  0.784314,  1.0),
-	"text_secondary":Color(0.850980, 0.713726,  0.501961,  1.0),
-	"text_hint":     Color(0.878431, 0.894118,  0.925490,  1.0),
-	"text_accent":   Color(0.658824, 0.788235,  0.972549,  1.0),
-	"text_content":  Color(0.960784, 0.941176,  0.858824,  1.0),
-	"text_body":     Color(0.937255, 0.870588,  0.756863,  1.0),
-	"text_card":     Color(0.88,     0.88,      0.88,      1.0),
-	"text_question": Color(1.0,      0.968627,  0.913725,  1.0),
-	"question_bg":   Color(0.439216, 0.337255,  0.223529,  0.92),
-	"side_card_bg":  Color(0.203922, 0.141176,  0.0862745, 0.96),
-	"button_bg":     Color(0.152941, 0.105882,  0.0627451, 1.0),
-	"button_border": Color(0.474510, 0.333333,  0.176471,  1.0),
-	"button_hover":  Color(0.250980, 0.176471,  0.101961,  1.0),
+	"background":    Color(0.173, 0.243, 0.314, 1.0),   # Midnight Blue #2c3e50
+	"panel_bg":      Color(0.122, 0.176, 0.239, 0.97),  # darker than bg  #1f2d3d
+	"panel_border":  Color(0.102, 0.737, 0.612, 1.0),   # Turquoise       #1abc9c
+	"text_primary":  Color(0.925, 0.941, 0.945, 1.0),   # Clouds          #ecf0f1
+	"text_secondary":Color(0.741, 0.765, 0.780, 1.0),   # Silver          #bdc3c7
+	"text_hint":     Color(0.584, 0.647, 0.651, 1.0),   # Concrete        #95a5a6
+	"text_accent":   Color(0.102, 0.737, 0.612, 1.0),   # Turquoise       #1abc9c
+	"text_content":  Color(0.925, 0.941, 0.945, 1.0),   # Clouds          #ecf0f1
+	"text_body":     Color(0.741, 0.765, 0.780, 1.0),   # Silver          #bdc3c7
+	"text_card":     Color(0.741, 0.765, 0.780, 1.0),   # Silver          #bdc3c7
+	"text_question": Color(0.925, 0.941, 0.945, 1.0),   # Clouds          #ecf0f1
+	"question_bg":   Color(0.204, 0.286, 0.369, 0.92),  # Wet Asphalt     #34495e
+	"side_card_bg":  Color(0.141, 0.200, 0.259, 0.96),  # mid-dark blue   #243341
+	"button_bg":     Color(0.204, 0.286, 0.369, 1.0),   # Wet Asphalt     #34495e
+	"button_border": Color(0.204, 0.596, 0.859, 1.0),   # Peter River     #3498db
+	"button_hover":  Color(0.161, 0.502, 0.725, 1.0),   # Belize Hole     #2980b9
 }
 
 const LIGHT := {
-	"background":    Color(0.93,  0.91,  0.87,  1.0),
-	"panel_bg":      Color(0.99,  0.97,  0.94,  0.97),
-	"panel_border":  Color(0.55,  0.40,  0.18,  1.0),
-	"text_primary":  Color(0.13,  0.08,  0.03,  1.0),
-	"text_secondary":Color(0.32,  0.20,  0.07,  1.0),
-	"text_hint":     Color(0.28,  0.28,  0.32,  1.0),
-	"text_accent":   Color(0.06,  0.28,  0.68,  1.0),
-	"text_content":  Color(0.13,  0.10,  0.05,  1.0),
-	"text_body":     Color(0.20,  0.15,  0.07,  1.0),
-	"text_card":     Color(0.15,  0.15,  0.15,  1.0),
-	"text_question": Color(0.10,  0.06,  0.02,  1.0),
-	"question_bg":   Color(0.88,  0.85,  0.78,  0.95),
-	"side_card_bg":  Color(0.94,  0.92,  0.87,  0.97),
-	"button_bg":     Color(0.96,  0.93,  0.87,  1.0),
-	"button_border": Color(0.50,  0.36,  0.14,  1.0),
-	"button_hover":  Color(0.88,  0.83,  0.72,  1.0),
+	"background":    Color(0.925, 0.941, 0.945, 1.0),   # Clouds          #ecf0f1
+	"panel_bg":      Color(0.969, 0.976, 0.980, 0.97),  # near-white      #f7f9fa
+	"panel_border":  Color(0.204, 0.596, 0.859, 1.0),   # Peter River     #3498db
+	"text_primary":  Color(0.173, 0.243, 0.314, 1.0),   # Midnight Blue   #2c3e50
+	"text_secondary":Color(0.204, 0.286, 0.369, 1.0),   # Wet Asphalt     #34495e
+	"text_hint":     Color(0.498, 0.549, 0.553, 1.0),   # Asbestos        #7f8c8d
+	"text_accent":   Color(0.204, 0.596, 0.859, 1.0),   # Peter River     #3498db
+	"text_content":  Color(0.173, 0.243, 0.314, 1.0),   # Midnight Blue   #2c3e50
+	"text_body":     Color(0.204, 0.286, 0.369, 1.0),   # Wet Asphalt     #34495e
+	"text_card":     Color(0.173, 0.243, 0.314, 1.0),   # Midnight Blue   #2c3e50
+	"text_question": Color(0.173, 0.243, 0.314, 1.0),   # Midnight Blue   #2c3e50
+	"question_bg":   Color(0.741, 0.765, 0.780, 0.50),  # Silver 50%      #bdc3c7
+	"side_card_bg":  Color(0.925, 0.941, 0.945, 0.97),  # Clouds          #ecf0f1
+	"button_bg":     Color(0.741, 0.765, 0.780, 1.0),   # Silver          #bdc3c7
+	"button_border": Color(0.161, 0.502, 0.725, 1.0),   # Belize Hole     #2980b9
+	"button_hover":  Color(0.204, 0.596, 0.859, 1.0),   # Peter River     #3498db
 }
 
 

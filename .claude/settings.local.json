@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:flatuicolors.com)",
+      "WebSearch",
+      "WebFetch(domain:www.webnots.com)",
+      "WebFetch(domain:gist.github.com)"
+    ]
+  }
+}
