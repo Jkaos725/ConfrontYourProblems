@@ -12,12 +12,15 @@ const ROOMS_DATA_PATH := "res://Data/rooms.json"
 const SUBJECTS_DATA_PATH := "res://Data/subjects.json"
 const QUESTIONS_DATA_PATH := "res://Data/questions.json"
 const ANSWERS_DATA_PATH := "res://Data/answers.json"
-const CLICK_SOUND_PATH := "res://Audio/Correct SOun/chrisiex1-correct-156911.mp3"
-const CORRECT_SOUND_PATH := "res://Audio/Correct SOun/freesound_community-rightanswer-95219.mp3"
-const WRONG_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-training-program-incorrect2-88735.mp3"
-const UNLOCK_SOUND_PATH := "res://Audio/Correct SOun/u_a5z4rtk6yn-sonido-correcto-331225.mp3"
-const WIN_SOUND_PATH := "res://Audio/Correct SOun/u_y6jn4lst7i-benar-494211.mp3"
-const LOSE_SOUND_PATH := "res://Audio/Wrong Answer/freesound_community-fail-jingle-stereo-mix-88784.mp3"
+const CLICK_SOUND_PATH := "res://Audio/New Sounds/Random Sound/skyscraper_seven-click-buttons-ui-menu-sounds-effects-button-13-205396.mp3"
+const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
+const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
+const UNLOCK_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
+const WIN_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
+const LOSE_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
+const LIVES_OPTIONS := [1, 2, 3, 5]
+const QUESTION_COUNT_OPTIONS := [3, 4, 5, 6, 8]
+const HINT_TIMER_OPTIONS := [60, 120, 180, 300, 600]
 const PROFESSOR_OPTIONS := [
 	{"name": "Professor Vex", "description": "Harsh, intense, and quick to challenge you."},
 	{"name": "Professor Hale", "description": "Calm, neutral, and focused on precision."},
@@ -25,8 +28,8 @@ const PROFESSOR_OPTIONS := [
 ]
 const PROFESSOR_PORTRAITS := {
 	"Professor Vex": "res://Images/angryBot.png",
-	"Professor Hale": "res://Images/enutralface.png",
-	"Professor Mira": "res://Images/first.png"
+	"Professor Hale": "res://Images/neutralface.png",
+	"Professor Mira": "res://Images/happyface.png"
 }
 
 var rooms: Array[Dictionary] = []
@@ -55,6 +58,9 @@ var current_game_state := "start_intro"
 var current_launch_target := "quiz"
 var mascot_home_position := Vector2.ZERO
 var mascot_tween: Tween
+var selected_lives := START_LIVES
+var selected_question_count := SUBJECT_RUN_ROOM_COUNT
+var selected_hint_time := 180
 
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
@@ -76,6 +82,14 @@ var mascot_tween: Tween
 @onready var upload_name_label: Label = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadNameLabel
 @onready var upload_name_input: LineEdit = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadNameInput
 @onready var upload_help: Label = $MarginContainer/PanelContainer/VBoxContainer/UploadBox/UploadHelp
+@onready var session_setup_box: VBoxContainer = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox
+@onready var session_setup_title: Label = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/SessionSetupTitle
+@onready var session_setup_help: Label = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/SessionSetupHelp
+@onready var lives_label: Label = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/LivesLabel
+@onready var hint_timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/HintTimerLabel
+@onready var lives_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/LivesOption
+@onready var question_count_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/QuestionCountOption
+@onready var hint_timer_option: OptionButton = $MarginContainer/PanelContainer/VBoxContainer/SessionSetupBox/HintTimerOption
 @onready var room_title: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/RoomTitle
 @onready var room_description: Label = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/RoomDescription
 @onready var question_card: PanelContainer = $MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard
@@ -102,8 +116,11 @@ var mascot_tween: Tween
 @onready var lose_player: AudioStreamPlayer = $LosePlayer
 @onready var timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel
 @onready var mascot: TextureRect = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot
+@onready var mascot_box: CenterContainer = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
 
 func _ready() -> void:
+	if not String(Global.selected_professor).is_empty():
+		current_professor_name = String(Global.selected_professor)
 	for index in range(answers_container.get_child_count()):
 		var button := answers_container.get_child(index) as Button
 		button.pressed.connect(_on_answer_selected.bind(index))
@@ -116,9 +133,13 @@ func _ready() -> void:
 	tertiary_button.pressed.connect(_on_tertiary_pressed)
 	subject_option.item_selected.connect(_on_subject_selected)
 	quiz_option.item_selected.connect(_on_quiz_selected)
+	lives_option.item_selected.connect(_on_lives_selected)
+	question_count_option.item_selected.connect(_on_question_count_selected)
+	hint_timer_option.item_selected.connect(_on_hint_timer_selected)
 	question_file_dialog.file_selected.connect(_on_question_file_selected)
 	http_request.request_completed.connect(_on_http_request_completed)
 	groq_api_key = _load_groq_api_key()
+	_populate_session_setup_options()
 	_apply_selected_professor_visual()
 	_start_mascot_motion()
 	if Global.last_result == "victory":
@@ -132,9 +153,14 @@ func _start_game() -> void:
 		status_label.text = "No rooms were loaded. Check Data/rooms.json."
 		return
 
+	rooms = _build_session_room_subset(rooms)
+	if rooms.is_empty():
+		status_label.text = "No rooms are available for the selected setup."
+		return
+
 	current_room_index = 0
 	score = 0
-	lives_remaining = START_LIVES
+	lives_remaining = selected_lives
 	hints_used = 0
 	room_cleared = false
 	current_game_state = "playing"
@@ -142,6 +168,9 @@ func _start_game() -> void:
 	Global.rooms = rooms.duplicate(true)
 	Global.active_subject = active_subject
 	Global.active_quiz_name = active_quiz_name if not active_quiz_name.is_empty() else active_catalog_name
+	Global.selected_lives = selected_lives
+	Global.selected_question_count = selected_question_count
+	Global.selected_hint_time = selected_hint_time
 	Global.reset_quiz_session()
 	get_tree().change_scene_to_file("res://Scenes/ServerVaultRoom.tscn")
 
@@ -149,10 +178,13 @@ func _start_game() -> void:
 func _show_start_screen() -> void:
 	current_game_state = "start_intro"
 	room_cleared = false
+	if not String(Global.selected_professor).is_empty():
+		current_professor_name = String(Global.selected_professor)
 	background.color = Color("0e1423")
 	background_texture.visible = true
 	_apply_full_panel_layout()
 	_apply_intro_emphasis()
+	_apply_selected_professor_visual()
 	room_title.visible = true
 	room_description.visible = true
 	question_card.visible = true
@@ -167,6 +199,7 @@ func _show_start_screen() -> void:
 	catalog_help.visible = true
 	quiz_label.visible = true
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	room_title.text = "Start Your Escape"
@@ -207,6 +240,7 @@ func _show_professor_selection() -> void:
 	quiz_option.visible = false
 	catalog_description.visible = true
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	meta_label.text = ""
@@ -247,6 +281,7 @@ func _show_source_selection() -> void:
 	quiz_option.visible = true
 	catalog_description.visible = true
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	room_title.text = "How do you want to start this study session?"
@@ -271,7 +306,10 @@ func _show_subject_selection() -> void:
 	current_game_state = "subject_select"
 	background.color = Color("202432")
 	background_texture.visible = false
-	_apply_full_panel_layout()
+	if current_launch_target == "question_hints":
+		_apply_compact_panel_layout()
+	else:
+		_apply_full_panel_layout()
 	_clear_intro_emphasis()
 	room_title.visible = false
 	room_description.visible = false
@@ -283,12 +321,13 @@ func _show_subject_selection() -> void:
 	catalog_box.visible = true
 	catalog_title.visible = true
 	catalog_title.text = "Choose A Subject"
-	catalog_help.visible = true
-	catalog_help.text = "Pick a subject, then choose the quiz set you want to enter."
+	catalog_help.visible = false
 	quiz_label.visible = true
 	quiz_option.visible = true
-	catalog_description.visible = true
+	catalog_description.visible = false
 	upload_box.visible = false
+	session_setup_box.visible = true
+	_configure_session_setup_box()
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	meta_label.text = ""
@@ -299,12 +338,12 @@ func _show_subject_selection() -> void:
 	hint_label.text = ""
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
+	_repopulate_subject_options()
 	primary_button.text = "Start Subject"
 	primary_button.visible = true
 	primary_button.disabled = subjects_db.is_empty()
-	secondary_button.text = "Preview Catalog"
-	secondary_button.visible = true
-	secondary_button.disabled = subjects_db.is_empty()
+	secondary_button.visible = false
+	secondary_button.disabled = true
 	tertiary_button.text = "Back"
 	tertiary_button.visible = true
 	tertiary_button.disabled = false
@@ -326,6 +365,7 @@ func _show_room() -> void:
 	status_card.visible = false
 	catalog_box.visible = false
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	_apply_room_theme(room, current_room_index)
@@ -365,8 +405,16 @@ func _show_room() -> void:
 	_set_quaternary_button(false, true)
 
 func _show_escape_room():
-	Global.rooms = rooms
+	var session_rooms: Array[Dictionary] = _build_session_room_subset(rooms)
+	if session_rooms.is_empty():
+		status_label.text = "No rooms are available for the selected setup."
+		return
+	Global.rooms = session_rooms
 	Global.index = 0
+	Global.selected_lives = selected_lives
+	Global.selected_question_count = selected_question_count
+	Global.selected_hint_time = selected_hint_time
+	Global.reset_quiz_session()
 	get_tree().change_scene_to_file("res://Scenes/Questionhints.tscn")
 
 func _show_end_screen(did_win: bool) -> void:
@@ -385,6 +433,7 @@ func _show_end_screen(did_win: bool) -> void:
 	background_texture.visible = false
 	catalog_box.visible = false
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	if did_win:
@@ -419,10 +468,13 @@ func _show_end_screen(did_win: bool) -> void:
 func _show_quiz_victory_screen() -> void:
 	current_game_state = "end"
 	room_cleared = false
+	if not String(Global.selected_professor).is_empty():
+		current_professor_name = String(Global.selected_professor)
 	background.color = Color("2a1d11")
 	background_texture.visible = false
 	_apply_full_panel_layout()
 	_clear_intro_emphasis()
+	_apply_selected_professor_visual()
 	room_title.visible = true
 	room_description.visible = true
 	question_card.visible = true
@@ -432,6 +484,7 @@ func _show_quiz_victory_screen() -> void:
 	hint_card.visible = true
 	catalog_box.visible = false
 	upload_box.visible = false
+	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	_set_answer_buttons_visible(false)
@@ -443,7 +496,7 @@ func _show_quiz_victory_screen() -> void:
 		Global.last_quiz_total
 	]
 	room_title.text = "The final door opens."
-	room_description.text = "You made it through every chamber and escaped Professor Vex's trial."
+	room_description.text = "You made it through every chamber and escaped %s's trial." % current_professor_name
 	question_label.text = "What do you want to do next?"
 	hint_label.text = "Every solved room becomes part of your archive."
 	status_label.text = ""
@@ -475,12 +528,44 @@ func _set_quaternary_button(is_visible: bool, is_disabled: bool) -> void:
 
 
 func _apply_compact_panel_layout() -> void:
-	margin_container.offset_top = 70.0
-	margin_container.offset_bottom = -130.0
+	margin_container.offset_top = 112.0
+	margin_container.offset_bottom = -52.0
 	main_panel.size_flags_vertical = 0
 	main_vbox.size_flags_vertical = 0
 	body_row.size_flags_vertical = 0
 	left_column.size_flags_vertical = 0
+
+
+func _apply_question_hints_ready_layout() -> void:
+	_apply_compact_panel_layout()
+	mascot_box.custom_minimum_size = Vector2(190, 72)
+	mascot.custom_minimum_size = Vector2(120, 56)
+	title_banner.add_theme_font_size_override("font_size", 28)
+	room_title.add_theme_font_size_override("font_size", 22)
+	room_description.add_theme_font_size_override("font_size", 14)
+	question_label.add_theme_font_size_override("font_size", 16)
+	question_card.custom_minimum_size = Vector2(0, 72)
+	primary_button.custom_minimum_size = Vector2(0, 44)
+	secondary_button.custom_minimum_size = Vector2(0, 44)
+	tertiary_button.custom_minimum_size = Vector2(0, 44)
+	session_setup_box.add_theme_constant_override("separation", 4)
+	main_vbox.add_theme_constant_override("separation", 6)
+
+
+func _apply_ready_screen_layout() -> void:
+	_apply_compact_panel_layout()
+	mascot_box.custom_minimum_size = Vector2(190, 72)
+	mascot.custom_minimum_size = Vector2(120, 56)
+	title_banner.add_theme_font_size_override("font_size", 30)
+	room_title.add_theme_font_size_override("font_size", 22)
+	room_description.add_theme_font_size_override("font_size", 14)
+	question_label.add_theme_font_size_override("font_size", 18)
+	question_card.custom_minimum_size = Vector2(0, 76)
+	primary_button.custom_minimum_size = Vector2(0, 46)
+	secondary_button.custom_minimum_size = Vector2(0, 46)
+	tertiary_button.custom_minimum_size = Vector2(0, 46)
+	session_setup_box.add_theme_constant_override("separation", 4)
+	main_vbox.add_theme_constant_override("separation", 6)
 
 
 func _apply_full_panel_layout() -> void:
@@ -490,6 +575,10 @@ func _apply_full_panel_layout() -> void:
 	main_vbox.size_flags_vertical = 4
 	body_row.size_flags_vertical = 3
 	left_column.size_flags_vertical = 3
+	mascot_box.custom_minimum_size = Vector2(190, 128)
+	mascot.custom_minimum_size = Vector2(150, 78)
+	main_vbox.add_theme_constant_override("separation", 10)
+	session_setup_box.add_theme_constant_override("separation", 8)
 
 
 func _apply_intro_emphasis() -> void:
@@ -512,6 +601,8 @@ func _clear_intro_emphasis() -> void:
 	question_card.custom_minimum_size = Vector2(0, 136)
 	primary_button.add_theme_font_size_override("font_size", 16)
 	primary_button.custom_minimum_size = Vector2.ZERO
+	secondary_button.custom_minimum_size = Vector2.ZERO
+	tertiary_button.custom_minimum_size = Vector2.ZERO
 	title_banner.add_theme_font_size_override("font_size", 34)
 
 
@@ -605,8 +696,6 @@ func _on_secondary_pressed() -> void:
 			question_file_dialog.popup_centered_ratio(0.75)
 		"upload_ready":
 			question_file_dialog.popup_centered_ratio(0.75)
-		"subject_select":
-			_generate_preview_room()
 		"playing":
 			_on_hint_pressed()
 		"start_intro", "end":
@@ -690,13 +779,13 @@ func _restart_loaded_catalog() -> void:
 
 func _generate_preview_room() -> void:
 	if rooms.is_empty():
-		status_label.text = "No room data is available to preview."
+		status_label.text = ""
 		return
 
 	var preview_index: int = clamp(current_room_index, 0, rooms.size() - 1)
 	var preview_room: Dictionary = rooms[preview_index]
 	_apply_room_theme(preview_room, preview_index)
-	title_banner.text = "Catalog Preview Mode"
+	title_banner.text = "Escape Room Challenge"
 	meta_label.text = "Catalog %s   Subject %s   Preview room %d" % [active_catalog_name, active_subject, preview_index + 1]
 	room_title.text = preview_room["title"]
 	room_description.text = "This is the current room from the selected or uploaded catalog."
@@ -716,6 +805,12 @@ func _is_valid_generated_room(room: Dictionary) -> bool:
 	if not room.has("title") or not room.has("description") or not room.has("question"):
 		return false
 	if not room.has("answers") or not room.has("correct_index") or not room.has("hint") or not room.has("success"):
+		return false
+
+	var generated_question: String = str(room.get("question", ""))
+	var generated_hint: String = str(room.get("hint", ""))
+	var generated_description: String = str(room.get("description", ""))
+	if _contains_meta_material(generated_question) or _contains_meta_material(generated_hint) or _contains_meta_material(generated_description):
 		return false
 
 	var answers: Array = room["answers"]
@@ -900,6 +995,23 @@ func _update_professor_selection(index: int) -> void:
 	_start_mascot_motion()
 
 
+func _repopulate_subject_options() -> void:
+	subject_option.clear()
+	for subject in subjects_db:
+		var subject_dict: Dictionary = subject
+		subject_option.add_item(str(subject_dict.get("name", "")))
+
+	if subjects_db.is_empty():
+		active_subject = ""
+		active_subject_id = ""
+		active_quiz_name = ""
+		active_quiz_id = ""
+		return
+
+	subject_option.select(0)
+	_update_subject_selection(0)
+
+
 func _apply_selected_professor_visual() -> void:
 	var portrait_path := str(PROFESSOR_PORTRAITS.get(current_professor_name, "res://Images/angryBot.png"))
 	var texture: Variant = load(portrait_path)
@@ -917,14 +1029,14 @@ func _start_mascot_motion() -> void:
 	mascot_tween.set_loops()
 	mascot_tween.set_ease(Tween.EASE_IN_OUT)
 	mascot_tween.set_trans(Tween.TRANS_SINE)
-	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-34, -10), 0.55)
-	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -6.0, 0.55)
-	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(26, 16), 0.7)
-	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 5.0, 0.7)
-	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(42, -6), 0.45)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-16, -4), 0.55)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -4.0, 0.55)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(14, 10), 0.7)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 3.5, 0.7)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(18, -3), 0.45)
 	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 0.0, 0.45)
-	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-18, 12), 0.55)
-	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -3.0, 0.55)
+	mascot_tween.tween_property(mascot, "position", mascot_home_position + Vector2(-10, 8), 0.55)
+	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", -2.0, 0.55)
 	mascot_tween.tween_property(mascot, "position", mascot_home_position, 0.55)
 	mascot_tween.parallel().tween_property(mascot, "rotation_degrees", 0.0, 0.55)
 
@@ -991,24 +1103,32 @@ func _on_question_file_selected(path: String) -> void:
 	upload_name_input.text = active_catalog_name
 	catalog_box.visible = false
 	upload_box.visible = true
+	session_setup_box.visible = false
 
 	var extension := path.get_extension().to_lower()
 	if pending_upload_mode == "json" or extension == "json":
 		_load_rooms_from_path(path)
 		active_subject = "Uploaded"
+		active_subject_id = ""
 		active_quiz_name = active_catalog_name
 		active_quiz_id = "uploaded_json"
 		current_game_state = "upload_ready"
+		if current_launch_target == "question_hints":
+			_apply_question_hints_ready_layout()
+		else:
+			_apply_ready_screen_layout()
 		_clear_intro_emphasis()
 		theme_card.visible = false
 		status_card.visible = false
 		upload_name_label.visible = false
 		upload_name_input.visible = false
+		session_setup_box.visible = true
+		_configure_session_setup_box()
 		status_label.text = "Loaded uploaded questions from %s (%d rooms)." % [active_catalog_name, rooms.size()]
 		theme_badge.text = ""
 		room_title.text = "Uploaded Questions Ready"
-		room_description.text = "Your custom question file is loaded and ready to play."
-		question_label.text = "Press start to use the uploaded questions."
+		room_description.text = ""
+		question_label.text = "Press Start when you're ready."
 		upload_help.text = ""
 		hint_label.text = ""
 		primary_button.text = "Start"
@@ -1032,17 +1152,24 @@ func _on_question_file_selected(path: String) -> void:
 
 	pending_upload_text = file.get_as_text()
 	current_game_state = "module_ready"
+	if current_launch_target == "question_hints":
+		_apply_question_hints_ready_layout()
+	else:
+		_apply_ready_screen_layout()
 	_clear_intro_emphasis()
 	theme_card.visible = false
 	status_card.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
+	session_setup_box.visible = true
+	_configure_session_setup_box()
 	active_subject = "Uploaded Module"
+	active_subject_id = ""
 	active_quiz_name = active_catalog_name
 	active_quiz_id = "uploaded_module"
 	room_title.text = "Escape Room Is Ready"
-	room_description.text = "Your notes are loaded and ready to become the next challenge."
-	question_label.text = "Choose what you want to do next."
+	room_description.text = ""
+	question_label.text = "Press Start when you're ready."
 	theme_badge.text = ""
 	upload_help.text = ""
 	hint_label.text = ""
@@ -1114,10 +1241,90 @@ func _build_rooms_for_subject(subject_id: String, quiz_id: String) -> void:
 			subject_rooms.append(_normalize_generated_room(room))
 
 	subject_rooms.shuffle()
-	rooms.clear()
-	var selected_count := mini(SUBJECT_RUN_ROOM_COUNT, subject_rooms.size())
-	for index in range(selected_count):
-		rooms.append(subject_rooms[index])
+	rooms = subject_rooms
+
+
+func _build_session_room_subset(source_rooms: Array[Dictionary]) -> Array[Dictionary]:
+	var trimmed_rooms: Array[Dictionary] = source_rooms.duplicate(true)
+	if trimmed_rooms.is_empty():
+		return trimmed_rooms
+
+	var limit := mini(selected_question_count, trimmed_rooms.size())
+	if active_subject_id.is_empty():
+		return trimmed_rooms.slice(0, limit)
+
+	trimmed_rooms.shuffle()
+	return trimmed_rooms.slice(0, limit)
+
+
+func _populate_session_setup_options() -> void:
+	lives_option.clear()
+	for value in LIVES_OPTIONS:
+		lives_option.add_item(str(value))
+
+	question_count_option.clear()
+	for value in QUESTION_COUNT_OPTIONS:
+		question_count_option.add_item(str(value))
+
+	hint_timer_option.clear()
+	for seconds in HINT_TIMER_OPTIONS:
+		hint_timer_option.add_item("%d minute%s" % [int(seconds / 60), "" if seconds == 60 else "s"])
+
+	_select_option_by_value(lives_option, LIVES_OPTIONS, selected_lives)
+	_select_option_by_value(question_count_option, QUESTION_COUNT_OPTIONS, selected_question_count)
+	_select_option_by_value(hint_timer_option, HINT_TIMER_OPTIONS, selected_hint_time)
+
+
+func _configure_session_setup_box() -> void:
+	session_setup_title.text = "Session Setup"
+	if current_launch_target == "question_hints":
+		session_setup_help.text = "Choose question count and total time."
+		lives_label.visible = false
+		lives_option.visible = false
+		hint_timer_label.text = "Time Limit"
+		hint_timer_label.visible = true
+		hint_timer_option.visible = true
+		question_card.custom_minimum_size = Vector2(0, 120)
+		room_title.add_theme_font_size_override("font_size", 24)
+		room_description.add_theme_font_size_override("font_size", 16)
+		question_label.add_theme_font_size_override("font_size", 18)
+	else:
+		session_setup_help.text = "Choose how many questions and lives you want for this quiz run."
+		lives_label.visible = true
+		lives_option.visible = true
+		hint_timer_label.visible = false
+		hint_timer_option.visible = false
+		question_card.custom_minimum_size = Vector2(0, 136)
+		room_title.add_theme_font_size_override("font_size", 26)
+		room_description.add_theme_font_size_override("font_size", 16)
+		question_label.add_theme_font_size_override("font_size", 22)
+
+
+func _select_option_by_value(option_button: OptionButton, values: Array, target_value: int) -> void:
+	for index in range(values.size()):
+		if int(values[index]) == target_value:
+			option_button.select(index)
+			return
+	if option_button.item_count > 0:
+		option_button.select(0)
+
+
+func _on_lives_selected(index: int) -> void:
+	if index < 0 or index >= LIVES_OPTIONS.size():
+		return
+	selected_lives = int(LIVES_OPTIONS[index])
+
+
+func _on_question_count_selected(index: int) -> void:
+	if index < 0 or index >= QUESTION_COUNT_OPTIONS.size():
+		return
+	selected_question_count = int(QUESTION_COUNT_OPTIONS[index])
+
+
+func _on_hint_timer_selected(index: int) -> void:
+	if index < 0 or index >= HINT_TIMER_OPTIONS.size():
+		return
+	selected_hint_time = int(HINT_TIMER_OPTIONS[index])
 
 
 func _get_quiz_info_for_question(question: Dictionary) -> Dictionary:
@@ -1213,10 +1420,12 @@ func _extract_module_sections(module_text: String) -> Array[Dictionary]:
 		var is_markdown_heading := line.begins_with("## ")
 		if is_topic_heading or is_markdown_heading:
 			if not current_title.is_empty() and not current_body_lines.is_empty():
-				sections.append({
-					"title": current_title,
-					"body": _join_lines(current_body_lines)
-				})
+				var section_body: String = _join_lines(current_body_lines)
+				if not _is_meta_section(current_title, section_body):
+					sections.append({
+						"title": current_title,
+						"body": section_body
+					})
 			if is_topic_heading:
 				current_title = line.get_slice(":", 1).strip_edges()
 			else:
@@ -1230,10 +1439,12 @@ func _extract_module_sections(module_text: String) -> Array[Dictionary]:
 		current_body_lines.append(line)
 
 	if not current_title.is_empty() and not current_body_lines.is_empty():
-		sections.append({
-			"title": current_title,
-			"body": _join_lines(current_body_lines)
-		})
+		var final_body: String = _join_lines(current_body_lines)
+		if not _is_meta_section(current_title, final_body):
+			sections.append({
+				"title": current_title,
+				"body": final_body
+			})
 
 	return sections
 
@@ -1327,6 +1538,10 @@ func _generate_module_catalog() -> void:
 		+ "Each room object must include title, description, question, answers, correct_index, hint, success. " \
 		+ "Use exactly 3 answer choices. correct_index must be 0, 1, or 2. " \
 		+ "Keep the quiz at university level and tie it closely to the uploaded notes. " \
+		+ "Make every question about the actual subject matter, concepts, methods, definitions, or problem-solving steps in the notes. " \
+		+ "Do not ask about the author, the book title, chapter names, publisher, edition, intro, preface, acknowledgements, or any other source metadata. " \
+		+ "Do not phrase hints as 'read the book' or 'check the notes'; give a conceptual clue instead. " \
+		+ "Hints must guide the learner without revealing the answer or repeating an answer choice. " \
 		+ "Quiz set name: %s. Uploaded notes:\n%s" % [active_catalog_name, trimmed_text]
 
 	var payload := {
@@ -1334,7 +1549,7 @@ func _generate_module_catalog() -> void:
 		"messages": [
 			{
 				"role": "system",
-				"content": "You turn university study notes into concise multiple-choice quiz rooms for an escape-room study app. Return JSON only."
+				"content": "You turn university study notes into concise multiple-choice quiz rooms for an escape-room study app. Return JSON only. Focus on subject-matter concepts, never book metadata, and never reveal answers inside hints."
 			},
 			{
 				"role": "user",
@@ -1418,6 +1633,50 @@ func _use_local_module_fallback(reason: String) -> void:
 	active_request_kind = ""
 
 
+func _contains_meta_material(text: String) -> bool:
+	var lowered: String = text.to_lower()
+	var banned_terms: Array[String] = [
+		"author",
+		"book",
+		"chapter",
+		"preface",
+		"publisher",
+		"edition",
+		"foreword",
+		"acknowledg",
+		"introduction to the book",
+		"read the book",
+		"read the notes",
+		"check the book",
+		"check the notes"
+	]
+	for term in banned_terms:
+		if lowered.contains(term):
+			return true
+	return false
+
+
+func _is_meta_section(title: String, body: String) -> bool:
+	var combined: String = "%s\n%s" % [title.to_lower(), body.to_lower()]
+	var banned_terms: Array[String] = [
+		"about the author",
+		"author biography",
+		"preface",
+		"foreword",
+		"acknowledg",
+		"copyright",
+		"publisher",
+		"edition",
+		"table of contents",
+		"book introduction",
+		"about this book"
+	]
+	for term in banned_terms:
+		if combined.contains(term):
+			return true
+	return false
+
+
 func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: bool) -> void:
 	rooms.clear()
 	for room in generated_rooms:
@@ -1426,13 +1685,20 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	current_game_state = "upload_ready"
 	catalog_box.visible = false
 	upload_box.visible = true
+	session_setup_box.visible = true
+	_configure_session_setup_box()
+	if current_launch_target == "question_hints":
+		_apply_question_hints_ready_layout()
+	else:
+		_apply_ready_screen_layout()
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	active_subject = "Uploaded Module"
+	active_subject_id = ""
 	status_label.text = ""
 	room_title.text = "Escape Room Is Ready"
-	room_description.text = "Your notes were converted into a playable set of challenges."
-	question_label.text = "Choose what you want to do next."
+	room_description.text = ""
+	question_label.text = "Press Start when you're ready."
 	theme_badge.text = ""
 	hint_label.text = ""
 	primary_button.text = "Start"
@@ -1463,6 +1729,7 @@ func _load_audio(path: String) -> AudioStream:
 
 func _play_if_ready(player: AudioStreamPlayer) -> void:
 	if player.stream != null:
+		player.stop()
 		player.play()
 
 

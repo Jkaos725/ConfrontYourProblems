@@ -170,7 +170,7 @@ func _return_to_main_after_delay() -> void:
 	await get_tree().create_timer(1.6).timeout
 	Global.index = 0
 	Global.rooms.clear()
-	Global.globalTime = 180
+	Global.globalTime = Global.selected_hint_time
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 

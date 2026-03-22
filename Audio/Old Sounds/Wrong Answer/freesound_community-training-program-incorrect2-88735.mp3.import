@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bvml3ewfv4efm"
+path="res://.godot/imported/freesound_community-training-program-incorrect2-88735.mp3-1d71450ecd432561960aa955ef4cf475.mp3str"
+
+[deps]
+
+source_file="res://Audio/Old Sounds/Wrong Answer/freesound_community-training-program-incorrect2-88735.mp3"
+dest_files=["res://.godot/imported/freesound_community-training-program-incorrect2-88735.mp3-1d71450ecd432561960aa955ef4cf475.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

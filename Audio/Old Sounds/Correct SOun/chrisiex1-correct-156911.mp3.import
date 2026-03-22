@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://d0vcb8hdbjnrw"
+path="res://.godot/imported/chrisiex1-correct-156911.mp3-b6f4af12455f33340cec308e0457a8d7.mp3str"
+
+[deps]
+
+source_file="res://Audio/Old Sounds/Correct SOun/chrisiex1-correct-156911.mp3"
+dest_files=["res://.godot/imported/chrisiex1-correct-156911.mp3-b6f4af12455f33340cec308e0457a8d7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

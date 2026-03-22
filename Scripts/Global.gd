@@ -8,6 +8,9 @@ var rooms: Array[Dictionary] = []
 var index = 0
 var score = 0
 var lives = 3
+var selected_lives = 3
+var selected_question_count = 4
+var selected_hint_time = 180
 var hints_used = 0
 var active_subject = ""
 var active_quiz_name = ""
@@ -21,9 +24,9 @@ var last_result = ""
 func reset_quiz_session() -> void:
 	index = 0
 	score = 0
-	lives = 3
+	lives = selected_lives
 	hints_used = 0
-	globalTime = 180
+	globalTime = selected_hint_time
 
 
 func clear_quiz_session() -> void:

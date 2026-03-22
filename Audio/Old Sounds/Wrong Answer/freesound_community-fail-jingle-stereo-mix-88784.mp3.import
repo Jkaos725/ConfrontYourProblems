@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ct3db4jan3d1o"
+path="res://.godot/imported/freesound_community-fail-jingle-stereo-mix-88784.mp3-f0daafc7feddf83d3316e771d8b5cb63.mp3str"
+
+[deps]
+
+source_file="res://Audio/Old Sounds/Wrong Answer/freesound_community-fail-jingle-stereo-mix-88784.mp3"
+dest_files=["res://.godot/imported/freesound_community-fail-jingle-stereo-mix-88784.mp3-f0daafc7feddf83d3316e771d8b5cb63.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
