@@ -9,7 +9,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.102, 0.737, 0.612, 1.0)
+border_color = Color(0.102, 0.737, 0.612, 1)
 corner_radius_top_left = 14
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
@@ -18,24 +18,24 @@ shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_button"]
-bg_color = Color(0.204, 0.286, 0.369, 1.0)
+bg_color = Color(0.204, 0.286, 0.369, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_hover"]
-bg_color = Color(0.161, 0.502, 0.725, 1.0)
+bg_color = Color(0.161, 0.502, 0.725, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
@@ -58,7 +58,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.173, 0.243, 0.314, 1.0)
+color = Color(0.173, 0.243, 0.314, 1)
 
 [node name="TopGlow" type="ColorRect" parent="." unique_id=1218879637]
 z_index = -28
@@ -67,7 +67,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 160.0
 grow_horizontal = 2
-color = Color(0.102, 0.737, 0.612, 0.10)
+color = Color(0.102, 0.737, 0.612, 0.1)
 
 [node name="BackWallBand" type="ColorRect" parent="." unique_id=900116695]
 z_index = -26
@@ -82,14 +82,14 @@ color = Color(0.204, 0.286, 0.369, 0.9)
 [node name="Floor" type="ColorRect" parent="." unique_id=1509211993]
 z_index = -24
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -130.0
 grow_horizontal = 2
 grow_vertical = 0
-color = Color(0.118, 0.173, 0.224, 1.0)
+color = Color(0.118, 0.173, 0.224, 1)
 
 [node name="CenterPath" type="ColorRect" parent="." unique_id=228285284]
 z_index = -18
@@ -137,7 +137,7 @@ offset_right = 96.0
 offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.122, 0.176, 0.239, 1.0)
+color = Color(0.122, 0.176, 0.239, 1)
 
 [node name="Doorway" type="ColorRect" parent="Door" unique_id=1320416267]
 layout_mode = 1
@@ -150,7 +150,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.055, 0.090, 0.122, 1.0)
+color = Color(0.055, 0.09, 0.122, 1)
 
 [node name="DoorPanel" type="ColorRect" parent="Door" unique_id=1071916582]
 layout_mode = 1
@@ -163,7 +163,7 @@ offset_right = -14.0
 offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.204, 0.286, 0.369, 1.0)
+color = Color(0.204, 0.286, 0.369, 1)
 
 [node name="DoorLabel" type="Label" parent="Door" unique_id=1990604850]
 layout_mode = 1
@@ -172,7 +172,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 24
 text = "EXIT"
 horizontal_alignment = 1
@@ -191,7 +191,7 @@ offset_right = 14.0
 offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.906, 0.298, 0.235, 1.0)
+color = Color(0.906, 0.298, 0.235, 1)
 
 [node name="DoorClickArea" type="Button" parent="Door" unique_id=843000111]
 visible = false
@@ -202,7 +202,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 flat = true
-text = ""
 
 [node name="TitleLabel" type="Label" parent="." unique_id=66924006]
 visible = false
@@ -218,7 +217,7 @@ offset_right = 360.0
 offset_bottom = -256.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 34
 text = "The Server Vault"
 horizontal_alignment = 1
@@ -237,7 +236,7 @@ offset_right = 240.0
 offset_bottom = -272.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
 theme_override_font_sizes/font_size = 14
 text = "Realm Escape   Room 1/4   Lives 3   Score 0"
 horizontal_alignment = 1
@@ -250,10 +249,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -492.0
-offset_top = -228.0
-offset_right = -346.0
-offset_bottom = -126.0
+offset_left = -439.0
+offset_top = -215.0
+offset_right = -239.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_clue_panel")
@@ -264,7 +263,7 @@ theme_override_constants/separation = 8
 
 [node name="ProfessorPortrait" type="TextureRect" parent="ProfessorPanel/ProfessorBox" unique_id=392234532]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 texture = ExtResource("2_prof")
 expand_mode = 1
@@ -272,8 +271,8 @@ stretch_mode = 5
 
 [node name="ProfessorLine" type="Label" parent="ProfessorPanel/ProfessorBox" unique_id=1412948070]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
+theme_override_font_sizes/font_size = 13
 text = "Professor Vex: One lock. Three chances."
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -292,7 +291,7 @@ offset_right = -236.0
 offset_bottom = 314.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.141, 0.200, 0.259, 0.92)
+color = Color(0.141, 0.2, 0.259, 0.92)
 
 [node name="ClueNote" type="PanelContainer" parent="." unique_id=1480785901]
 z_index = 3
@@ -312,9 +311,10 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_clue_panel")
 
 [node name="ClueText" type="Label" parent="ClueNote" unique_id=1182569062]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 13
-text = "CLUE NOTE\nInspect to reveal."
+text = "CLUE NOTE
+Inspect to reveal."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
@@ -334,7 +334,6 @@ offset_bottom = 296.0
 grow_horizontal = 2
 grow_vertical = 2
 flat = true
-text = ""
 
 [node name="StatusLabel" type="Label" parent="." unique_id=1921583842]
 z_index = 7
@@ -350,7 +349,7 @@ offset_right = 240.0
 offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.741, 0.765, 0.780, 1.0)
+theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
 theme_override_font_sizes/font_size = 14
 text = "Inspect the note."
 horizontal_alignment = 1
@@ -370,7 +369,7 @@ offset_right = 20.0
 offset_bottom = 294.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.741, 0.765, 0.780, 1.0)
+color = Color(0.741, 0.765, 0.78, 1)
 
 [node name="Head" type="ColorRect" parent="PlayerMarker" unique_id=620476680]
 layout_mode = 1
@@ -385,75 +384,62 @@ offset_right = 12.0
 offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.925, 0.941, 0.945, 1.0)
+color = Color(0.925, 0.941, 0.945, 1)
 
 [node name="TerminalBase" type="ColorRect" parent="." unique_id=50170001]
-z_index = 0
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 148.0
-offset_top = 118.0
-offset_right = 484.0
-offset_bottom = 322.0
+offset_left = 130.0
+offset_top = 88.0
+offset_right = 516.0
+offset_bottom = 340.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.055, 0.122, 0.102, 0.95)
 
 [node name="TerminalPanel" type="PanelContainer" parent="." unique_id=1042549143]
 z_index = 3
-layout_mode = 1
 clip_contents = true
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 166.0
-offset_top = 90.0
-offset_right = 474.0
-offset_bottom = 286.0
+offset_left = 144.0
+offset_top = 62.0
+offset_right = 506.0
+offset_bottom = 314.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_clue_panel")
 
 [node name="TerminalVBox" type="VBoxContainer" parent="TerminalPanel" unique_id=631625002]
 layout_mode = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 10.0
-offset_right = -12.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
 theme_override_constants/separation = 6
 
 [node name="TerminalHeader" type="Label" parent="TerminalPanel/TerminalVBox" unique_id=930849201]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1.0)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1)
+theme_override_font_sizes/font_size = 14
 text = "TERMINAL"
-horizontal_alignment = 0
 
 [node name="TerminalStatus" type="Label" parent="TerminalPanel/TerminalVBox" unique_id=1019165510]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.741, 0.765, 0.780, 1.0)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
+theme_override_font_sizes/font_size = 13
 text = "CLUE REQUIRED"
-horizontal_alignment = 0
 
 [node name="TerminalButton" type="Button" parent="TerminalPanel/TerminalVBox" unique_id=183084230]
 visible = false
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 28)
 theme_override_font_sizes/font_size = 12
-text = ""
 
 [node name="Choices" type="VBoxContainer" parent="TerminalPanel/TerminalVBox" unique_id=183838190]
 layout_mode = 2
@@ -463,7 +449,7 @@ theme_override_constants/separation = 6
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
@@ -473,7 +459,7 @@ text = "Array"
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
@@ -483,7 +469,7 @@ text = "Hash Map"
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
@@ -497,10 +483,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 168.0
-offset_top = -166.0
-offset_right = 292.0
-offset_bottom = -58.0
+offset_left = 252.0
+offset_top = -196.0
+offset_right = 376.0
+offset_bottom = -88.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_clue_panel")
@@ -511,7 +497,7 @@ theme_override_constants/separation = 6
 
 [node name="KeypadTitle" type="Label" parent="KeypadPanel/KeypadVBox" unique_id=77711122]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 12
 text = "WALL KEYPAD"
 horizontal_alignment = 1
@@ -542,7 +528,7 @@ offset_right = 220.0
 offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
 theme_override_font_sizes/font_size = 12
 text = "Inspect the note."
 horizontal_alignment = 1
@@ -563,7 +549,7 @@ offset_right = 300.0
 offset_bottom = 258.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
-theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 autowrap_mode = 3

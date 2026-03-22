@@ -41,7 +41,9 @@ enum RoomPhase {
 @onready var door_label: Label = $Door/DoorLabel
 @onready var door_lock_light: ColorRect = $Door/DoorLockLight
 @onready var door_click_area: Button = $Door/DoorClickArea
+@onready var professor_panel: PanelContainer = $ProfessorPanel
 @onready var keypad_panel: PanelContainer = $KeypadPanel
+@onready var keypad_title: Label = $KeypadPanel/KeypadVBox/KeypadTitle
 @onready var keypad_display: Label = $KeypadPanel/KeypadVBox/KeypadDisplay
 @onready var keypad_button: Button = $KeypadPanel/KeypadVBox/KeypadButton
 @onready var room_prompt: Label = $RoomPrompt
@@ -58,6 +60,8 @@ var player_start_position := Vector2.ZERO
 var player_exit_position := Vector2.ZERO
 var active_room_tween: Tween
 var current_professor: Dictionary = {}
+var _portrait_bounce_tween: Tween = null
+var _portrait_rest_y: float = 0.0
 var correct_player: AudioStreamPlayer
 var wrong_player: AudioStreamPlayer
 var transition_player: AudioStreamPlayer
@@ -168,31 +172,61 @@ var professors := [
 ]
 var room_palettes := [
 	{
-		"background": Color("140d07"),
-		"glow": Color(0.827451, 0.560784, 0.258824, 0.12),
-		"wall": Color(0.160784, 0.101961, 0.054902, 0.9),
-		"floor": Color(0.101961, 0.0627451, 0.0313726, 1),
-		"path": Color(0.241176, 0.156863, 0.0862745, 0.78),
-		"desk": Color(0.239216, 0.14902, 0.0823529, 0.92),
-		"door": Color(0.227451, 0.145098, 0.0784314, 1)
+		# Midnight Blue / Turquoise
+		"background":   Color(0.173, 0.243, 0.314, 1.0),
+		"glow":         Color(0.102, 0.737, 0.612, 0.10),
+		"wall":         Color(0.204, 0.286, 0.369, 0.9),
+		"floor":        Color(0.118, 0.173, 0.224, 1.0),
+		"path":         Color(0.204, 0.286, 0.369, 0.78),
+		"desk":         Color(0.141, 0.200, 0.259, 0.92),
+		"door":         Color(0.122, 0.176, 0.239, 1.0),
+		"panel_bg":     Color(0.122, 0.176, 0.239, 0.96),
+		"panel_border": Color(0.102, 0.737, 0.612, 1.0),
+		"text_primary": Color(0.925, 0.941, 0.945, 1.0),
+		"text_secondary":Color(0.741, 0.765, 0.780, 1.0),
+		"text_hint":    Color(0.584, 0.647, 0.651, 1.0),
+		"text_accent":  Color(0.102, 0.737, 0.612, 1.0),
+		"button_bg":    Color(0.204, 0.286, 0.369, 1.0),
+		"button_border":Color(0.204, 0.596, 0.859, 1.0),
+		"button_hover": Color(0.161, 0.502, 0.725, 1.0),
 	},
 	{
-		"background": Color("0d1420"),
-		"glow": Color(0.25098, 0.509804, 0.827451, 0.12),
-		"wall": Color(0.0823529, 0.109804, 0.184314, 0.92),
-		"floor": Color(0.0509804, 0.0784314, 0.133333, 1),
-		"path": Color(0.141176, 0.239216, 0.352941, 0.74),
-		"desk": Color(0.117647, 0.176471, 0.282353, 0.9),
-		"door": Color(0.117647, 0.192157, 0.301961, 1)
+		# Peter River / Belize Hole
+		"background":   Color(0.075, 0.114, 0.157, 1.0),
+		"glow":         Color(0.204, 0.596, 0.859, 0.12),
+		"wall":         Color(0.122, 0.176, 0.239, 0.9),
+		"floor":        Color(0.075, 0.114, 0.157, 1.0),
+		"path":         Color(0.141, 0.200, 0.259, 0.78),
+		"desk":         Color(0.102, 0.149, 0.196, 0.92),
+		"door":         Color(0.161, 0.502, 0.725, 1.0),
+		"panel_bg":     Color(0.086, 0.137, 0.188, 0.96),
+		"panel_border": Color(0.204, 0.596, 0.859, 1.0),
+		"text_primary": Color(0.925, 0.941, 0.945, 1.0),
+		"text_secondary":Color(0.741, 0.765, 0.780, 1.0),
+		"text_hint":    Color(0.584, 0.647, 0.651, 1.0),
+		"text_accent":  Color(0.204, 0.596, 0.859, 1.0),
+		"button_bg":    Color(0.122, 0.176, 0.239, 1.0),
+		"button_border":Color(0.204, 0.596, 0.859, 1.0),
+		"button_hover": Color(0.161, 0.502, 0.725, 1.0),
 	},
 	{
-		"background": Color("1a0f1d"),
-		"glow": Color(0.65098, 0.313726, 0.768627, 0.12),
-		"wall": Color(0.180392, 0.0901961, 0.227451, 0.92),
-		"floor": Color(0.0862745, 0.0470588, 0.113725, 1),
-		"path": Color(0.333333, 0.160784, 0.372549, 0.74),
-		"desk": Color(0.25098, 0.129412, 0.282353, 0.9),
-		"door": Color(0.266667, 0.137255, 0.309804, 1)
+		# Amethyst / Wisteria
+		"background":   Color(0.102, 0.071, 0.122, 1.0),
+		"glow":         Color(0.608, 0.349, 0.714, 0.12),
+		"wall":         Color(0.180, 0.106, 0.204, 0.9),
+		"floor":        Color(0.122, 0.075, 0.141, 1.0),
+		"path":         Color(0.263, 0.157, 0.302, 0.78),
+		"desk":         Color(0.196, 0.118, 0.224, 0.92),
+		"door":         Color(0.220, 0.141, 0.259, 1.0),
+		"panel_bg":     Color(0.141, 0.098, 0.161, 0.96),
+		"panel_border": Color(0.608, 0.349, 0.714, 1.0),
+		"text_primary": Color(0.925, 0.941, 0.945, 1.0),
+		"text_secondary":Color(0.741, 0.765, 0.780, 1.0),
+		"text_hint":    Color(0.584, 0.647, 0.651, 1.0),
+		"text_accent":  Color(0.608, 0.349, 0.714, 1.0),
+		"button_bg":    Color(0.196, 0.118, 0.224, 1.0),
+		"button_border":Color(0.608, 0.349, 0.714, 1.0),
+		"button_hover": Color(0.557, 0.267, 0.678, 1.0),
 	}
 ]
 
@@ -207,6 +241,7 @@ func _ready() -> void:
 	clue_note_button.pressed.connect(_on_clue_note_pressed)
 	keypad_button.pressed.connect(_on_keypad_pressed)
 	_load_current_room()
+	_play_entrance_animation()
 
 
 func _load_current_room() -> void:
@@ -245,7 +280,7 @@ func _load_current_room() -> void:
 	solved = false
 	room_phase = RoomPhase.LOCKED
 	_apply_palette(Global.index)
-	doorway.color = Color(0.0470588, 0.0313726, 0.0156863, 1)
+	doorway.color = Color(0.055, 0.090, 0.122, 1.0)
 	door_panel.offset_top = door_closed_top
 	door_panel.offset_bottom = door_closed_bottom
 	door_label.modulate = Color(1, 1, 1, 1)
@@ -360,8 +395,8 @@ func _open_vault() -> void:
 	active_room_tween = create_tween()
 	active_room_tween.set_trans(Tween.TRANS_SINE)
 	active_room_tween.set_ease(Tween.EASE_OUT)
-	active_room_tween.parallel().tween_property(door, "color", Color(0.568627, 0.407843, 0.180392, 1), 0.25)
-	active_room_tween.parallel().tween_property(doorway, "color", Color(0.729412, 0.65098, 0.34902, 0.9), 0.25)
+	active_room_tween.parallel().tween_property(door, "color", Color(0.204, 0.596, 0.859, 1.0), 0.25)
+	active_room_tween.parallel().tween_property(doorway, "color", Color(0.102, 0.737, 0.612, 0.9), 0.25)
 	active_room_tween.parallel().tween_property(door_panel, "offset_top", -150.0, 0.8)
 	active_room_tween.parallel().tween_property(door_panel, "offset_bottom", -178.0, 0.8)
 	active_room_tween.parallel().tween_property(door_label, "modulate:a", 0.0, 0.4)
@@ -451,6 +486,7 @@ func _play_sound(player: AudioStreamPlayer) -> void:
 
 func _apply_palette(room_index: int) -> void:
 	var palette: Dictionary = room_palettes[room_index % room_palettes.size()]
+	# Background elements
 	background.color = palette["background"]
 	top_glow.color = palette["glow"]
 	back_wall_band.color = palette["wall"]
@@ -459,6 +495,36 @@ func _apply_palette(room_index: int) -> void:
 	terminal_base.color = palette["floor"]
 	$Desk.color = palette["desk"]
 	door.color = palette["door"]
+	# Panels — all share the same StyleBoxFlat sub-resource
+	var panel_style := terminal_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	if panel_style:
+		panel_style.bg_color = palette["panel_bg"]
+		panel_style.border_color = palette["panel_border"]
+	# Labels
+	terminal_header.add_theme_color_override("font_color", palette["text_accent"])
+	terminal_status.add_theme_color_override("font_color", palette["text_secondary"])
+	professor_line.add_theme_color_override("font_color", palette["text_primary"])
+	clue_text.add_theme_color_override("font_color", palette["text_primary"])
+	door_label.add_theme_color_override("font_color", palette["text_primary"])
+	keypad_title.add_theme_color_override("font_color", palette["text_primary"])
+	keypad_display.add_theme_color_override("font_color", palette["text_primary"])
+	status_label.add_theme_color_override("font_color", palette["text_secondary"])
+	room_prompt.add_theme_color_override("font_color", palette["text_hint"])
+	hint_label.add_theme_color_override("font_color", palette["text_hint"])
+	meta_label.add_theme_color_override("font_color", palette["text_hint"])
+	# Choice button fonts
+	choice_a.add_theme_color_override("font_color", palette["text_primary"])
+	choice_b.add_theme_color_override("font_color", palette["text_primary"])
+	choice_c.add_theme_color_override("font_color", palette["text_primary"])
+	# Choice button styles (shared sub-resource)
+	var btn_normal := choice_a.get_theme_stylebox("normal") as StyleBoxFlat
+	if btn_normal:
+		btn_normal.bg_color = palette["button_bg"]
+		btn_normal.border_color = palette["button_border"]
+	var btn_hover := choice_a.get_theme_stylebox("hover") as StyleBoxFlat
+	if btn_hover:
+		btn_hover.bg_color = palette["button_hover"]
+		btn_hover.border_color = palette["button_border"]
 
 
 func _format_choice_text(choice_text: String) -> String:
@@ -502,6 +568,65 @@ func _refresh_meta_label() -> void:
 		Global.lives,
 		Global.score
 	]
+
+func _play_entrance_animation() -> void:
+	# Wait one frame so Control layout is fully computed before reading positions/sizes
+	await get_tree().process_frame
+
+	var prof_panel := $ProfessorPanel
+	var rest_x: float = prof_panel.global_position.x
+	# Place professor fully off the left edge, then make it visible
+	prof_panel.global_position.x = -prof_panel.size.x - 20.0
+	prof_panel.modulate.a = 1.0
+	professor_line.visible_characters = 0
+
+	clue_note.modulate.a = 0.0
+	terminal_panel.modulate.a = 0.0
+	door.modulate.a = 0.0
+
+	# Professor slides in from the left, then typewriter plays
+	var prof_tw := create_tween()
+	prof_tw.tween_property(prof_panel, "global_position:x", rest_x, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	prof_tw.tween_callback(func() -> void: _play_typewriter(professor_line))
+
+	# Other elements fade in alongside the entrance
+	var bg_tw := create_tween().set_parallel(true)
+	bg_tw.tween_property(clue_note, "modulate:a", 1.0, 0.5).set_delay(0.2)
+	bg_tw.tween_property(terminal_panel, "modulate:a", 0.45, 0.5).set_delay(0.25)
+	bg_tw.tween_property(door, "modulate:a", 1.0, 0.45).set_delay(0.1)
+
+
+func _play_typewriter(label: Label) -> void:
+	label.visible_characters = 0
+	var total: int = label.text.length()
+	if total == 0:
+		label.visible_characters = -1
+		return
+	_start_portrait_bounce()
+	var tw := create_tween()
+	tw.tween_property(label, "visible_characters", total, total * 0.045).set_trans(Tween.TRANS_LINEAR)
+	tw.tween_callback(_stop_portrait_bounce)
+
+
+func _speak(text: String) -> void:
+	professor_line.text = text
+	_play_typewriter(professor_line)
+
+
+func _start_portrait_bounce() -> void:
+	if _portrait_bounce_tween != null:
+		_portrait_bounce_tween.kill()
+	_portrait_rest_y = professor_portrait.position.y
+	_portrait_bounce_tween = create_tween().set_loops()
+	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y - 5.0, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _stop_portrait_bounce() -> void:
+	if _portrait_bounce_tween != null:
+		_portrait_bounce_tween.kill()
+		_portrait_bounce_tween = null
+	professor_portrait.position.y = _portrait_rest_y
 
 
 func _select_professor(room_index: int) -> Dictionary:

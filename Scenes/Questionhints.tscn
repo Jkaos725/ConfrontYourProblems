@@ -31,7 +31,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.102, 0.737, 0.612, 1.0)
+border_color = Color(0.102, 0.737, 0.612, 1)
 corner_radius_top_left = 14
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
@@ -49,31 +49,31 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.086, 0.627, 0.522, 1.0)
+border_color = Color(0.086, 0.627, 0.522, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color = Color(0.204, 0.286, 0.369, 1.0)
+bg_color = Color(0.204, 0.286, 0.369, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.161, 0.502, 0.725, 1.0)
+bg_color = Color(0.161, 0.502, 0.725, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -89,7 +89,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.102, 0.737, 0.612, 1.0)
+border_color = Color(0.102, 0.737, 0.612, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -120,7 +120,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.173, 0.243, 0.314, 1.0)
+color = Color(0.173, 0.243, 0.314, 1)
 
 [node name="TopGlow" type="ColorRect" parent="Control2" unique_id=1486640420]
 layout_mode = 1
@@ -128,7 +128,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 160.0
 grow_horizontal = 2
-color = Color(0.102, 0.737, 0.612, 0.10)
+color = Color(0.102, 0.737, 0.612, 0.1)
 
 [node name="BackWallBand" type="ColorRect" parent="Control2" unique_id=1413961678]
 layout_mode = 1
@@ -148,7 +148,7 @@ anchor_bottom = 1.0
 offset_top = -130.0
 grow_horizontal = 2
 grow_vertical = 0
-color = Color(0.118, 0.173, 0.224, 1.0)
+color = Color(0.118, 0.173, 0.224, 1)
 
 [node name="CenterPath" type="ColorRect" parent="Control2" unique_id=1313142510]
 layout_mode = 1
@@ -193,7 +193,7 @@ offset_right = 96.0
 offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.122, 0.176, 0.239, 1.0)
+color = Color(0.122, 0.176, 0.239, 1)
 
 [node name="Doorway" type="ColorRect" parent="Control2/Door" unique_id=711071734]
 layout_mode = 1
@@ -206,7 +206,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.055, 0.090, 0.122, 1.0)
+color = Color(0.055, 0.09, 0.122, 1)
 
 [node name="DoorPanel" type="ColorRect" parent="Control2/Door" unique_id=782127841]
 layout_mode = 1
@@ -219,7 +219,7 @@ offset_right = -14.0
 offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.204, 0.286, 0.369, 1.0)
+color = Color(0.204, 0.286, 0.369, 1)
 
 [node name="DoorLabel" type="Label" parent="Control2/Door" unique_id=513026668]
 layout_mode = 1
@@ -228,7 +228,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 24
 text = "EXIT"
 horizontal_alignment = 1
@@ -247,7 +247,7 @@ offset_right = 14.0
 offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.906, 0.298, 0.235, 1.0)
+color = Color(0.906, 0.298, 0.235, 1)
 
 [node name="MetaLabel" type="Label" parent="Control2" unique_id=1118235947]
 layout_mode = 1
@@ -262,7 +262,7 @@ offset_right = 260.0
 offset_bottom = -272.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
 theme_override_font_sizes/font_size = 14
 text = "Chamber 1/4   Trial Timer 180"
 horizontal_alignment = 1
@@ -274,10 +274,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -480.0
-offset_top = -224.0
-offset_right = -334.0
-offset_bottom = -110.0
+offset_left = -439.0
+offset_top = -215.0
+offset_right = -239.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
@@ -288,7 +288,7 @@ theme_override_constants/separation = 8
 
 [node name="ProfessorPortrait" type="TextureRect" parent="Control2/ProfessorPanel/ProfessorBox" unique_id=4400126]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 texture = ExtResource("3_prof")
 expand_mode = 1
@@ -296,8 +296,8 @@ stretch_mode = 5
 
 [node name="ProfessorLine" type="Label" parent="Control2/ProfessorPanel/ProfessorBox" unique_id=17807588]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
+theme_override_font_sizes/font_size = 13
 text = "Professor Vex: One lock. Three chances."
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -316,7 +316,7 @@ offset_right = -258.0
 offset_bottom = 306.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.141, 0.200, 0.259, 0.92)
+color = Color(0.141, 0.2, 0.259, 0.92)
 
 [node name="ClueNote" type="PanelContainer" parent="Control2" unique_id=897393730]
 layout_mode = 1
@@ -335,7 +335,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
 [node name="ClueText" type="Label" parent="Control2/ClueNote" unique_id=1462456245]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 12
 text = "CLUE NOTE
 Inspect to reveal."
@@ -371,7 +371,7 @@ offset_right = 260.0
 offset_bottom = 176.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.741, 0.765, 0.780, 1.0)
+theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
 theme_override_font_sizes/font_size = 14
 text = "Inspect the note or enter your response."
 horizontal_alignment = 1
@@ -390,7 +390,7 @@ offset_right = 20.0
 offset_bottom = 294.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.741, 0.765, 0.780, 1.0)
+color = Color(0.741, 0.765, 0.78, 1)
 
 [node name="Head" type="ColorRect" parent="Control2/PlayerMarker" unique_id=340203533]
 layout_mode = 1
@@ -405,7 +405,7 @@ offset_right = 12.0
 offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.925, 0.941, 0.945, 1.0)
+color = Color(0.925, 0.941, 0.945, 1)
 
 [node name="TerminalBase" type="ColorRect" parent="Control2" unique_id=1392974682]
 layout_mode = 1
@@ -414,10 +414,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 118.0
-offset_top = 118.0
-offset_right = 430.0
-offset_bottom = 314.0
+offset_left = 94.0
+offset_top = 88.0
+offset_right = 462.0
+offset_bottom = 332.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.055, 0.122, 0.102, 0.95)
@@ -429,10 +429,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 132.0
-offset_top = 86.0
-offset_right = 418.0
-offset_bottom = 262.0
+offset_left = 108.0
+offset_top = 58.0
+offset_right = 448.0
+offset_bottom = 306.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_terminal")
@@ -443,14 +443,14 @@ theme_override_constants/separation = 8
 
 [node name="TerminalHeader" type="Label" parent="Control2/TerminalPanel/TerminalVBox" unique_id=584170833]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1.0)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1)
+theme_override_font_sizes/font_size = 14
 text = "ACCESS TERMINAL"
 
 [node name="TerminalStatus" type="Label" parent="Control2/TerminalPanel/TerminalVBox" unique_id=1900380625]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.741, 0.765, 0.780, 1.0)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
+theme_override_font_sizes/font_size = 13
 text = "INPUT CHANNEL OPEN"
 
 [node name="TerminalButton" type="Button" parent="Control2/TerminalPanel/TerminalVBox" unique_id=314237687]
@@ -461,14 +461,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 
 [node name="TerminalInput" type="TextEdit" parent="Control2/TerminalPanel/TerminalVBox" unique_id=1428493482]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
-theme_override_colors/background_color = Color(0.141, 0.200, 0.259, 1.0)
+theme_override_colors/background_color = Color(0.141, 0.2, 0.259, 1)
 
 [node name="AnswerButton1" type="Button" parent="Control2/TerminalPanel/TerminalVBox" unique_id=2068668247]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1.0)
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
@@ -482,10 +482,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 320.0
-offset_top = -176.0
-offset_right = 472.0
-offset_bottom = 40.0
+offset_left = 300.0
+offset_top = -229.0
+offset_right = 452.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
@@ -556,7 +556,7 @@ offset_right = 260.0
 offset_bottom = 210.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
 theme_override_font_sizes/font_size = 12
 text = "Inspect the note or enter your response."
 horizontal_alignment = 1
@@ -569,13 +569,13 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = 220.0
+offset_top = 216.0
 offset_right = 340.0
-offset_bottom = 272.0
+offset_bottom = 284.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1.0)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
+theme_override_font_sizes/font_size = 17
 horizontal_alignment = 1
 autowrap_mode = 3
 

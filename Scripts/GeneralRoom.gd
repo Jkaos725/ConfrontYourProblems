@@ -208,7 +208,7 @@ func _load_current_room() -> void:
 	submit_button.modulate = Color(1, 1, 1, 1)
 	terminal_panel.modulate = Color(1, 1, 1, 0.95)
 	door_lock_light.color = Color("c53a2f")
-	doorway.color = Color(0.0470588, 0.0313726, 0.0156863, 1)
+	doorway.color = Color(0.055, 0.090, 0.122, 1.0)
 	door_panel.offset_top = door_closed_top
 	door_panel.offset_bottom = door_closed_bottom
 	door_label.modulate = Color(1, 1, 1, 1)
@@ -287,8 +287,8 @@ func _open_vault() -> void:
 	active_room_tween = create_tween()
 	active_room_tween.set_trans(Tween.TRANS_SINE)
 	active_room_tween.set_ease(Tween.EASE_OUT)
-	active_room_tween.parallel().tween_property(door, "color", Color(0.568627, 0.407843, 0.180392, 1), 0.25)
-	active_room_tween.parallel().tween_property(doorway, "color", Color(0.729412, 0.65098, 0.34902, 0.9), 0.25)
+	active_room_tween.parallel().tween_property(door, "color", Color(0.204, 0.596, 0.859, 1.0), 0.25)
+	active_room_tween.parallel().tween_property(doorway, "color", Color(0.102, 0.737, 0.612, 0.9), 0.25)
 	active_room_tween.parallel().tween_property(door_panel, "offset_top", -150.0, 0.8)
 	active_room_tween.parallel().tween_property(door_panel, "offset_bottom", -178.0, 0.8)
 	active_room_tween.parallel().tween_property(door_label, "modulate:a", 0.0, 0.4)
