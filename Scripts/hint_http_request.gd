@@ -32,24 +32,23 @@ var currentQuestion
 # This is never sent to the AI directly — only the banned word list is derived from it.
 var expectedAnswer := ""
 
-# Tracks whether the first hint has been filled in yet.
-var hintOne = false
-
-# Tracks whether the second hint has been filled in yet.
-var hintTwo = false
-
 # The three hint buttons in the scene — exported so they can be assigned in the editor.
 @export var Hint1 : Button
 @export var Hint2 : Button
 @export var Hint3 : Button
 
+# Tracks which hint button started the current request so the response can be
+# written back to the exact clue the player selected.
+var pending_hint_button: Button = null
+var pending_hint_level: int = 1
+
 
 # Connects all three hint buttons to the shared _on_button_pressed handler
 # and loads the Groq API key from the config file.
 func _ready() -> void:
-	Hint1.pressed.connect(_on_button_pressed)
-	Hint2.pressed.connect(_on_button_pressed)
-	Hint3.pressed.connect(_on_button_pressed)
+	Hint1.pressed.connect(_on_button_pressed.bind(Hint1, 1))
+	Hint2.pressed.connect(_on_button_pressed.bind(Hint2, 2))
+	Hint3.pressed.connect(_on_button_pressed.bind(Hint3, 3))
 
 	var config = ConfigFile.new()
 	var err = config.load("res://config.cfg")
@@ -67,7 +66,7 @@ func _process(delta: float) -> void:
 
 # Handles the completed HTTP response from the Groq API.
 # Parses the JSON, extracts the hint text, sanitizes it,
-# and fills the next available hint button in order (Hint1 → Hint2 → Hint3).
+# and writes it back to the exact clue button the player clicked.
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	if response_code == 200:
 		var json = JSON.new()
@@ -78,21 +77,19 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 			if response is Dictionary and response.has("choices"):
 				var content: String = _sanitize_hint_text(str(response["choices"][0]["message"]["content"]))
 				print("Response: ", content)
-				if hintTwo:
-					# Both earlier hints are filled — this response goes to Hint3.
-					Hint3.text = content
-				elif hintOne:
-					# First hint exists — fill Hint2 and mark hintTwo as used.
-					Hint2.text = content
-					hintTwo = true
-				else:
-					# No hints yet — fill Hint1 and mark hintOne as used.
-					Hint1.text = content
-					hintOne = true
+				if pending_hint_button != null:
+					pending_hint_button.text = content
+					pending_hint_button.disabled = true
+				pending_hint_button = null
+				pending_hint_level = 1
 		else:
 			print("JSON parse error")
 	else:
 		print("HTTP Error: ", response_code, " - ", body.get_string_from_utf8())
+		if pending_hint_button != null:
+			pending_hint_button.disabled = false
+		pending_hint_button = null
+		pending_hint_level = 1
 
 
 # Builds a banned-word list from the expected answer so the AI cannot
@@ -109,9 +106,11 @@ func _build_banned_words() -> String:
 
 
 # Fires when any of the three hint buttons is pressed.
-# Builds a context-aware prompt for the AI based on which hints have already been given,
+# Builds the requested hint depth from the clicked clue button,
 # then sends the request to the Groq API.
-func _on_button_pressed() -> void:
+func _on_button_pressed(button: Button, hint_level: int) -> void:
+	pending_hint_button = button
+	pending_hint_level = hint_level
 	var banned_words: String = _build_banned_words()
 
 	# Build the base system prompt with rules and banned words.
@@ -128,13 +127,18 @@ func _on_button_pressed() -> void:
 	prompt_text += "- Second hint: narrower conceptual guidance.\n"
 	prompt_text += "- Third hint: very close guidance without naming the answer.\n"
 
-	# Add context about prior hints so each new hint is meaningfully different.
-	if hintTwo:
-		prompt_text += "\nPrior hints already given:\n- %s\n- %s\n" % [Hint1.text, Hint2.text]
-		prompt_text += "Give the third hint (closest, still no answer).\n"
-	elif hintOne:
-		prompt_text += "\nPrior hint already given:\n- %s\n" % Hint1.text
-		prompt_text += "Give the second hint (narrower than the first).\n"
+	var prior_hints: Array[String] = []
+	if hint_level > 1 and _button_has_real_hint(Hint1):
+		prior_hints.append(Hint1.text)
+	if hint_level > 2 and _button_has_real_hint(Hint2):
+		prior_hints.append(Hint2.text)
+	if prior_hints.size() > 0:
+		prompt_text += "\nEarlier hints already shown:\n- %s\n" % "\n- ".join(prior_hints)
+
+	if hint_level == 3:
+		prompt_text += "\nGive the third hint (closest, still no answer).\n"
+	elif hint_level == 2:
+		prompt_text += "\nGive the second hint (narrower than the first).\n"
 	else:
 		prompt_text += "\nGive the first hint (broad conceptual nudge).\n"
 
@@ -156,6 +160,13 @@ func _on_button_pressed() -> void:
 # Unused handler — kept as a stub in case answer button logic is added here later.
 func _on_answer_button():
 	pass
+
+
+func _button_has_real_hint(button: Button) -> bool:
+	if button == null:
+		return false
+	var text_value: String = button.text.strip_edges()
+	return text_value != "" and not text_value.begins_with("Clue ") and text_value != "Clue Ready"
 
 
 # Cleans up the raw AI response to ensure it is safe to show as a hint.
