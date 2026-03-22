@@ -6,6 +6,7 @@ var client
 var connected = false
 
 var currentQuestion
+var expectedAnswer := ""
 
 var hintOne = false
 var hintTwo = false
@@ -42,7 +43,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		if parse_result == OK:
 			var response = json.get_data()
 			if response is Dictionary and response.has("choices"):
-				var content = response["choices"][0]["message"]["content"]
+				var content: String = _sanitize_hint_text(str(response["choices"][0]["message"]["content"]))
 				print("Response: ", content)
 				if hintTwo:
 					Hint3.text = content
@@ -60,30 +61,35 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 
 
 func _on_button_pressed() -> void:
-	var prompt_text = "You are a teacher helping a student.
-	Do not give them the answer!!!
-	Only give them hints!
-	Make sure to give the answer in 60 characters or less.
-	Make sure the hint is only included. Do not include anything else.
-	They are having problems trying to solve this homework\n"
+	var prompt_text = "You are helping a student in an escape-room study game.\n"
+	prompt_text += "Question: %s\n" % str(currentQuestion)
+	prompt_text += "Expected answer or key idea: %s\n" % str(expectedAnswer)
+	prompt_text += "Rules:\n"
+	prompt_text += "- Return only one hint line.\n"
+	prompt_text += "- Never reveal the final answer or any answer choice.\n"
+	prompt_text += "- Never use the exact expected answer or a direct synonym of it.\n"
+	prompt_text += "- Never mention the book, author, chapter, intro, preface, publisher, or tell the user to read the book or notes.\n"
+	prompt_text += "- Keep it under 55 characters.\n"
+	prompt_text += "- Base the hint on the core concept, not book metadata.\n"
+	prompt_text += "- First hint: broad conceptual nudge.\n"
+	prompt_text += "- Second hint: narrower conceptual guidance.\n"
+	prompt_text += "- Third hint: very close guidance without naming the answer.\n"
+	prompt_text += "- Good hints mention properties, behavior, or relationships.\n"
 	
-	if hintOne:
-		prompt_text += "You have already given a hint so far: " + Hint1.text + "\n"
-		prompt_text += "What is the second hint?\n"
-	else:
-		prompt_text += " Give them the first step in the right direction for this problem: "
-		
 	if hintTwo:
-		prompt_text += "You have given this hint as well: " + Hint2.text + "\n"
-		prompt_text += "What is the thrid hint?\n"
-	
-	prompt_text += currentQuestion
+		prompt_text += "Prior hints:\n- %s\n- %s\n" % [Hint1.text, Hint2.text]
+		prompt_text += "Give the third hint.\n"
+	elif hintOne:
+		prompt_text += "Prior hint:\n- %s\n" % Hint1.text
+		prompt_text += "Give the second hint.\n"
+	else:
+		prompt_text += "Give the first hint.\n"
 	
 	var body = JSON.stringify({
 		"model": "llama-3.3-70b-versatile",
 		"messages": [{"role": "user", "content": prompt_text}],
 		"max_tokens": 40,
-		"temperature": 0.5
+		"temperature": 0.2
 	})
 	
 	var headers = ["Content-Type: application/json", "Authorization: Bearer " + groq_api_key]
@@ -95,3 +101,39 @@ func _on_button_pressed() -> void:
 
 func _on_answer_button():
 	pass
+
+
+func _sanitize_hint_text(raw_text: String) -> String:
+	var cleaned: String = raw_text.strip_edges().replace("\"", "")
+	if cleaned.contains("\n"):
+		cleaned = cleaned.split("\n")[0].strip_edges()
+
+	var banned_phrases: Array[String] = [
+		"read the book",
+		"read the notes",
+		"check the book",
+		"check the notes",
+		"read the chapter",
+		"check the chapter",
+		"check the intro",
+		"book intro",
+		"author",
+		"publisher",
+		"preface"
+	]
+	var lowered: String = cleaned.to_lower()
+	for phrase in banned_phrases:
+		if lowered.contains(phrase):
+			return "Focus on the core idea, not the source text."
+
+	var expected_lower: String = expectedAnswer.to_lower().strip_edges()
+	if not expected_lower.is_empty() and lowered.contains(expected_lower):
+		return "Focus on what the concept does."
+
+	if cleaned.length() > 60:
+		cleaned = cleaned.substr(0, 60).strip_edges()
+
+	if cleaned.is_empty():
+		return "Focus on the key concept."
+
+	return cleaned

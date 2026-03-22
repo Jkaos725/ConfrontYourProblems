@@ -72,7 +72,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Hale",
-		"portrait": "res://Images/enutralface.png",
+		"portrait": "res://Images/neutralface.png",
 		"intro": [
 			"Take your time and read the clue carefully.",
 			"This room rewards steady thinking.",
@@ -106,7 +106,7 @@ var professors := [
 	},
 	{
 		"name": "Professor Mira",
-		"portrait": "res://Images/first.png",
+		"portrait": "res://Images/happyface.png",
 		"intro": [
 			"You can do this. Start with the clue in front of you.",
 			"Take a breath. One careful answer opens the way.",
