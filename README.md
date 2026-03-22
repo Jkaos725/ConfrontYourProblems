@@ -19,7 +19,9 @@ A lot of college study tools feel repetitive, passive, or boring. Students often
 
 ## Solution
 
-This project turns studying into an escape-room experience supported by AI. Players move through challenges by solving clues and responding to educational prompts. The game can use built-in content or generate new room content from uploaded notes with AI support.
+This project turns studying into an escape-room experience supported by AI. Players move through challenges by solving clues and responding to educational prompts. The game generates room content from uploaded notes using AI.
+
+At the moment, uploaded notes are supported as **`.txt` files only**.
 
 This makes studying more interactive while still keeping the educational goal at the center.
 
@@ -27,13 +29,11 @@ This makes studying more interactive while still keeping the educational goal at
 
 - Escape-room style progression
 - AI-supported study flow
-- Built-in challenge content
-- Uploaded notes support
+- `.txt` file upload support
 - Multiple room interactions
 - Clue and response system
 - Professor-based game flavor
 - Godot-based game interface
-- Hosted version available through Vercel
 
 ## Why This Is Innovative
 
@@ -63,7 +63,7 @@ The project is designed so users can:
 
 - start from a main menu
 - choose a challenge path
-- use built-in content or uploaded notes
+- upload notes as `.txt` files
 - interact with clues and response areas
 - progress through rooms as they solve challenges
 
@@ -72,8 +72,7 @@ The goal was to make the experience clearer, more interactive, and more game-lik
 ## Implementation
 
 The project was built in **Godot** using **GDScript**.  
-AI-supported features use the **Groq API**.  
-The project is also hosted on **Vercel**.
+AI-supported features use the **Groq API**.
 
 We chose Godot because it was familiar for development, and GDScript has syntax similar to Python, which made collaboration easier.
 
@@ -82,11 +81,15 @@ We chose Godot because it was familiar for development, and GDScript has syntax 
 - Godot Engine
 - GDScript
 - Groq API
-- Vercel
 
 ## How to Run the Code
 
-The base code was made in **Godot**.
+### Option 1: Run via Releases (Recommended)
+
+Go to the **Releases** section of this GitHub repository and download the exported build for your system.  
+Run the executable directly.
+
+### Option 2: Run in Godot
 
 You can run and view the project on desktop from here:  
 https://godotengine.org/
