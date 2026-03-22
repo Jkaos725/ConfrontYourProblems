@@ -1,6 +1,6 @@
 ================================================================================
-                    CONFRONT YOUR PROBLEMS
-                    Game Documentation
+					CONFRONT YOUR PROBLEMS
+					Game Documentation
 ================================================================================
 
 TABLE OF CONTENTS
@@ -380,8 +380,8 @@ IMAGES (Images/)
 - angryBot.png: Professor Vex portrait
 - neutralface.png: Professor Hale portrait
 - happyface.png: Professor Mira portrait
-- cogwheel icons: Theme toggle buttons
+- lightbulb icons: Theme toggle buttons
 
 ================================================================================
-                              END OF DOCUMENTATION
+							  END OF DOCUMENTATION
 ================================================================================
