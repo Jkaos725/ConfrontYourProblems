@@ -535,15 +535,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = 150.0
-offset_right = 260.0
-offset_bottom = 176.0
+offset_left = -232.0
+offset_top = 167.0
+offset_right = 248.0
+offset_bottom = 193.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
 theme_override_font_sizes/font_size = 14
-text = "Inspect the note or answer below."
+text = "Inspect the note"
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -714,24 +714,6 @@ timePercentage = 40
 [node name="Timer" type="Timer" parent="Control2/HintRack/HintCard3/Hint3" unique_id=759245328]
 autostart = true
 
-[node name="RoomPrompt" type="Label" parent="Control2" unique_id=926873282]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = 184.0
-offset_right = 260.0
-offset_bottom = 210.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
-theme_override_font_sizes/font_size = 12
-text = "Inspect the note or answer below."
-horizontal_alignment = 1
-
 [node name="HintLabel" type="Label" parent="Control2" unique_id=723163797]
 layout_mode = 1
 anchors_preset = 8
@@ -739,10 +721,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = 216.0
-offset_right = 340.0
-offset_bottom = 284.0
+offset_left = -93.0
+offset_top = 91.0
+offset_right = 93.0
+offset_bottom = 159.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)

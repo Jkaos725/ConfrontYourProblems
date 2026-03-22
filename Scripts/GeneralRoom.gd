@@ -55,7 +55,6 @@ enum RoomPhase {
 @onready var terminal_input: TextEdit = $Control2/TerminalPanel/TerminalVBox/TerminalInput
 @onready var submit_button: Button = $Control2/TerminalPanel/TerminalVBox/AnswerButton1
 @onready var status_label: Label = $Control2/StatusLabel
-@onready var room_prompt: Label = $Control2/RoomPrompt
 @onready var hint_label: Label = $Control2/HintLabel
 @onready var keypad_display: Label = $Control2/KeypadPanel/KeypadVBox/KeypadDisplay
 @onready var code_display: Label = $Control2/KeypadPanel/KeypadVBox/CodeDisplay
@@ -274,7 +273,6 @@ func _load_current_room() -> void:
 	$Control2/ProfessorPanel.modulate.a = 0.0
 	clue_text.text = "CLUE NOTE\nInspect to reveal."
 	status_label.text = ""
-	room_prompt.text = "Inspect the note or answer below."
 	hint_label.text = ""
 	terminal_status.text = "Type your answer below."
 	terminal_button.visible = false
@@ -309,7 +307,6 @@ func _on_clue_note_pressed() -> void:
 		return
 	clue_text.text = _format_clue_text(currentQuestion)
 	status_label.text = "Clue found."
-	room_prompt.text = "Answer below."
 	_speak(_professor_line("hint"))
 	terminal_input.grab_focus()
 
@@ -324,10 +321,9 @@ func handle_answer_correct() -> void:
 	keypad_input = ""
 	_refresh_code_display()
 	status_label.text = "Code revealed: %s" % keypad_code
-	room_prompt.text = "Enter the code."
+	terminal_status.text = "Code revealed: %s" % keypad_code
 	hint_label.text = ""
 	_speak(_professor_line("success"))
-	terminal_status.text = "Code revealed."
 	door_lock_light.color = Color("6fdc74")
 	_play_sound(correct_player)
 	keypad_display.text = "READY"
@@ -341,7 +337,6 @@ func handle_answer_wrong(hint: String) -> void:
 	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
 		return
 	status_label.text = "Try again."
-	room_prompt.text = "Try again."
 	hint_label.text = "Room clue: %s" % hint
 	_speak(_professor_line("wrong"))
 	door_lock_light.color = Color("d14a3a")
@@ -399,7 +394,6 @@ func _on_keypad_enter_pressed() -> void:
 	room_phase = RoomPhase.TRANSITIONING
 	keypad_display.text = "OPEN"
 	status_label.text = "Path opened."
-	room_prompt.text = "Entering..."
 	_play_transition_sound()
 	_open_vault()
 	_advance_after_delay()
@@ -419,7 +413,6 @@ func on_timer_timeout() -> void:
 			status_label.text = "Time up. Answer unavailable."
 		else:
 			status_label.text = "Time up. Answer: %s" % expectedAnswer
-		room_prompt.text = "The chamber seals shut."
 		hint_label.text = ""
 		terminal_input.editable = false
 		submit_button.disabled = true
@@ -481,7 +474,6 @@ func _advance_after_delay() -> void:
 # Called when the player clears the final room in the session.
 func _show_victory_and_return() -> void:
 	status_label.text = "Trial complete."
-	room_prompt.text = "Every chamber cleared."
 	await get_tree().create_timer(1.2).timeout
 	countdown_timer.stop()
 	Global.index = 0
