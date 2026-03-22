@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 @onready var overlay:      ColorRect    = $Overlay
+@onready var panel: PanelContainer = $Overlay/Center/Panel
 @onready var panel:        PanelContainer = $Overlay/Center/Panel
 @onready var title_lbl:    Label        = $Overlay/Center/Panel/Margin/VBox/TitleRow/Title
 @onready var close_btn:    Button       = $Overlay/Center/Panel/Margin/VBox/TitleRow/CloseButton
@@ -19,6 +20,7 @@ func _ready() -> void:
 	sfx_toggle.set_block_signals(true)
 	sfx_slider.set_block_signals(true)
 	hide()
+	_sync_from_audio_manager()
 	music_toggle.set_block_signals(false)
 	music_slider.set_block_signals(false)
 	sfx_toggle.set_block_signals(false)

@@ -19,14 +19,14 @@ func _ready() -> void:
 func _ensure_buses() -> void:
 	if AudioServer.get_bus_index(MUSIC_BUS) == -1:
 		AudioServer.add_bus()
-		var idx := AudioServer.bus_count - 1
-		AudioServer.set_bus_name(idx, MUSIC_BUS)
-		AudioServer.set_bus_send(idx, "Master")
+		var music_idx := AudioServer.bus_count - 1
+		AudioServer.set_bus_name(music_idx, MUSIC_BUS)
+		AudioServer.set_bus_send(music_idx, "Master")
 	if AudioServer.get_bus_index(SFX_BUS) == -1:
 		AudioServer.add_bus()
-		var idx := AudioServer.bus_count - 1
-		AudioServer.set_bus_name(idx, SFX_BUS)
-		AudioServer.set_bus_send(idx, "Master")
+		var sfx_idx := AudioServer.bus_count - 1
+		AudioServer.set_bus_name(sfx_idx, SFX_BUS)
+		AudioServer.set_bus_send(sfx_idx, "Master")
 
 
 func set_music_volume(value: float) -> void:
@@ -57,14 +57,14 @@ func _apply_settings() -> void:
 	var music_idx := AudioServer.get_bus_index(MUSIC_BUS)
 	if music_idx != -1:
 		AudioServer.set_bus_mute(music_idx, music_muted)
-		var db := linear_to_db(music_volume) if music_volume > 0.0 else -80.0
-		AudioServer.set_bus_volume_db(music_idx, db)
+		var music_db := linear_to_db(music_volume) if music_volume > 0.0 else -80.0
+		AudioServer.set_bus_volume_db(music_idx, music_db)
 
 	var sfx_idx := AudioServer.get_bus_index(SFX_BUS)
 	if sfx_idx != -1:
 		AudioServer.set_bus_mute(sfx_idx, sfx_muted)
-		var db := linear_to_db(sfx_volume) if sfx_volume > 0.0 else -80.0
-		AudioServer.set_bus_volume_db(sfx_idx, db)
+		var sfx_db := linear_to_db(sfx_volume) if sfx_volume > 0.0 else -80.0
+		AudioServer.set_bus_volume_db(sfx_idx, sfx_db)
 
 
 func _save_settings() -> void:
@@ -79,7 +79,7 @@ func _save_settings() -> void:
 func _load_settings() -> void:
 	var config := ConfigFile.new()
 	if config.load(SAVE_PATH) == OK:
-		music_volume = config.get_value("audio", "music_volume", 1.0)
-		sfx_volume = config.get_value("audio", "sfx_volume", 1.0)
-		music_muted = config.get_value("audio", "music_muted", false)
-		sfx_muted = config.get_value("audio", "sfx_muted", false)
+		music_volume = float(config.get_value("audio", "music_volume", 1.0))
+		sfx_volume = float(config.get_value("audio", "sfx_volume", 1.0))
+		music_muted = bool(config.get_value("audio", "music_muted", false))
+		sfx_muted = bool(config.get_value("audio", "sfx_muted", false))

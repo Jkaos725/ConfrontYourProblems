@@ -1,9 +1,5 @@
 extends HTTPRequest
 
-signal answer_graded_correct(is_final_room: bool)
-signal answer_graded_wrong
-signal ready_to_advance(next_scene: String)
-
 var groq_url = "https://api.groq.com/openai/v1/chat/completions"
 var groq_api_key = ""
 
@@ -56,22 +52,26 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 	if _waiting_for_grade:
 		_waiting_for_grade = false
 		if content == "1":
-			var is_final: bool = Global.index >= Global.rooms.size() - 1
-			answer_graded_correct.emit(is_final)
-			if is_final:
+			var room_controller: Node = get_parent()
+			if room_controller != null and room_controller.has_method("handle_answer_correct"):
+				room_controller.handle_answer_correct()
+			elif Global.index >= Global.rooms.size() - 1:
 				_show_end_overlay("Victory!\nYou escaped every room.", "res://Scenes/main.tscn", false)
 			else:
 				_show_end_overlay("Victory!\nThe next room opens.", pathToNextScene, true)
 		else:
-			answer_graded_wrong.emit()
 			# Grade came back wrong — ask for a hint in a separate call that
 			# does NOT include the expected answer, so it can't be leaked.
 			_send_hint_request()
 	else:
 		# This is the hint response.
 		var hint: String = content if not content.is_empty() else "Think about the core concept."
-		feedBackPrompt.visible = true
-		feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % hint
+		var room_controller: Node = get_parent()
+		if room_controller != null and room_controller.has_method("handle_answer_wrong"):
+			room_controller.handle_answer_wrong(hint)
+		else:
+			feedBackPrompt.visible = true
+			feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % hint
 
 
 func _build_grade_prompt(student_answer: String) -> String:
@@ -132,7 +132,7 @@ func _send_hint_request() -> void:
 
 
 func _submit_answer() -> void:
-	var student_answer: String = $"../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control/TextEdit".text.strip_edges()
+	var student_answer: String = $"../Control2/TerminalPanel/TerminalVBox/TerminalInput".text.strip_edges()
 	_last_student_answer = student_answer
 	_waiting_for_grade = true
 	_send_request(_build_grade_prompt(student_answer), 5)
@@ -146,8 +146,13 @@ func _show_end_overlay(message: String, next_scene: String, advance_index: bool)
 	else:
 		Global.index = 0
 		Global.rooms.clear()
-		Global.globalTime = Global.selected_hint_time
-	ready_to_advance.emit(next_scene)
+		Global.globalTime = 180
+	_transition_after_delay(next_scene)
+
+
+func _transition_after_delay(next_scene: String) -> void:
+	await get_tree().create_timer(1.4).timeout
+	get_tree().change_scene_to_file(next_scene)
 
 
 func _on_button_pressed() -> void:

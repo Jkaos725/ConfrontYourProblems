@@ -1,194 +1,174 @@
 extends Node2D
 
-const CLICK_SOUND_PATH := "res://Audio/New Sounds/Random Sound/skyscraper_seven-click-buttons-ui-menu-sounds-effects-button-13-205396.mp3"
 const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
 const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
-const UNLOCK_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
-const WIN_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
-const LOSE_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
-
+const LEVEL_TRANSITION_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
 const BACKGROUND_MUSIC_PATH := "res://Audio/New Sounds/Background music/Background.mp3"
 
-@export var currentQuestion = "What is the derivative of sin(x)x^2"
-@export var expectedAnswer = ""
-@onready var professor_line: Label = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorLine
-@onready var professor_portrait: TextureRect = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorPortrait
-@onready var professor_panel: PanelContainer = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel
-@onready var question_card: PanelContainer = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard
+enum RoomPhase {
+	LOCKED,
+	CLUE_DISCOVERED,
+	ACCESS_GRANTED,
+	TRANSITIONING
+}
 
-@onready var click_player: AudioStreamPlayer = $ClickPlayer
-@onready var correct_player: AudioStreamPlayer = $CorrectPlayer
-@onready var wrong_player: AudioStreamPlayer = $WrongPlayer
-@onready var unlock_player: AudioStreamPlayer = $UnlockPlayer
-@onready var win_player: AudioStreamPlayer = $WinPlayer
-@onready var lose_player: AudioStreamPlayer = $LosePlayer
+@export var currentQuestion: String = "What does this chamber require?"
+@export var expectedAnswer: String = ""
 
-var end_state_triggered := false
-var _typewriter_label: Label
-var _idle_tween: Tween = null
-var _speak_tween: Tween = null
-var _pending_scene: String = ""
+@onready var meta_label: Label = $Control2/MetaLabel
+@onready var professor_line: Label = $Control2/ProfessorPanel/ProfessorBox/ProfessorLine
+@onready var professor_portrait: TextureRect = $Control2/ProfessorPanel/ProfessorBox/ProfessorPortrait
+@onready var question_desk: ColorRect = $Control2/Desk
+@onready var clue_note: PanelContainer = $Control2/ClueNote
+@onready var clue_text: Label = $Control2/ClueNote/ClueText
+@onready var clue_note_button: Button = $Control2/ClueNoteButton
+@onready var terminal_base: ColorRect = $Control2/TerminalBase
+@onready var terminal_panel: PanelContainer = $Control2/TerminalPanel
+@onready var terminal_status: Label = $Control2/TerminalPanel/TerminalVBox/TerminalStatus
+@onready var terminal_button: Button = $Control2/TerminalPanel/TerminalVBox/TerminalButton
+@onready var terminal_input: TextEdit = $Control2/TerminalPanel/TerminalVBox/TerminalInput
+@onready var submit_button: Button = $Control2/TerminalPanel/TerminalVBox/AnswerButton1
+@onready var status_label: Label = $Control2/StatusLabel
+@onready var room_prompt: Label = $Control2/RoomPrompt
+@onready var hint_label: Label = $Control2/HintLabel
+@onready var door: ColorRect = $Control2/Door
+@onready var doorway: ColorRect = $Control2/Door/Doorway
+@onready var door_panel: ColorRect = $Control2/Door/DoorPanel
+@onready var door_label: Label = $Control2/Door/DoorLabel
+@onready var door_lock_light: ColorRect = $Control2/Door/DoorLockLight
+@onready var player_marker: ColorRect = $Control2/PlayerMarker
+@onready var timer_label: Label = $Control2/TimerLabel
+@onready var countdown_timer: Timer = $Control2/CountdownTimer
+
 var background_music_player: AudioStreamPlayer
+var correct_player: AudioStreamPlayer
+var wrong_player: AudioStreamPlayer
+var transition_player: AudioStreamPlayer
 
+var room_phase := RoomPhase.LOCKED
+var end_state_triggered := false
 var current_professor: Dictionary = {}
+var player_start_position := Vector2.ZERO
+var player_exit_position := Vector2.ZERO
+var active_room_tween: Tween
+var door_closed_top := 14.0
+var door_closed_bottom := -14.0
+
 var professors := [
 	{
 		"name": "Professor Vex",
 		"portrait": "res://Images/angryBot.png",
 		"intro": [
-			"Answer correctly and I may let you pass.",
-			"One lock. One clue. Do not embarrass yourself.",
-			"The door listens only to sharp minds.",
-			"Solve it quickly, or remain in my hall.",
-			"I have no patience for dawdling. Answer.",
-			"The mechanism is simple. Observe before you act.",
-			"Every second you hesitate disappoints me further."
+			"Release the right lock and the path will open.",
+			"One clue. One console. Do not waste either.",
+			"This chamber yields only to a sharp mind."
 		],
 		"wrong": [
-			"Wrong. Look closer.",
-			"No. Think before you touch the lock.",
-			"Careless. Try again.",
-			"That is not the mechanism I asked for.",
-			"Predictable. Try harder.",
-			"That answer was an insult to the lock.",
-			"I expected better. I should not have."
+			"Access denied. Think harder.",
+			"That input does not fit the lock.",
+			"The chamber rejects that response."
 		],
 		"hint": [
-			"I will offer one clue. Do not waste it.",
-			"Very well. Here is your hint.",
-			"A small clue, nothing more.",
-			"Even now I am being generous.",
-			"I will not repeat myself.",
-			"Use it wisely. I have nothing more to give.",
-			"One clue. That is all your incompetence has earned."
+			"I will offer one clue. Use it well.",
+			"Very well. Here is your room clue.",
+			"A narrow clue. Nothing more."
 		],
 		"success": [
 			"Hm. Acceptable.",
-			"You may proceed.",
-			"Better. The next chamber awaits.",
-			"Correct. Move before I change my mind.",
-			"Finally.",
-			"I was beginning to lose hope.",
-			"Do not let it go to your head."
+			"Access granted. Move on.",
+			"The lock releases. Do not linger."
 		],
 		"defeat": [
-			"Then remain here with your mistakes.",
-			"The hall closes on the unprepared.",
+			"The chamber closes on the unprepared.",
 			"You were not ready for this trial.",
-			"The chamber keeps what it defeats.",
-			"Time rewards the prepared. You were not.",
-			"This is what complacency earns.",
-			"The door has made its judgment."
+			"The hall keeps what it defeats."
 		]
 	},
 	{
 		"name": "Professor Hale",
-		"portrait": "res://Images/enutralface.png",
+		"portrait": "res://Images/neutralface.png",
 		"intro": [
-			"Take your time and read the clue carefully.",
-			"This room rewards steady thinking.",
-			"The right answer is here if you follow the pattern.",
-			"Stay calm. The door will open for the prepared.",
-			"Check the details before committing to an answer.",
-			"Approach this systematically and you will find the way.",
-			"Every clue in this room has a purpose. Use them."
+			"Study the clue. Then use the terminal.",
+			"The right response is already in the room.",
+			"Steady thinking will open this chamber."
 		],
 		"wrong": [
-			"Not quite. Try another angle.",
-			"Close reading will help here.",
-			"That choice does not fit. Try again.",
-			"Almost. Focus on the key idea.",
-			"Reread the clue before trying again.",
-			"The answer is here. Keep narrowing it down.",
-			"A step in the wrong direction. Adjust and try again."
+			"Not quite. Try another input.",
+			"That response does not match the clue.",
+			"Close. Refine the idea."
 		],
 		"hint": [
+			"Use the strongest idea in the clue.",
 			"Here is a nudge in the right direction.",
-			"Use the clue, not your first guess.",
-			"Look for the strongest match.",
-			"Think about what the room is really asking.",
-			"Consider the relationship between the key terms.",
-			"The pattern becomes clear when you slow down.",
-			"A small detail in the question points the way."
+			"Focus on the concept, not the wording."
 		],
 		"success": [
-			"Good. Keep going.",
-			"Nicely reasoned.",
-			"That opened it. Onward.",
-			"Well done. The next chamber is ready.",
-			"Confirmed. Move to the next stage.",
-			"Logical. Well executed.",
-			"That is how it is done."
+			"Good. The path is opening.",
+			"Well reasoned.",
+			"That opened it. Continue."
 		],
 		"defeat": [
-			"You ran out of time, but the lesson is still there.",
-			"This round is over. Return when you are ready.",
-			"The room wins for now.",
-			"You will get another chance.",
-			"Time expired. Review the material and return.",
-			"Note what slowed you down and address it.",
-			"A neutral outcome. There is always another attempt."
+			"This round is over. Return when ready.",
+			"The chamber wins for now.",
+			"You will get another chance."
 		]
 	},
 	{
 		"name": "Professor Mira",
-		"portrait": "res://Images/first.png",
+		"portrait": "res://Images/happyface.png",
 		"intro": [
-			"You can do this. Start with the clue in front of you.",
-			"Take a breath. One careful answer opens the way.",
-			"The exit is closer than it looks.",
-			"Trust what you know and move step by step.",
-			"You have everything you need. Trust yourself.",
-			"Start with what you know and build from there.",
-			"This room is solvable. I believe in you."
+			"You can do this. Start with the note.",
+			"One careful response opens the way.",
+			"Take a breath. The clue will guide you."
 		],
 		"wrong": [
 			"Not this one. Try again.",
-			"That was a good attempt. Look once more.",
-			"Keep going. The right answer is near.",
-			"Almost there. Read the clue again.",
-			"That is okay. Take another look.",
-			"You are closer than you think. Try once more.",
-			"Do not worry. The right answer is within reach."
+			"That was close. Read the clue once more.",
+			"Keep going. The right response is near."
 		],
 		"hint": [
 			"Here is a clue to help you forward.",
 			"Look for the concept that fits best.",
-			"Use the strongest keyword in the clue.",
-			"You already have what you need.",
-			"This should point you in the right direction.",
-			"Take your time with this one.",
-			"A gentle nudge — you are almost there."
+			"You already have what you need."
 		],
 		"success": [
 			"Nice work. The door is opening.",
 			"Yes, that was it.",
-			"Great job. Keep moving.",
-			"You solved it beautifully.",
-			"I knew you could do it.",
-			"That is the one. Well done.",
-			"Wonderful. The next room is waiting for you."
+			"Great job. Keep moving."
 		],
 		"defeat": [
 			"It is okay. Try again from the start.",
 			"This room can be beaten next time.",
-			"You made progress. Come back stronger.",
-			"The trial ends here, but not your journey.",
-			"That is alright. Every attempt teaches something.",
-			"You gave it your best. Come back ready.",
-			"The room stopped you today. Not forever."
+			"The trial ends here, but not your progress."
 		]
 	}
 ]
 
+
 func _ready() -> void:
-	_configure_audio_players()
+	_configure_audio()
+	if not countdown_timer.timeout.is_connected(on_timer_timeout):
+		countdown_timer.timeout.connect(on_timer_timeout)
+	countdown_timer.wait_time = 1.0
+	countdown_timer.one_shot = false
+	countdown_timer.start()
+	player_start_position = player_marker.position
+	player_exit_position = Vector2(door.position.x + (door.size.x * 0.5) - (player_marker.size.x * 0.35), door.position.y + 110.0)
+	clue_note_button.pressed.connect(_on_clue_note_pressed)
+	_load_room_data()
+	_load_current_room()
+	_play_entrance_animation()
 
-	_configure_background_music()
-	var timer = get_tree().get_first_node_in_group("GlobalTimer")
-	if timer != null:
-		timer.timeout.connect(on_timer_timeout)
 
+func _process(_delta: float) -> void:
+	meta_label.text = "Chamber %d/%d   Trial Timer %s" % [
+		Global.index + 1,
+		max(Global.rooms.size(), 1),
+		_format_trial_time(Global.globalTime)
+	]
+
+
+func _load_room_data() -> void:
 	if not Global.rooms.is_empty() and Global.index >= 0 and Global.index < Global.rooms.size():
 		var room: Dictionary = Global.rooms[Global.index]
 		currentQuestion = str(room.get("question", currentQuestion))
@@ -202,69 +182,187 @@ func _ready() -> void:
 			child.currentQuestion = currentQuestion
 		if "expectedAnswer" in child:
 			child.expectedAnswer = expectedAnswer
-		if child.name == "QuestionLabel" and "text" in child:
-			child.text = currentQuestion
-	$Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard/QuestionLabel.text = currentQuestion
 
-	$AnswerHTTPRequest.answer_graded_correct.connect(_on_answer_graded_correct)
-	$AnswerHTTPRequest.answer_graded_wrong.connect(_on_answer_graded_wrong)
-	$AnswerHTTPRequest.ready_to_advance.connect(_on_ready_to_advance)
-	$Control2/FeedBackPrompt/ContinueButton.pressed.connect(_on_continue_pressed)
 
-	var hint1 = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1
-	var hint2 = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2
-	var hint3 = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3
-	var answer_btn = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1
-	hint1.pressed.connect(func(): _play_with_random_pitch(click_player))
-	hint2.pressed.connect(func(): _play_with_random_pitch(click_player))
-	hint3.pressed.connect(func(): _play_with_random_pitch(click_player))
-	answer_btn.pressed.connect(func(): _play_with_random_pitch(click_player))
-
+func _load_current_room() -> void:
+	end_state_triggered = false
+	room_phase = RoomPhase.LOCKED
 	current_professor = _select_professor(Global.index)
-
-
-	professor_line.text = ""
 	_apply_professor_portrait()
-	_play_entrance_animation()
+	professor_line.text = _professor_line("intro")
+	clue_text.text = "CLUE NOTE\nInspect to reveal."
+	status_label.text = ""
+	room_prompt.text = "Inspect the note or enter your response."
+	hint_label.text = ""
+	terminal_status.text = "INPUT CHANNEL OPEN"
+	terminal_button.visible = false
+	terminal_button.disabled = true
+	terminal_input.text = ""
+	terminal_input.editable = true
+	terminal_input.modulate = Color(1, 1, 1, 1)
+	submit_button.disabled = false
+	submit_button.modulate = Color(1, 1, 1, 1)
+	terminal_panel.modulate = Color(1, 1, 1, 0.95)
+	door_lock_light.color = Color("c53a2f")
+	doorway.color = Color(0.0470588, 0.0313726, 0.0156863, 1)
+	door_panel.offset_top = door_closed_top
+	door_panel.offset_bottom = door_closed_bottom
+	door_label.modulate = Color(1, 1, 1, 1)
+	player_marker.position = player_start_position
+	player_marker.scale = Vector2.ONE
+	player_marker.modulate = Color(1, 1, 1, 1)
+	room_phase = RoomPhase.CLUE_DISCOVERED
 
 
+func _on_clue_note_pressed() -> void:
+	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
+		return
+	clue_text.text = _format_clue_text(currentQuestion)
+	status_label.text = "Clue found."
+	room_prompt.text = "Enter your response."
+	professor_line.text = _professor_line("hint")
+	terminal_input.grab_focus()
 
-func _process(_delta: float) -> void:
-	pass
+
+func handle_answer_correct() -> void:
+	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
+		return
+	room_phase = RoomPhase.ACCESS_GRANTED
+	status_label.text = "Access granted."
+	room_prompt.text = "Door unlocking..."
+	hint_label.text = ""
+	professor_line.text = _professor_line("success")
+	terminal_status.text = "ACCESS GRANTED"
+	terminal_input.editable = false
+	submit_button.disabled = true
+	door_lock_light.color = Color("6fdc74")
+	_play_sound(correct_player)
+	_play_transition_sound()
+	_open_vault()
+	_advance_after_delay()
+
+
+func handle_answer_wrong(hint: String) -> void:
+	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
+		return
+	status_label.text = "Access denied."
+	room_prompt.text = "Refine your response."
+	hint_label.text = "Room clue: %s" % hint
+	professor_line.text = _professor_line("wrong")
+	door_lock_light.color = Color("d14a3a")
+	_play_sound(wrong_player)
+	var flash_tween := create_tween()
+	flash_tween.tween_property(door_lock_light, "color", Color("c53a2f"), 0.25)
 
 
 func on_timer_timeout() -> void:
 	Global.globalTime -= 1
 	if Global.globalTime <= 0 and not end_state_triggered:
+		countdown_timer.stop()
 		end_state_triggered = true
-		_play_with_random_pitch(lose_player)
-		var timer = get_tree().get_first_node_in_group("GlobalTimer")
-		if timer != null:
-			timer.stop()
-		var feedback_prompt = get_node_or_null("Control2/FeedBackPrompt")
-		if feedback_prompt != null:
-			feedback_prompt.visible = true
-			professor_line.text = _professor_line("defeat")
-			feedback_prompt.textBox.text = "Defeat.\nTime ran out in the room."
+		professor_line.text = _professor_line("defeat")
+		status_label.text = "Lockdown."
+		room_prompt.text = "The chamber seals shut."
+		terminal_input.editable = false
+		submit_button.disabled = true
+		await get_tree().create_timer(1.6).timeout
 		_return_to_main_after_delay()
 
 
 func _return_to_main_after_delay() -> void:
-	await get_tree().create_timer(1.6).timeout
+	countdown_timer.stop()
 	Global.index = 0
 	Global.rooms.clear()
 	Global.globalTime = Global.selected_hint_time
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
-func _on_answer_button_mouse_entered() -> void:
-	var tween = create_tween()
-	tween.tween_property($AnswerHTTPRequest/AnswerButton, "scale", Vector2(1.1, 1.1), 0.01)
+func _open_vault() -> void:
+	if active_room_tween != null:
+		active_room_tween.kill()
+	active_room_tween = create_tween()
+	active_room_tween.set_trans(Tween.TRANS_SINE)
+	active_room_tween.set_ease(Tween.EASE_OUT)
+	active_room_tween.parallel().tween_property(door, "color", Color(0.568627, 0.407843, 0.180392, 1), 0.25)
+	active_room_tween.parallel().tween_property(doorway, "color", Color(0.729412, 0.65098, 0.34902, 0.9), 0.25)
+	active_room_tween.parallel().tween_property(door_panel, "offset_top", -150.0, 0.8)
+	active_room_tween.parallel().tween_property(door_panel, "offset_bottom", -178.0, 0.8)
+	active_room_tween.parallel().tween_property(door_label, "modulate:a", 0.0, 0.4)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 236.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 170.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", Vector2(player_start_position.x, 104.0), 0.22)
+	active_room_tween.tween_property(player_marker, "position", player_exit_position, 0.35)
+	active_room_tween.parallel().tween_property(player_marker, "scale", Vector2(0.42, 0.42), 0.32)
+	active_room_tween.parallel().tween_property(player_marker, "modulate:a", 0.25, 0.32)
 
 
-func _on_answer_button_mouse_exited() -> void:
-	var tween = create_tween()
-	tween.tween_property($AnswerHTTPRequest/AnswerButton, "scale", Vector2(1, 1), 0.01)
+func _advance_after_delay() -> void:
+	await get_tree().create_timer(1.9).timeout
+	if Global.rooms.is_empty() or Global.index >= Global.rooms.size() - 1:
+		_show_victory_and_return()
+		return
+	Global.index += 1
+	get_tree().change_scene_to_file("res://Scenes/Questionhints.tscn")
+
+
+func _show_victory_and_return() -> void:
+	status_label.text = "Trial complete."
+	room_prompt.text = "Every chamber cleared."
+	await get_tree().create_timer(1.2).timeout
+	countdown_timer.stop()
+	Global.index = 0
+	Global.rooms.clear()
+	Global.globalTime = Global.selected_hint_time
+	get_tree().change_scene_to_file("res://Scenes/main.tscn")
+
+
+func _configure_audio() -> void:
+	background_music_player = AudioStreamPlayer.new()
+	background_music_player.bus = "Music"
+	add_child(background_music_player)
+	var background_stream: Variant = load(BACKGROUND_MUSIC_PATH)
+	if background_stream is AudioStream:
+		background_music_player.stream = background_stream
+		if background_music_player.stream is AudioStreamMP3:
+			background_music_player.stream.loop = true
+		background_music_player.volume_db = -14.0
+		background_music_player.play()
+
+	correct_player = AudioStreamPlayer.new()
+	correct_player.bus = "SFX"
+	add_child(correct_player)
+	var correct_stream: Variant = load(CORRECT_SOUND_PATH)
+	if correct_stream is AudioStream:
+		correct_player.stream = correct_stream
+
+	wrong_player = AudioStreamPlayer.new()
+	wrong_player.bus = "SFX"
+	add_child(wrong_player)
+	var wrong_stream: Variant = load(WRONG_SOUND_PATH)
+	if wrong_stream is AudioStream:
+		wrong_player.stream = wrong_stream
+
+	transition_player = AudioStreamPlayer.new()
+	transition_player.bus = "SFX"
+	add_child(transition_player)
+	var transition_stream: Variant = load(LEVEL_TRANSITION_SOUND_PATH)
+	if transition_stream is AudioStream:
+		transition_player.stream = transition_stream
+
+
+func _play_entrance_animation() -> void:
+	var intro_tween := create_tween().set_parallel(true)
+	$Control2/ProfessorPanel.modulate.a = 0.0
+	$Control2/ProfessorPanel.position.x -= 18.0
+	clue_note.modulate.a = 0.0
+	terminal_panel.modulate.a = 0.0
+	door.modulate.a = 0.0
+	intro_tween.tween_property($Control2/ProfessorPanel, "modulate:a", 1.0, 0.4)
+	intro_tween.tween_property($Control2/ProfessorPanel, "position:x", $Control2/ProfessorPanel.position.x + 18.0, 0.4)
+	intro_tween.tween_property(clue_note, "modulate:a", 1.0, 0.5).set_delay(0.1)
+	intro_tween.tween_property(terminal_panel, "modulate:a", 0.45, 0.5).set_delay(0.15)
+	intro_tween.tween_property(door, "modulate:a", 1.0, 0.45)
+
 
 func _select_professor(room_index: int) -> Dictionary:
 	var selected_name := str(Global.selected_professor)
@@ -299,154 +397,27 @@ func _apply_professor_portrait() -> void:
 		professor_portrait.texture = texture
 
 
-func _play_entrance_animation() -> void:
-	var question_label = question_card.get_node("QuestionLabel")
-	var original_pos = question_card.position.y
-	question_card.modulate.a = 0
-	question_card.position.y -= 20
-	
-	var tween = create_tween().set_parallel(true)
-	tween.tween_property(question_card, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(question_card, "position:y", original_pos, 0.5).set_trans(Tween.TRANS_CUBIC)
-	
-	if question_label:
-		question_label.modulate.a = 0
-		tween.tween_property(question_label, "modulate:a", 1.0, 0.4).set_delay(0.2)
-	
-	var portrait_original_pos = professor_portrait.position.x
-	professor_portrait.modulate.a = 0
-	professor_portrait.position.x -= 30
-	tween.tween_property(professor_portrait, "modulate:a", 1.0, 0.4).set_delay(0.1)
-	tween.tween_property(professor_portrait, "position:x", portrait_original_pos, 0.4).set_delay(0.1).set_trans(Tween.TRANS_BACK)
-	
-	await get_tree().create_timer(0.5).timeout
-	_start_idle_bob()
-	_typewriter_text(professor_line, _professor_line("intro"), 0.03)
+func _play_transition_sound() -> void:
+	_play_sound(transition_player)
 
 
-func _start_idle_bob() -> void:
-	if _idle_tween:
-		_idle_tween.kill()
-	_idle_tween = create_tween().set_loops().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_idle_tween.tween_property(professor_portrait, "rotation_degrees", 1.5, 1.2)
-	_idle_tween.tween_property(professor_portrait, "rotation_degrees", -1.5, 1.2)
+func _play_sound(player: AudioStreamPlayer) -> void:
+	if player == null or player.stream == null:
+		return
+	player.stop()
+	player.pitch_scale = randf_range(0.95, 1.05)
+	player.play()
 
 
-func _start_speak_shake() -> void:
-	if _idle_tween:
-		_idle_tween.kill()
-		_idle_tween = null
-	if _speak_tween:
-		_speak_tween.kill()
-	_speak_tween = create_tween().set_loops()
-	_speak_tween.tween_property(professor_portrait, "rotation_degrees", 2.5, 0.07).set_trans(Tween.TRANS_SINE)
-	_speak_tween.tween_property(professor_portrait, "rotation_degrees", -2.5, 0.12).set_trans(Tween.TRANS_SINE)
-	_speak_tween.tween_property(professor_portrait, "rotation_degrees", 0.0, 0.07).set_trans(Tween.TRANS_SINE)
+func _format_clue_text(question_text: String) -> String:
+	var cleaned := question_text.strip_edges()
+	if cleaned.is_empty():
+		return "The clue has faded."
+	return cleaned
 
 
-func _stop_speak_shake() -> void:
-	if _speak_tween:
-		_speak_tween.kill()
-		_speak_tween = null
-	var reset := create_tween()
-	reset.tween_property(professor_portrait, "rotation_degrees", 0.0, 0.12).set_trans(Tween.TRANS_SINE)
-	reset.tween_callback(_start_idle_bob)
-
-
-func _typewriter_text(label: Label, text: String, speed: float) -> void:
-	_typewriter_label = label
-	_typewriter_label.text = text
-	_typewriter_label.visible_characters = 1
-	_start_speak_shake()
-	await label.get_tree().process_frame
-	
-	
-	var timer = Timer.new()
-	timer.wait_time = speed
-	timer.one_shot = false
-	add_child(timer)
-	timer.timeout.connect(_on_typewriter_tick)
-	timer.start()
-
-
-func _on_typewriter_tick() -> void:
-	if _typewriter_label.visible_characters < _typewriter_label.text.length():
-		_typewriter_label.visible_characters += 1
-	else:
-		for child in get_children():
-			if child is Timer:
-				child.stop()
-				child.queue_free()
-				break
-		_on_typewriter_complete()
-
-
-func _on_typewriter_complete() -> void:
-	_stop_speak_shake()
-
-
-func _configure_audio_players() -> void:
-	click_player.stream = _load_audio(CLICK_SOUND_PATH)
-	correct_player.stream = _load_audio(CORRECT_SOUND_PATH)
-	wrong_player.stream = _load_audio(WRONG_SOUND_PATH)
-	unlock_player.stream = _load_audio(UNLOCK_SOUND_PATH)
-	win_player.stream = _load_audio(WIN_SOUND_PATH)
-	lose_player.stream = _load_audio(LOSE_SOUND_PATH)
-
-
-func _load_audio(path: String) -> AudioStream:
-	if not ResourceLoader.exists(path):
-		return null
-	var stream: Variant = ResourceLoader.load(path)
-	if stream is AudioStream:
-		return stream
-	return null
-
-
-func _play_with_random_pitch(player: AudioStreamPlayer) -> void:
-	if player.stream != null:
-		player.pitch_scale = randf_range(0.95, 1.05)
-		player.stop()
-		player.play()
-
-
-func _on_answer_graded_correct(is_final_room: bool) -> void:
-	if is_final_room:
-		_play_with_random_pitch(win_player)
-	else:
-		_play_with_random_pitch(correct_player)
-		_play_with_random_pitch(unlock_player)
-	_typewriter_text(professor_line, _professor_line("success"), 0.03)
-
-
-func _on_answer_graded_wrong() -> void:
-	_play_with_random_pitch(wrong_player)
-	_typewriter_text(professor_line, _professor_line("wrong"), 0.03)
-
-
-func _on_ready_to_advance(next_scene: String) -> void:
-	_pending_scene = next_scene
-	var global_timer = get_tree().get_first_node_in_group("GlobalTimer")
-	if global_timer != null:
-		global_timer.stop()
-	$Control2/FeedBackPrompt/Button.visible = false
-	$Control2/FeedBackPrompt/ContinueButton.visible = true
-
-
-func _on_continue_pressed() -> void:
-	var global_timer = get_tree().get_first_node_in_group("GlobalTimer")
-	if global_timer != null:
-		global_timer.start(1)
-	get_tree().change_scene_to_file(_pending_scene)
-
-
-func _configure_background_music() -> void:
-	background_music_player = AudioStreamPlayer.new()
-	add_child(background_music_player)
-	var stream: Variant = load(BACKGROUND_MUSIC_PATH)
-	if stream is AudioStream:
-		background_music_player.stream = stream
-		if background_music_player.stream is AudioStreamMP3:
-			background_music_player.stream.loop = true
-		background_music_player.volume_db = -14.0
-		background_music_player.play()
+func _format_trial_time(total_seconds: int) -> String:
+	var clamped_seconds: int = maxi(total_seconds, 0)
+	var minutes: int = int(clamped_seconds / 60)
+	var seconds: int = int(clamped_seconds % 60)
+	return "%02d:%02d" % [minutes, seconds]

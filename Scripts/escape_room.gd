@@ -47,6 +47,7 @@ var lives_remaining := START_LIVES
 var hints_used := 0
 var current_game_state := "start_intro"
 var current_launch_target := "quiz"
+var auto_start_after_generation := false
 var mascot_home_position := Vector2.ZERO
 var mascot_tween: Tween
 var selected_lives := START_LIVES
@@ -674,6 +675,7 @@ func _on_primary_pressed() -> void:
 		"source_select":
 			_show_subject_selection()
 		"module_ready":
+			auto_start_after_generation = current_launch_target == "quiz"
 			_generate_module_catalog()
 		"upload_ready":
 			if current_launch_target == "question_hints":
@@ -1485,6 +1487,7 @@ func _on_http_request_completed(result: int, response_code: int, headers: Packed
 func _use_local_module_fallback(reason: String) -> void:
 	var generated_rooms := _build_rooms_from_module_text(pending_upload_text, active_catalog_name)
 	if generated_rooms.is_empty():
+		auto_start_after_generation = false
 		primary_button.disabled = false
 		status_label.text = "The uploaded text needs at least 3 topic sections to build chambers."
 		hint_label.text = "Try headings like 'Topic 1: Algorithms', then add a few lines under each topic."
@@ -1544,6 +1547,14 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	rooms.clear()
 	for room in generated_rooms:
 		rooms.append(room)
+
+	if auto_start_after_generation:
+		auto_start_after_generation = false
+		if current_launch_target == "question_hints":
+			_show_escape_room()
+		else:
+			_start_game()
+		return
 
 	current_game_state = "upload_ready"
 	catalog_box.visible = false
