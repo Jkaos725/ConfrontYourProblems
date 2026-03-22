@@ -241,6 +241,23 @@ theme_override_font_sizes/font_size = 14
 text = "Realm Escape   Room 1/4   Lives 3   Score 0"
 horizontal_alignment = 1
 
+[node name="ExitButton" type="Button" parent="." unique_id=912345678]
+z_index = 9
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -156.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 56.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "Exit"
+
 [node name="ProfessorPanel" type="PanelContainer" parent="." unique_id=302121721]
 z_index = 6
 layout_mode = 1

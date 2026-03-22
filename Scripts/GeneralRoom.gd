@@ -39,6 +39,7 @@ enum RoomPhase {
 @onready var player_marker: ColorRect = $Control2/PlayerMarker
 @onready var timer_label: Label = $Control2/TimerLabel
 @onready var countdown_timer: Timer = $Control2/CountdownTimer
+@onready var exit_button: Button = $Control2/ExitButton
 
 var background_music_player: AudioStreamPlayer
 var correct_player: AudioStreamPlayer
@@ -157,6 +158,7 @@ func _ready() -> void:
 	player_start_position = player_marker.position
 	player_exit_position = Vector2(door.position.x + (door.size.x * 0.5) - (player_marker.size.x * 0.35), door.position.y + 110.0)
 	clue_note_button.pressed.connect(_on_clue_note_pressed)
+	exit_button.pressed.connect(_on_exit_pressed)
 	_load_room_data()
 	_load_current_room()
 	_play_entrance_animation()
@@ -274,6 +276,14 @@ func on_timer_timeout() -> void:
 
 
 func _return_to_main_after_delay() -> void:
+	countdown_timer.stop()
+	Global.index = 0
+	Global.rooms.clear()
+	Global.globalTime = Global.selected_hint_time
+	get_tree().change_scene_to_file("res://Scenes/main.tscn")
+
+
+func _on_exit_pressed() -> void:
 	countdown_timer.stop()
 	Global.index = 0
 	Global.rooms.clear()

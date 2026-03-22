@@ -35,6 +35,7 @@ enum RoomPhase {
 @onready var choice_a: Button = $TerminalPanel/TerminalVBox/Choices/ChoiceA
 @onready var choice_b: Button = $TerminalPanel/TerminalVBox/Choices/ChoiceB
 @onready var choice_c: Button = $TerminalPanel/TerminalVBox/Choices/ChoiceC
+@onready var exit_button: Button = $ExitButton
 @onready var door: ColorRect = $Door
 @onready var doorway: ColorRect = $Door/Doorway
 @onready var door_panel: ColorRect = $Door/DoorPanel
@@ -238,6 +239,7 @@ func _ready() -> void:
 	choice_a.pressed.connect(_on_choice_pressed.bind(0))
 	choice_b.pressed.connect(_on_choice_pressed.bind(1))
 	choice_c.pressed.connect(_on_choice_pressed.bind(2))
+	exit_button.pressed.connect(_on_exit_pressed)
 	clue_note_button.pressed.connect(_on_clue_note_pressed)
 	keypad_button.pressed.connect(_on_keypad_pressed)
 	_load_current_room()
@@ -300,12 +302,15 @@ func _load_current_room() -> void:
 	choice_a.visible = true
 	choice_b.visible = true
 	choice_c.visible = true
+	exit_button.visible = true
 	choice_a.disabled = true
 	choice_b.disabled = true
 	choice_c.disabled = true
+	exit_button.disabled = false
 	choice_a.modulate = Color(1, 1, 1, 0.45)
 	choice_b.modulate = Color(1, 1, 1, 0.45)
 	choice_c.modulate = Color(1, 1, 1, 0.45)
+	exit_button.modulate = Color(1, 1, 1, 1)
 
 
 func _on_clue_note_pressed() -> void:
@@ -340,6 +345,10 @@ func _on_keypad_pressed() -> void:
 	_open_vault()
 	_advance_after_delay()
 	door_click_area.disabled = true
+
+
+func _on_exit_pressed() -> void:
+	_return_to_main()
 
 
 func _on_choice_pressed(choice_index: int) -> void:
