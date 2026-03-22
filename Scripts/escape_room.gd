@@ -282,6 +282,7 @@ func _show_source_selection() -> void:
 	room_title.text = "How will you enter this trial?"
 	room_description.text = "Choose a built-in challenge or upload your own study notes."
 	question_label.text = "Pick the path you want to take for the %s." % ("clue trial" if current_launch_target == "question_hints" else "escape run")
+	question_label.visible = true
 	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = ""
@@ -1121,6 +1122,8 @@ func _on_question_file_selected(path: String) -> void:
 	room_title.text = "Escape Room Is Ready"
 	room_description.text = ""
 	question_label.text = "Enter when you're ready."
+	question_label.visible = false
+	question_card.visible = false
 	theme_badge.text = ""
 	upload_help.text = ""
 	hint_label.text = ""
