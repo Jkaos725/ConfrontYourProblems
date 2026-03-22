@@ -4,8 +4,11 @@ extends Node2D
 @export var expectedAnswer = ""
 @onready var professor_line: Label = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorLine
 @onready var professor_portrait: TextureRect = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorPortrait
+@onready var professor_panel: PanelContainer = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel
+@onready var question_card: PanelContainer = $Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard
 
 var end_state_triggered := false
+var _typewriter_label: Label
 
 var current_professor: Dictionary = {}
 var professors := [
@@ -138,8 +141,9 @@ func _ready() -> void:
 	current_professor = _select_professor(Global.index)
 	
 
-	professor_line.text = _professor_line("intro")
+	professor_line.text = ""
 	_apply_professor_portrait()
+	_play_entrance_animation()
 
 
 
@@ -210,3 +214,65 @@ func _apply_professor_portrait() -> void:
 	var texture: Variant = load(portrait_path)
 	if texture is Texture2D:
 		professor_portrait.texture = texture
+
+
+func _play_entrance_animation() -> void:
+	var question_label = question_card.get_node("QuestionLabel")
+	var original_pos = question_card.position.y
+	question_card.modulate.a = 0
+	question_card.position.y -= 20
+	
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(question_card, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(question_card, "position:y", original_pos, 0.5).set_trans(Tween.TRANS_CUBIC)
+	
+	if question_label:
+		question_label.modulate.a = 0
+		tween.tween_property(question_label, "modulate:a", 1.0, 0.4).set_delay(0.2)
+	
+	var portrait_original_pos = professor_portrait.position.x
+	professor_portrait.modulate.a = 0
+	professor_portrait.position.x -= 30
+	tween.tween_property(professor_portrait, "modulate:a", 1.0, 0.4).set_delay(0.1)
+	tween.tween_property(professor_portrait, "position:x", portrait_original_pos, 0.4).set_delay(0.1).set_trans(Tween.TRANS_BACK)
+	
+	await get_tree().create_timer(0.5).timeout
+	_start_idle_bob()
+	_typewriter_text(professor_line, _professor_line("intro"), 0.03)
+
+
+func _start_idle_bob() -> void:
+	var tween = create_tween().set_loops()
+	tween.tween_property(professor_portrait, "position", Vector2(), 1.0)
+	tween.tween_property(professor_portrait, "rotation_degrees", 0, 30.0)
+
+
+func _typewriter_text(label: Label, text: String, speed: float) -> void:
+	_typewriter_label = label
+	_typewriter_label.text = text
+	_typewriter_label.visible_characters = 1
+	await label.get_tree().process_frame
+	
+	
+	var timer = Timer.new()
+	timer.wait_time = speed
+	timer.one_shot = false
+	add_child(timer)
+	timer.timeout.connect(_on_typewriter_tick)
+	timer.start()
+
+
+func _on_typewriter_tick() -> void:
+	if _typewriter_label.visible_characters < _typewriter_label.text.length():
+		_typewriter_label.visible_characters += 1
+	else:
+		for child in get_children():
+			if child is Timer:
+				child.stop()
+				child.queue_free()
+				break
+		_on_typewriter_complete()
+
+
+func _on_typewriter_complete() -> void:
+	pass
