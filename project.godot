@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Global="*uid://hsaxpgapeh0r"
 AudioManager="*res://Scripts/audio_manager.gd"
+ThemeManager="*res://Scripts/theme_manager.gd"
 LeaderboardManager="*res://Scripts/leaderboard_manager.gd"
 
 [display]

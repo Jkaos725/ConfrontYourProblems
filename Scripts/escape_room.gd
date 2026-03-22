@@ -115,6 +115,8 @@ var background_music_player: AudioStreamPlayer
 @onready var mascot_box: CenterContainer = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
 @onready var leaderboard_display: CanvasLayer = $LeaderboardDisplay
 @onready var name_entry: CanvasLayer = $NameEntry
+@onready var settings_button: Button = get_node_or_null("MarginContainer/PanelContainer/VBoxContainer/TopRow/SettingsButton")
+@onready var leaderboard_button: Button = get_node_or_null("MarginContainer/PanelContainer/VBoxContainer/TopRow/LeaderboardButton")
 
 func _ready() -> void:
 	if not String(Global.selected_professor).is_empty():
@@ -1644,12 +1646,10 @@ func _apply_theme(is_dark: bool = true) -> void:
 		if btn is Button:
 			btn.add_theme_color_override("font_color", p["text_primary"])
 
-	var settings_btn := get_node_or_null("%SettingsButton") as Button
-	if settings_btn:
-		settings_btn.add_theme_color_override("font_color", p["text_primary"])
-	var leaderboard_btn := get_node_or_null("%LeaderboardButton") as Button
-	if leaderboard_btn:
-		leaderboard_btn.add_theme_color_override("font_color", p["text_primary"])
+	if settings_button:
+		settings_button.add_theme_color_override("font_color", p["text_primary"])
+	if leaderboard_button:
+		leaderboard_button.add_theme_color_override("font_color", p["text_primary"])
 
 
 func _configure_audio_players() -> void:

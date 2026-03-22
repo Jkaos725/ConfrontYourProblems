@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://cgjlxhbirlucc"]
 
-[ext_resource type="Script" path="res://Scripts/GeneralRoom.gd" id="1_room"]
-[ext_resource type="Script" path="res://Scripts/hint_http_request.gd" id="2_hint"]
-[ext_resource type="Texture2D" path="res://Images/angryBot.png" id="3_prof"]
-[ext_resource type="Script" path="res://Scripts/hint_1.gd" id="4_hintbtn"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/timer_label.tscn" id="5_timer"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/answer_http_request.tscn" id="6_answer"]
-[ext_resource type="Script" path="res://Scripts/feed_back_prompt.gd" id="7_feedback"]
+[ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_room"]
+[ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="2_hint"]
+[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_prof"]
+[ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="4_hintbtn"]
+[ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="5_timer"]
+[ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="6_answer"]
+[ext_resource type="Script" uid="uid://j1nkab67m1np" path="res://Scripts/feed_back_prompt.gd" id="7_feedback"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ambient"]
 particle_flag_disable_z = true
@@ -20,18 +20,6 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.5
 scale_max = 1.5
 color = Color(1, 0.85, 0.6, 0.15)
-
-[sub_resource type="Gradient" id="Gradient_vignette"]
-offsets = PackedFloat32Array(0.4, 1)
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.7)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_vignette"]
-gradient = SubResource("Gradient_vignette")
-width = 512
-height = 512
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0.5, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_room_panel"]
 content_margin_left = 18.0
@@ -66,18 +54,6 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_terminal_input"]
-bg_color = Color(0.329412, 0.25098, 0.164706, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.686275, 0.509804, 0.231373, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
@@ -121,23 +97,23 @@ corner_radius_bottom_left = 16
 shadow_color = Color(0.0509804, 0.0235294, 0.00392157, 0.45)
 shadow_size = 18
 
-[node name="Question1" type="Node2D"]
+[node name="Question1" type="Node2D" unique_id=1039350786]
 script = ExtResource("1_room")
 
-[node name="AmbientParticles" type="GPUParticles2D" parent="."]
+[node name="AmbientParticles" type="GPUParticles2D" parent="." unique_id=1213824996]
 modulate = Color(1, 0.9, 0.7, 0.3)
 position = Vector2(576, 322)
 amount = 80
 lifetime = 8.0
 process_material = SubResource("ParticleProcessMaterial_ambient")
 
-[node name="Control2" type="Control" parent="."]
+[node name="Control2" type="Control" parent="." unique_id=18415815]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="Background" type="ColorRect" parent="Control2"]
+[node name="Background" type="ColorRect" parent="Control2" unique_id=1762960775]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -146,7 +122,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0823529, 0.0509804, 0.027451, 1)
 
-[node name="TopGlow" type="ColorRect" parent="Control2"]
+[node name="TopGlow" type="ColorRect" parent="Control2" unique_id=1486640420]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -154,7 +130,7 @@ offset_bottom = 160.0
 grow_horizontal = 2
 color = Color(0.827451, 0.560784, 0.258824, 0.12)
 
-[node name="BackWallBand" type="ColorRect" parent="Control2"]
+[node name="BackWallBand" type="ColorRect" parent="Control2" unique_id=1413961678]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -163,9 +139,9 @@ offset_bottom = 440.0
 grow_horizontal = 2
 color = Color(0.160784, 0.101961, 0.054902, 0.9)
 
-[node name="Floor" type="ColorRect" parent="Control2"]
+[node name="Floor" type="ColorRect" parent="Control2" unique_id=895881211]
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -174,7 +150,7 @@ grow_horizontal = 2
 grow_vertical = 0
 color = Color(0.101961, 0.0627451, 0.0313726, 1)
 
-[node name="CenterPath" type="ColorRect" parent="Control2"]
+[node name="CenterPath" type="ColorRect" parent="Control2" unique_id=1313142510]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -189,7 +165,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.241176, 0.156863, 0.0862745, 0.78)
 
-[node name="DoorShadow" type="ColorRect" parent="Control2"]
+[node name="DoorShadow" type="ColorRect" parent="Control2" unique_id=953092810]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -204,7 +180,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.18)
 
-[node name="Door" type="ColorRect" parent="Control2"]
+[node name="Door" type="ColorRect" parent="Control2" unique_id=1353112266]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -219,7 +195,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.227451, 0.145098, 0.0784314, 1)
 
-[node name="Doorway" type="ColorRect" parent="Control2/Door"]
+[node name="Doorway" type="ColorRect" parent="Control2/Door" unique_id=711071734]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -232,7 +208,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0470588, 0.0313726, 0.0156863, 1)
 
-[node name="DoorPanel" type="ColorRect" parent="Control2/Door"]
+[node name="DoorPanel" type="ColorRect" parent="Control2/Door" unique_id=782127841]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -245,7 +221,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.345098, 0.223529, 0.121569, 1)
 
-[node name="DoorLabel" type="Label" parent="Control2/Door"]
+[node name="DoorLabel" type="Label" parent="Control2/Door" unique_id=513026668]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -258,7 +234,7 @@ text = "EXIT"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DoorLockLight" type="ColorRect" parent="Control2/Door"]
+[node name="DoorLockLight" type="ColorRect" parent="Control2/Door" unique_id=89888572]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -273,7 +249,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.772549, 0.227451, 0.184314, 1)
 
-[node name="MetaLabel" type="Label" parent="Control2"]
+[node name="MetaLabel" type="Label" parent="Control2" unique_id=1118235947]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -291,7 +267,7 @@ theme_override_font_sizes/font_size = 14
 text = "Chamber 1/4   Trial Timer 180"
 horizontal_alignment = 1
 
-[node name="ProfessorPanel" type="PanelContainer" parent="Control2"]
+[node name="ProfessorPanel" type="PanelContainer" parent="Control2" unique_id=1969285252]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -306,11 +282,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="ProfessorBox" type="VBoxContainer" parent="Control2/ProfessorPanel"]
+[node name="ProfessorBox" type="VBoxContainer" parent="Control2/ProfessorPanel" unique_id=46591498]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ProfessorPortrait" type="TextureRect" parent="Control2/ProfessorPanel/ProfessorBox"]
+[node name="ProfessorPortrait" type="TextureRect" parent="Control2/ProfessorPanel/ProfessorBox" unique_id=4400126]
 texture_filter = 1
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
@@ -318,7 +294,7 @@ texture = ExtResource("3_prof")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ProfessorLine" type="Label" parent="Control2/ProfessorPanel/ProfessorBox"]
+[node name="ProfessorLine" type="Label" parent="Control2/ProfessorPanel/ProfessorBox" unique_id=17807588]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
 theme_override_font_sizes/font_size = 11
@@ -326,7 +302,7 @@ text = "Professor Vex: One lock. Three chances."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Desk" type="ColorRect" parent="Control2"]
+[node name="Desk" type="ColorRect" parent="Control2" unique_id=2003167771]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -341,7 +317,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.239216, 0.14902, 0.0823529, 0.92)
 
-[node name="ClueNote" type="PanelContainer" parent="Control2"]
+[node name="ClueNote" type="PanelContainer" parent="Control2" unique_id=897393730]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -356,16 +332,17 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="ClueText" type="Label" parent="Control2/ClueNote"]
+[node name="ClueText" type="Label" parent="Control2/ClueNote" unique_id=1462456245]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.945098, 0.847059, 1)
 theme_override_font_sizes/font_size = 12
-text = "CLUE NOTE\nInspect to reveal."
+text = "CLUE NOTE
+Inspect to reveal."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="ClueNoteButton" type="Button" parent="Control2"]
+[node name="ClueNoteButton" type="Button" parent="Control2" unique_id=1728418681]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -379,9 +356,8 @@ offset_bottom = 278.0
 grow_horizontal = 2
 grow_vertical = 2
 flat = true
-text = ""
 
-[node name="StatusLabel" type="Label" parent="Control2"]
+[node name="StatusLabel" type="Label" parent="Control2" unique_id=1848854509]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -400,7 +376,7 @@ text = "Inspect the note or enter your response."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="PlayerMarker" type="ColorRect" parent="Control2"]
+[node name="PlayerMarker" type="ColorRect" parent="Control2" unique_id=397222185]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -415,7 +391,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.913725, 0.866667, 0.733333, 1)
 
-[node name="Head" type="ColorRect" parent="Control2/PlayerMarker"]
+[node name="Head" type="ColorRect" parent="Control2/PlayerMarker" unique_id=340203533]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -430,7 +406,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.976471, 0.898039, 0.780392, 1)
 
-[node name="TerminalBase" type="ColorRect" parent="Control2"]
+[node name="TerminalBase" type="ColorRect" parent="Control2" unique_id=1392974682]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -445,7 +421,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.101961, 0.12549, 0.105882, 0.95)
 
-[node name="TerminalPanel" type="PanelContainer" parent="Control2"]
+[node name="TerminalPanel" type="PanelContainer" parent="Control2" unique_id=1920572957]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -460,36 +436,35 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_terminal")
 
-[node name="TerminalVBox" type="VBoxContainer" parent="Control2/TerminalPanel"]
+[node name="TerminalVBox" type="VBoxContainer" parent="Control2/TerminalPanel" unique_id=1529553355]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TerminalHeader" type="Label" parent="Control2/TerminalPanel/TerminalVBox"]
+[node name="TerminalHeader" type="Label" parent="Control2/TerminalPanel/TerminalVBox" unique_id=584170833]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.643137, 0.92549, 0.823529, 1)
 theme_override_font_sizes/font_size = 12
 text = "ACCESS TERMINAL"
 
-[node name="TerminalStatus" type="Label" parent="Control2/TerminalPanel/TerminalVBox"]
+[node name="TerminalStatus" type="Label" parent="Control2/TerminalPanel/TerminalVBox" unique_id=1900380625]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.894118, 0.882353, 0.796078, 1)
 theme_override_font_sizes/font_size = 12
 text = "INPUT CHANNEL OPEN"
 
-[node name="TerminalButton" type="Button" parent="Control2/TerminalPanel/TerminalVBox"]
+[node name="TerminalButton" type="Button" parent="Control2/TerminalPanel/TerminalVBox" unique_id=314237687]
 visible = false
-layout_mode = 2
 custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-text = ""
 
-[node name="TerminalInput" type="TextEdit" parent="Control2/TerminalPanel/TerminalVBox"]
+[node name="TerminalInput" type="TextEdit" parent="Control2/TerminalPanel/TerminalVBox" unique_id=1428493482]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_colors/background_color = Color(0.329412, 0.25098, 0.164706, 1)
 
-[node name="AnswerButton1" type="Button" parent="Control2/TerminalPanel/TerminalVBox"]
+[node name="AnswerButton1" type="Button" parent="Control2/TerminalPanel/TerminalVBox" unique_id=2068668247]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
@@ -499,7 +474,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "Submit Input"
 
-[node name="HintRack" type="VBoxContainer" parent="Control2"]
+[node name="HintRack" type="VBoxContainer" parent="Control2" unique_id=893732283]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -514,12 +489,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
 
-[node name="HintCard1" type="PanelContainer" parent="Control2/HintRack"]
+[node name="HintCard1" type="PanelContainer" parent="Control2/HintRack" unique_id=2066915610]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint1" type="Button" parent="Control2/HintRack/HintCard1"]
+[node name="Hint1" type="Button" parent="Control2/HintRack/HintCard1" unique_id=1952352580]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
@@ -529,15 +504,15 @@ autowrap_mode = 3
 script = ExtResource("4_hintbtn")
 timePercentage = 0
 
-[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard1/Hint1"]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard1/Hint1" unique_id=2029854815]
 autostart = true
 
-[node name="HintCard2" type="PanelContainer" parent="Control2/HintRack"]
+[node name="HintCard2" type="PanelContainer" parent="Control2/HintRack" unique_id=1775999909]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint2" type="Button" parent="Control2/HintRack/HintCard2"]
+[node name="Hint2" type="Button" parent="Control2/HintRack/HintCard2" unique_id=1215633085]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
@@ -546,15 +521,15 @@ text = "Clue 2"
 autowrap_mode = 3
 script = ExtResource("4_hintbtn")
 
-[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard2/Hint2"]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard2/Hint2" unique_id=524318572]
 autostart = true
 
-[node name="HintCard3" type="PanelContainer" parent="Control2/HintRack"]
+[node name="HintCard3" type="PanelContainer" parent="Control2/HintRack" unique_id=862737356]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint3" type="Button" parent="Control2/HintRack/HintCard3"]
+[node name="Hint3" type="Button" parent="Control2/HintRack/HintCard3" unique_id=119975442]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
@@ -564,10 +539,10 @@ autowrap_mode = 3
 script = ExtResource("4_hintbtn")
 timePercentage = 20
 
-[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard3/Hint3"]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard3/Hint3" unique_id=759245328]
 autostart = true
 
-[node name="RoomPrompt" type="Label" parent="Control2"]
+[node name="RoomPrompt" type="Label" parent="Control2" unique_id=926873282]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -585,7 +560,7 @@ theme_override_font_sizes/font_size = 12
 text = "Inspect the note or enter your response."
 horizontal_alignment = 1
 
-[node name="HintLabel" type="Label" parent="Control2"]
+[node name="HintLabel" type="Label" parent="Control2" unique_id=723163797]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -603,18 +578,17 @@ theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="TimerLabel" parent="Control2" instance=ExtResource("5_timer")]
+[node name="TimerLabel" parent="Control2" unique_id=483231326 instance=ExtResource("5_timer")]
 visible = false
+layout_mode = 0
 offset_left = 1000.0
 offset_top = 26.0
 offset_right = 1128.0
 offset_bottom = 72.0
 
-[node name="CountdownTimer" type="Timer" parent="Control2"]
-wait_time = 1.0
-autostart = false
+[node name="CountdownTimer" type="Timer" parent="Control2" unique_id=1758720222]
 
-[node name="FeedBackPrompt" type="ColorRect" parent="Control2"]
+[node name="FeedBackPrompt" type="ColorRect" parent="Control2" unique_id=1815899199]
 visible = false
 z_index = 1
 custom_minimum_size = Vector2(320, 180)
@@ -633,7 +607,7 @@ grow_vertical = 2
 color = Color(0.4, 0.4, 0.4, 0)
 script = ExtResource("7_feedback")
 
-[node name="PanelContainer" type="PanelContainer" parent="Control2/FeedBackPrompt"]
+[node name="PanelContainer" type="PanelContainer" parent="Control2/FeedBackPrompt" unique_id=1167603979]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -642,7 +616,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_feedback")
 
-[node name="Button" type="Button" parent="Control2/FeedBackPrompt"]
+[node name="Button" type="Button" parent="Control2/FeedBackPrompt" unique_id=1185751993]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -657,7 +631,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "X"
 
-[node name="Label" type="Label" parent="Control2/FeedBackPrompt"]
+[node name="Label" type="Label" parent="Control2/FeedBackPrompt" unique_id=1742015916]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -672,14 +646,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="HTTPRequest" type="HTTPRequest" parent="." node_paths=PackedStringArray("Hint1", "Hint2", "Hint3")]
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=461187162 node_paths=PackedStringArray("Hint1", "Hint2", "Hint3")]
 use_threads = true
 script = ExtResource("2_hint")
 Hint1 = NodePath("../Control2/HintRack/HintCard1/Hint1")
 Hint2 = NodePath("../Control2/HintRack/HintCard2/Hint2")
 Hint3 = NodePath("../Control2/HintRack/HintCard3/Hint3")
 
-[node name="AnswerHTTPRequest" parent="." node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("6_answer")]
+[node name="AnswerHTTPRequest" parent="." unique_id=3077022 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("6_answer")]
 pathToNextScene = "res://Scenes/Questionhints.tscn"
 AnswerButton = NodePath("../Control2/TerminalPanel/TerminalVBox/AnswerButton1")
 feedBackPrompt = NodePath("../Control2/FeedBackPrompt")

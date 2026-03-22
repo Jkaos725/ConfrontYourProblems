@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_bot"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/settings_menu.tscn" id="3_smenu"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/theme_toggle.tscn" id="4_ttog"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/name_entry.tscn" id="5_nent"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/leaderboard_display.tscn" id="6_ldsp"]
 

@@ -193,6 +193,5 @@ func _on_close_button_pressed() -> void:
 
 func _on_overlay_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var panel: Control = $Overlay/Center/Panel
 		if not panel.get_global_rect().has_point(event.global_position):
 			close()
