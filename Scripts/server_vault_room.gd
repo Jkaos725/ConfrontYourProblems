@@ -134,7 +134,7 @@ var professors := [
 		"portrait": "res://Images/angryBot.png",
 		"intro": [
 			"Release the right lock and I may let you pass.",
-			"One lock. One clue. Do not embarrass yourself.",
+			"One lock. One question. Do not embarrass yourself.",
 			"The door listens only to sharp minds.",
 			"Solve it quickly, or remain in my hall."
 		],
@@ -145,9 +145,9 @@ var professors := [
 			"That is not the mechanism I asked for."
 		],
 		"hint": [
-			"I will offer one clue. Do not waste it.",
+			"I will offer one hint. Do not waste it.",
 			"Very well. Here is your hint.",
-			"A small clue, nothing more.",
+			"A small hint, nothing more.",
 			"Even now I am being generous."
 		],
 		"success": [
@@ -167,7 +167,7 @@ var professors := [
 		"name": "Professor Hale",
 		"portrait": "res://Images/neutralface.png",
 		"intro": [
-			"Take your time and study the clue carefully.",
+			"Take your time and study the question carefully.",
 			"This room rewards steady thinking.",
 			"The right signal is here if you follow the pattern.",
 			"Stay calm. The door will open for the prepared."
@@ -180,7 +180,7 @@ var professors := [
 		],
 		"hint": [
 			"Here is a nudge in the right direction.",
-			"Use the clue, not your first guess.",
+			"Use the question, not your first guess.",
 			"Look for the strongest match.",
 			"Think about what the room is really asking."
 		],
@@ -201,7 +201,7 @@ var professors := [
 		"name": "Professor Mira",
 		"portrait": "res://Images/happyface.png",
 		"intro": [
-			"You can do this. Start with the clue in front of you.",
+			"You can do this. Start with the question in front of you.",
 			"Take a breath. One careful choice opens the way.",
 			"The exit is closer than it looks.",
 			"Trust what you know and move step by step."
@@ -210,12 +210,12 @@ var professors := [
 			"Not this one. The seal still holds.",
 			"That was a good attempt. Look once more.",
 			"Keep going. The right signal is near.",
-			"Almost there. Read the clue again."
+			"Almost there. Read the question again."
 		],
 		"hint": [
-			"Here is a clue to help you forward.",
+			"Here is a hint to help you forward.",
 			"Look for the concept that fits best.",
-			"Use the strongest keyword in the clue.",
+			"Use the strongest keyword in the question.",
 			"You already have what you need."
 		],
 		"success": [
@@ -344,7 +344,7 @@ func _load_current_room() -> void:
 	title_label.text = ""
 	title_label.visible = false
 	_refresh_meta_label()
-	clue_text.text = "CLUE NOTE\nInspect to reveal."
+	clue_text.text = "QUESTION NOTE\nInspect to reveal."
 	var answers: Array = current_room.get("answers", ["Array", "Hash Map", "Stack"])
 	choice_a.text = _format_choice_text(str(answers[0])) if answers.size() > 0 else "Module A"
 	choice_b.text = _format_choice_text(str(answers[1])) if answers.size() > 1 else "Module B"
@@ -367,13 +367,14 @@ func _load_current_room() -> void:
 	door_click_area.disabled = true
 	terminal_panel.modulate = Color(1, 1, 1, 0.45)
 	terminal_header.text = "CHOICES"
-	terminal_status.text = "CLUE REQUIRED"
+	terminal_status.text = "QUESTION REQUIRED"
 	terminal_button.visible = false
 	terminal_button.disabled = true
 	keypad_display.text = "LOCKED"
 	code_display.text = "_ _ _ _"
 	_set_keypad_enabled(true)
-	room_prompt.text = "Inspect the note."
+	room_prompt.visible = false
+	room_prompt.text = ""
 	player_marker.position = player_start_position
 	player_marker.scale = Vector2.ONE
 	player_marker.modulate = Color(1, 1, 1, 1)
@@ -410,7 +411,7 @@ func _on_clue_note_pressed() -> void:
 	choice_b.modulate = Color(1, 1, 1, 1)
 	choice_c.modulate = Color(1, 1, 1, 1)
 	room_prompt.text = "Choose a choice."
-	status_label.text = "Clue found."
+	status_label.text = "Question revealed."
 	_speak(_professor_line("hint"))
 
 
@@ -569,7 +570,7 @@ func _open_vault() -> void:
 # and has the professor speak a randomized hint line.
 func _on_hint_pressed() -> void:
 	Global.hints_used += 1
-	hint_label.text = "Clue: %s" % str(current_room.get("hint", "Inspect the machinery more closely."))
+	hint_label.text = "Hint: %s" % str(current_room.get("hint", "Inspect the machinery more closely."))
 	_speak(_professor_line("hint"))
 	if room_phase == RoomPhase.LOCKED:
 		room_prompt.text = "Inspect the note."
