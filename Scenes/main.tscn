@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_bot"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/settings_menu.tscn" id="3_smenu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
 content_margin_left = 26.0
@@ -172,6 +173,13 @@ stretch_mode = 5
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="SettingsButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1138294793]
+custom_minimum_size = Vector2(110, 36)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+text = "Settings"
 
 [node name="CatalogBox" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1255099477]
 layout_mode = 2
@@ -446,3 +454,8 @@ size = Vector2i(900, 560)
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.json ; JSON question catalogs", "*.txt ; Text modules", "*.md ; Markdown modules")
+
+[node name="SettingsMenu" parent="." unique_id=505063393 instance=ExtResource("3_smenu")]
+visible = false
+
+[connection signal="pressed" from="MarginContainer/PanelContainer/VBoxContainer/TopRow/SettingsButton" to="SettingsMenu" method="open"]

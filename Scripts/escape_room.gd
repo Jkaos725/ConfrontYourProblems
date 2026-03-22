@@ -1562,11 +1562,17 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 
 func _configure_audio_players() -> void:
 	_configure_background_music()
+	click_player.bus = "SFX"
 	click_player.stream = _load_audio(CLICK_SOUND_PATH)
+	correct_player.bus = "SFX"
 	correct_player.stream = _load_audio(CORRECT_SOUND_PATH)
+	wrong_player.bus = "SFX"
 	wrong_player.stream = _load_audio(WRONG_SOUND_PATH)
+	unlock_player.bus = "SFX"
 	unlock_player.stream = _load_audio(UNLOCK_SOUND_PATH)
+	win_player.bus = "SFX"
 	win_player.stream = _load_audio(WIN_SOUND_PATH)
+	lose_player.bus = "SFX"
 	lose_player.stream = _load_audio(LOSE_SOUND_PATH)
 
 
@@ -1585,7 +1591,7 @@ func _configure_background_music() -> void:
 	if background_music_player == null:
 		background_music_player = AudioStreamPlayer.new()
 		background_music_player.name = "BackgroundMusicPlayer"
-		background_music_player.bus = "Master"
+		background_music_player.bus = "Music"
 		background_music_player.volume_db = -14.0
 		add_child(background_music_player)
 
