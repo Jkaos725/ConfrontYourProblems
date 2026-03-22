@@ -8,6 +8,8 @@ var music_volume: float = 1.0
 var sfx_volume: float = 1.0
 var music_muted: bool = false
 var sfx_muted: bool = false
+var tts_enabled: bool = true
+var tts_volume: float = 1.0
 
 
 func _ready() -> void:
@@ -53,6 +55,16 @@ func set_sfx_muted(muted: bool) -> void:
 	_save_settings()
 
 
+func set_tts_enabled(enabled: bool) -> void:
+	tts_enabled = enabled
+	_save_settings()
+
+
+func set_tts_volume(value: float) -> void:
+	tts_volume = clampf(value, 0.0, 1.0)
+	_save_settings()
+
+
 func _apply_settings() -> void:
 	var music_idx := AudioServer.get_bus_index(MUSIC_BUS)
 	if music_idx != -1:
@@ -73,6 +85,8 @@ func _save_settings() -> void:
 	config.set_value("audio", "sfx_volume", sfx_volume)
 	config.set_value("audio", "music_muted", music_muted)
 	config.set_value("audio", "sfx_muted", sfx_muted)
+	config.set_value("audio", "tts_enabled", tts_enabled)
+	config.set_value("audio", "tts_volume", tts_volume)
 	config.save(SAVE_PATH)
 
 
@@ -83,3 +97,5 @@ func _load_settings() -> void:
 		sfx_volume = float(config.get_value("audio", "sfx_volume", 1.0))
 		music_muted = bool(config.get_value("audio", "music_muted", false))
 		sfx_muted = bool(config.get_value("audio", "sfx_muted", false))
+		tts_enabled = bool(config.get_value("audio", "tts_enabled", true))
+		tts_volume = float(config.get_value("audio", "tts_volume", 1.0))

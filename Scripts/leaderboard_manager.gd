@@ -59,8 +59,18 @@ func submit(
 		"date":         Time.get_date_string_from_system()
 	}
 
-	# High scores – sorted by score DESC, then time ASC as tiebreaker
-	high_scores.append(entry)
+	# High scores – one entry per name, keep the best result
+	var hs_idx := _find_entry_index(high_scores, player_name)
+	if hs_idx != -1:
+		var existing: Dictionary = high_scores[hs_idx]
+		var new_is_better: bool = entry["score"] > int(existing["score"]) or \
+			(entry["score"] == int(existing["score"]) and entry["time_seconds"] < int(existing["time_seconds"]))
+		if new_is_better:
+			high_scores.remove_at(hs_idx)
+			high_scores.append(entry)
+		# else: existing result is better — leave it unchanged
+	else:
+		high_scores.append(entry)
 	high_scores.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if a["score"] != b["score"]:
 			return a["score"] > b["score"]
@@ -69,9 +79,16 @@ func submit(
 	if high_scores.size() > max_entries:
 		high_scores.resize(max_entries)
 
-	# Fastest times – complete runs only, sorted by time ASC
+	# Fastest times – complete runs only, one entry per name, keep the best time
 	if score == total:
-		fastest_times.append(entry)
+		var ft_idx := _find_entry_index(fastest_times, player_name)
+		if ft_idx != -1:
+			if entry["time_seconds"] < int(fastest_times[ft_idx]["time_seconds"]):
+				fastest_times.remove_at(ft_idx)
+				fastest_times.append(entry)
+			# else: existing time is faster — leave it unchanged
+		else:
+			fastest_times.append(entry)
 		fastest_times.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 			return a["time_seconds"] < b["time_seconds"]
 		)
@@ -171,6 +188,13 @@ func _seed_from_defaults() -> void:
 		fastest_times.resize(max_entries)
 
 	_save()
+
+
+func _find_entry_index(arr: Array[Dictionary], player_name: String) -> int:
+	for i in arr.size():
+		if str(arr[i].get("name", "")) == player_name:
+			return i
+	return -1
 
 
 func _to_dict_array(raw: Variant) -> Array[Dictionary]:

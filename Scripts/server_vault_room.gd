@@ -1,5 +1,10 @@
 extends Control
 
+# TTS_RATE: controls how fast the professor speaks.
+# 1.0 = normal speed | 1.5 = 50% faster | 2.0 = double speed
+# To change speed: adjust the number below (range: 0.1 – 10.0)
+const TTS_RATE := 1.5
+
 const START_LIVES := 3
 const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
 const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
@@ -277,6 +282,7 @@ func _load_current_room() -> void:
 	choice_c.text = _format_choice_text(str(answers[2])) if answers.size() > 2 else "Module C"
 	status_label.text = "Inspect the note."
 	professor_line.text = _professor_line("intro")
+	_tts_speak(professor_line.text)
 	hint_label.text = ""
 	correct_choice = int(current_room.get("correct_index", 1))
 	solved = false
@@ -330,7 +336,7 @@ func _on_clue_note_pressed() -> void:
 	choice_c.modulate = Color(1, 1, 1, 1)
 	room_prompt.text = "Test a signal."
 	status_label.text = "Clue found."
-	professor_line.text = _professor_line("hint")
+	_speak(_professor_line("hint"))
 
 
 func _on_keypad_pressed() -> void:
@@ -361,7 +367,7 @@ func _on_choice_pressed(choice_index: int) -> void:
 		_refresh_meta_label()
 		room_phase = RoomPhase.ACCESS_GRANTED
 		status_label.text = "Lock released."
-		professor_line.text = _professor_line("success")
+		_speak(_professor_line("success"))
 		room_prompt.text = "Engage the keypad."
 		terminal_status.text = "ACCESS GRANTED"
 		keypad_button.disabled = false
@@ -381,14 +387,14 @@ func _on_choice_pressed(choice_index: int) -> void:
 		door_lock_light.color = Color("d14a3a")
 		if Global.lives <= 0:
 			status_label.text = "The chamber seals shut. Your attempts are spent."
-			professor_line.text = _professor_line("defeat")
+			_speak(_professor_line("defeat"))
 			_disable_choices()
 			await get_tree().create_timer(1.2).timeout
 			_return_to_main()
 			return
 		status_label.text = "Access denied."
 		room_prompt.text = "Test a signal."
-		professor_line.text = _professor_line("wrong")
+		_speak(_professor_line("wrong"))
 
 
 func _disable_choices() -> void:
@@ -420,7 +426,7 @@ func _open_vault() -> void:
 func _on_hint_pressed() -> void:
 	Global.hints_used += 1
 	hint_label.text = "Clue: %s" % str(current_room.get("hint", "Inspect the machinery more closely."))
-	professor_line.text = _professor_line("hint")
+	_speak(_professor_line("hint"))
 	if room_phase == RoomPhase.LOCKED:
 		room_prompt.text = "Inspect the note."
 	elif room_phase == RoomPhase.CLUE_DISCOVERED:
@@ -620,6 +626,33 @@ func _play_typewriter(label: Label) -> void:
 func _speak(text: String) -> void:
 	professor_line.text = text
 	_play_typewriter(professor_line)
+	_tts_speak(text)
+
+
+func _tts_speak(text: String) -> void:
+	if not AudioManager.tts_enabled:
+		return
+	# Strip "Professor Name: " prefix so only the dialogue is spoken
+	var speech_text := text
+	var colon_pos := text.find(": ")
+	if colon_pos != -1:
+		speech_text = text.substr(colon_pos + 2)
+	if speech_text.strip_edges().is_empty():
+		return
+	DisplayServer.tts_stop()
+	var voices := DisplayServer.tts_get_voices_for_language("en")
+	if voices.is_empty():
+		return
+	var voice_id := voices[_get_professor_voice_index() % voices.size()]
+	DisplayServer.tts_speak(speech_text, voice_id, int(AudioManager.tts_volume * 100), 1.0, TTS_RATE)
+
+
+func _get_professor_voice_index() -> int:
+	match str(current_professor.get("name", "")):
+		"Professor Vex":  return 0  # First available English voice
+		"Professor Hale": return 1  # Second available English voice
+		"Professor Mira": return 2  # Third available English voice (wraps if fewer voices exist)
+	return 0
 
 
 func _start_portrait_bounce() -> void:
