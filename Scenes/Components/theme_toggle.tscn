@@ -1,9 +1,19 @@
 [gd_scene format=3 uid="uid://b3y7m2n6k8p4r"]
 
-[ext_resource type="Script" path="res://Scripts/theme_toggle.gd" id="1_ttog"]
+[ext_resource type="Texture2D" uid="uid://i12o5topbil8" path="res://Images/pixel_art_small (1) (1).png" id="1_light_on"]
+[ext_resource type="Script" uid="uid://cmushjvbnmr3a" path="res://Scripts/theme_toggle.gd" id="1_ttog"]
 
-[node name="ThemeToggle" type="Button"]
-custom_minimum_size = Vector2(120, 36)
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_omkm7"]
+load_path = "res://.godot/imported/pixel_art_small (1) (1).png-bd511fd6bbe70e291c8bf53c60479dfa.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wau5x"]
+load_path = "res://.godot/imported/pixel_art_small (1) (2).png-a09334a6858ce3947d550c4843c77c11.ctex"
+
+[node name="ThemeToggle" type="Button" unique_id=127234600]
+custom_minimum_size = Vector2(80, 36)
 size_flags_vertical = 4
+icon = ExtResource("1_light_on")
+expand_icon = true
 script = ExtResource("1_ttog")
-text = "Light Mode"
+light_on_icon = SubResource("CompressedTexture2D_omkm7")
+light_off_icon = SubResource("CompressedTexture2D_wau5x")

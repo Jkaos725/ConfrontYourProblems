@@ -1,5 +1,7 @@
 extends Button
 
+@export var light_on_icon: Texture2D
+@export var light_off_icon: Texture2D
 
 func _ready() -> void:
 	pressed.connect(_on_pressed)
@@ -16,6 +18,4 @@ func _on_theme_changed(is_dark: bool) -> void:
 
 
 func _update(is_dark: bool) -> void:
-	text = "Light Mode" if is_dark else "Dark Mode"
-	var p := ThemeManager.palette()
-	add_theme_color_override("font_color", p["text_primary"])
+	icon = light_on_icon if is_dark else light_off_icon

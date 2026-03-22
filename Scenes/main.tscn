@@ -2,9 +2,12 @@
 
 [ext_resource type="Script" uid="uid://ddy5wasir0q02" path="res://Scripts/escape_room.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="2_bot"]
+[ext_resource type="Texture2D" uid="uid://hkys7ubevidl" path="res://Images/New Piskel (4).png" id="3_6bp64"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/settings_menu.tscn" id="3_smenu"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/theme_toggle.tscn" id="4_ttog"]
+[ext_resource type="PackedScene" uid="uid://b3y7m2n6k8p4r" path="res://Scenes/Components/theme_toggle.tscn" id="4_ttog"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/name_entry.tscn" id="5_nent"]
+[ext_resource type="Texture2D" uid="uid://i12o5topbil8" path="res://Images/pixel_art_small (1) (1).png" id="5_ynf5e"]
+[ext_resource type="Texture2D" uid="uid://1vpicsssvxrh" path="res://Images/pixel_art_small (1) (2).png" id="6_hptm8"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/leaderboard_display.tscn" id="6_ldsp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
@@ -17,7 +20,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.102, 0.737, 0.612, 1.0)
+border_color = Color(0.102, 0.737, 0.612, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -37,36 +40,36 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button"]
-bg_color = Color(0.204, 0.286, 0.369, 1.0)
+bg_color = Color(0.204, 0.286, 0.369, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button_pressed"]
-bg_color = Color(0.102, 0.322, 0.463, 1.0)
+bg_color = Color(0.102, 0.322, 0.463, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.102, 0.737, 0.612, 1.0)
+border_color = Color(0.102, 0.737, 0.612, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_answer_button_hover"]
-bg_color = Color(0.161, 0.502, 0.725, 1.0)
+bg_color = Color(0.161, 0.502, 0.725, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.204, 0.596, 0.859, 1.0)
+border_color = Color(0.204, 0.596, 0.859, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -77,7 +80,7 @@ content_margin_left = 18.0
 content_margin_top = 18.0
 content_margin_right = 18.0
 content_margin_bottom = 18.0
-bg_color = Color(0.141, 0.200, 0.259, 0.96)
+bg_color = Color(0.141, 0.2, 0.259, 0.96)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -173,14 +176,20 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SettingsButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1138294793]
-custom_minimum_size = Vector2(110, 36)
+custom_minimum_size = Vector2(80, 36)
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
-text = "Settings"
+icon = ExtResource("3_6bp64")
+flat = true
+expand_icon = true
 
 [node name="ThemeToggle" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=488511460 instance=ExtResource("4_ttog")]
+custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
+flat = true
+expand_icon = false
+light_on_icon = ExtResource("5_ynf5e")
+light_off_icon = ExtResource("6_hptm8")
 
 [node name="LeaderboardButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1327437986]
 custom_minimum_size = Vector2(120, 36)
