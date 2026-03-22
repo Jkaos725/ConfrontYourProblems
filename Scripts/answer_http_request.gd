@@ -1,20 +1,54 @@
+# answer_http_request.gd
+# Extends HTTPRequest to handle AI grading of the player's essay answers
+# and to provide a single contextual hint when the answer is wrong.
+# Communicates with the Groq API (llama-3.3-70b-versatile).
+# The API key is loaded from res://config.cfg so it is never hard-coded.
+#
+# Two-step flow:
+#   1. Player submits an answer → _submit_answer() builds a grading prompt and sends it.
+#      The AI replies with exactly "1" (correct) or "0" (wrong).
+#   2. If "0" is returned → _send_hint_request() fires a separate hint prompt.
+#      The AI's hint is passed to the parent room's handle_answer_wrong() method.
+#      The expected answer is NOT included in the hint prompt to prevent leaking it.
+#
+# The parent room node must expose:
+#   handle_answer_correct() — called when the grade is "1".
+#   handle_answer_wrong(hint: String) — called when the grade is "0", receives the hint text.
 extends HTTPRequest
 
+# Groq API endpoint for chat completions.
 var groq_url = "https://api.groq.com/openai/v1/chat/completions"
+
+# API key loaded from config.cfg at startup.
 var groq_api_key = ""
 
+# The scene to load if the player wins and there is no parent room controller to handle it.
+# Set in the editor via the export property.
 @export var pathToNextScene = "res://Scenes/EssayQuestion.tscn"
+
+# The submit/answer button in the room scene. Connected to _on_answer_button() in _ready().
 @export var AnswerButton: Button
+
+# Reference to the feedback overlay node (feed_back_prompt.gd).
+# Used as a fallback when no parent room controller is found.
 @export var feedBackPrompt: Node
 
+# The full question text for the current room, set by the parent room script.
 var currentQuestion := ""
+
+# The expected correct answer for the current room, used to build the grading prompt.
+# Never sent in the hint prompt to avoid leaking the answer.
 var expectedAnswer := ""
 
-# Tracks whether we're waiting for a grade (1/0) or a hint response.
+# True while waiting for the grading response ("1" or "0").
+# False while waiting for the hint response.
 var _waiting_for_grade: bool = false
+
+# The student's last submitted answer, stored so it can be included in logs/fallback messages.
 var _last_student_answer: String = ""
 
 
+# Connects the answer button signal and loads the Groq API key from config.cfg.
 func _ready() -> void:
 	AnswerButton.pressed.connect(_on_answer_button)
 
@@ -27,10 +61,13 @@ func _ready() -> void:
 		print("Failed to load config: ", err)
 
 
+# Called every frame. No per-frame logic needed.
 func _process(_delta: float) -> void:
 	pass
 
 
+# Handles the completed HTTP response from the Groq API.
+# Dispatches to the correct handler based on whether we were waiting for a grade or a hint.
 func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	if response_code != 200:
 		print("HTTP Error: ", response_code, " - ", body.get_string_from_utf8())
@@ -52,6 +89,7 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 	if _waiting_for_grade:
 		_waiting_for_grade = false
 		if content == "1":
+			# Grade is correct — notify the parent room controller.
 			var room_controller: Node = get_parent()
 			if room_controller != null and room_controller.has_method("handle_answer_correct"):
 				room_controller.handle_answer_correct()
@@ -60,21 +98,23 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 			else:
 				_show_end_overlay("Victory!\nThe next room opens.", pathToNextScene, true)
 		else:
-			# Grade came back wrong — ask for a hint in a separate call that
-			# does NOT include the expected answer, so it can't be leaked.
+			# Grade is wrong — fire a separate hint request (without the expected answer).
 			_send_hint_request()
 	else:
-		# This is the hint response.
+		# This response is the hint (not a grade).
 		var hint: String = content if not content.is_empty() else "Think about the core concept."
 		var room_controller: Node = get_parent()
 		if room_controller != null and room_controller.has_method("handle_answer_wrong"):
 			room_controller.handle_answer_wrong(hint)
-			
 		else:
+			# Fallback: show hint in the feedback overlay if no room controller is present.
 			feedBackPrompt.visible = true
 			feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % hint
 
 
+# Builds the grading prompt sent to the AI.
+# The AI is instructed to reply with exactly "1" (correct) or "0" (wrong).
+# Synonyms, paraphrases, and conceptually correct shortened answers are accepted as correct.
 func _build_grade_prompt(student_answer: String) -> String:
 	var prompt_text: String = "You are grading a student's answer in an escape-room study game.\n"
 	prompt_text += "Question: %s\n" % currentQuestion
@@ -89,10 +129,11 @@ func _build_grade_prompt(student_answer: String) -> String:
 	return prompt_text
 
 
+# Builds the hint prompt sent after a wrong answer.
+# The expected answer is NOT included — only a banned-word list derived from it —
+# so the AI cannot simply rephrase the answer as the hint.
 func _build_hint_prompt() -> String:
-	# Build a banned-word list from the expected answer so the LLM
-	# cannot simply rephrase it. The expected answer itself is NOT
-	# included in this prompt — only the question and the banned words.
+	# Extract meaningful words (length > 2) from the expected answer to form the banned list.
 	var answer_words: PackedStringArray = expectedAnswer.to_lower().split(" ", false)
 	var banned: Array[String] = []
 	for word in answer_words:
@@ -114,6 +155,8 @@ func _build_hint_prompt() -> String:
 	return prompt_text
 
 
+# Sends a request to the Groq API with the given prompt and token limit.
+# Uses temperature 0.2 for consistent, factual responses.
 func _send_request(prompt_text: String, max_tokens: int) -> void:
 	var body: String = JSON.stringify({
 		"model": "llama-3.3-70b-versatile",
@@ -128,10 +171,13 @@ func _send_request(prompt_text: String, max_tokens: int) -> void:
 		print("Error starting request")
 
 
+# Fires the hint request after a wrong answer. Uses max_tokens=50 for concise hints.
 func _send_hint_request() -> void:
 	_send_request(_build_hint_prompt(), 50)
 
 
+# Reads the player's answer from the terminal input, marks that we are waiting for a grade,
+# and sends the grading request to the API. Uses max_tokens=5 since the response is just "1" or "0".
 func _submit_answer() -> void:
 	var student_answer: String = $"../Control2/TerminalPanel/TerminalVBox/TerminalInput".text.strip_edges()
 	_last_student_answer = student_answer
@@ -139,6 +185,9 @@ func _submit_answer() -> void:
 	_send_request(_build_grade_prompt(student_answer), 5)
 
 
+# Shows the legacy end-of-game overlay with a message and transitions to the next scene.
+# Used as a fallback when no parent room controller is present.
+# advance_index: if true increments Global.index (next room); if false resets the session.
 func _show_end_overlay(message: String, next_scene: String, advance_index: bool) -> void:
 	feedBackPrompt.visible = true
 	feedBackPrompt.textBox.text = message
@@ -151,14 +200,17 @@ func _show_end_overlay(message: String, next_scene: String, advance_index: bool)
 	_transition_after_delay(next_scene)
 
 
+# Waits 1.4 seconds then changes to the specified scene.
 func _transition_after_delay(next_scene: String) -> void:
 	await get_tree().create_timer(1.4).timeout
 	get_tree().change_scene_to_file(next_scene)
 
 
+# Legacy signal handler — kept for compatibility with older scene connections.
 func _on_button_pressed() -> void:
 	_submit_answer()
 
 
+# Connected to AnswerButton.pressed in _ready(). Triggers answer grading.
 func _on_answer_button() -> void:
 	_submit_answer()

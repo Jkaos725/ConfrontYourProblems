@@ -1,20 +1,53 @@
+# leaderboard_display.gd
+# Modal leaderboard panel (CanvasLayer) that shows two tabs:
+#   "High Scores"   — all runs sorted by score DESC, time ASC as tiebreaker.
+#   "Fastest Times" — complete runs (score == total) sorted by time ASC.
+#
+# Features:
+#   - Subject filter buttons built dynamically from the unique subjects in the data.
+#   - Live search bar that filters by player name or quiz name.
+#   - Rows built entirely in code — no sub-scenes needed per row.
+#   - Theming applied via ThemeManager so it respects light/dark mode.
 extends CanvasLayer
 
+# Darkened full-screen overlay that closes the panel when clicked outside.
 @onready var overlay:      ColorRect     = $Overlay
+
+# The main panel container.
 @onready var panel:        PanelContainer = $Overlay/Center/Panel
+
+# "Leaderboard" title label.
 @onready var title_lbl:    Label          = $Overlay/Center/Panel/Margin/VBox/TitleRow/Title
+
+# X button that closes the panel.
 @onready var close_btn:    Button         = $Overlay/Center/Panel/Margin/VBox/TitleRow/CloseButton
+
+# Horizontal rule separator below the title.
 @onready var sep:          HSeparator     = $Overlay/Center/Panel/Margin/VBox/Sep
+
+# "Search" label next to the search field.
 @onready var search_label: Label          = $Overlay/Center/Panel/Margin/VBox/SearchRow/SearchLabel
+
+# Tab container holding the High Scores and Fastest Times tabs.
 @onready var tabs:         TabContainer   = $Overlay/Center/Panel/Margin/VBox/Tabs
+
+# VBoxContainer inside the High Scores tab where score rows are added.
 @onready var score_list:   VBoxContainer  = $Overlay/Center/Panel/Margin/VBox/Tabs/HighScores/ScoreList
+
+# VBoxContainer inside the Fastest Times tab where time rows are added.
 @onready var time_list:    VBoxContainer  = $Overlay/Center/Panel/Margin/VBox/Tabs/FastestTimes/TimeList
+
+# Text field for filtering rows by player name or quiz name.
 @onready var search_edit:  LineEdit       = $Overlay/Center/Panel/Margin/VBox/SearchRow/SearchEdit
+
+# HBoxContainer that holds the dynamically generated subject filter buttons.
 @onready var filter_row:   HBoxContainer  = $Overlay/Center/Panel/Margin/VBox/FilterScroll/FilterRow
 
-var _active_filter: String = ""  # "" = All subjects
+# The currently active subject filter. Empty string means "All subjects".
+var _active_filter: String = ""
 
 
+# Hides the panel on startup, sets tab titles, and wires up signals.
 func _ready() -> void:
 	hide()
 	tabs.set_tab_title(0, "High Scores")
@@ -25,6 +58,7 @@ func _ready() -> void:
 	_apply_theme(ThemeManager.is_dark_mode)
 
 
+# Opens the leaderboard: resets filters, rebuilds filter buttons, populates rows, shows panel.
 func open() -> void:
 	_active_filter = ""
 	search_edit.text = ""
@@ -33,10 +67,12 @@ func open() -> void:
 	show()
 
 
+# Hides the leaderboard panel.
 func close() -> void:
 	hide()
 
 
+# Applies the current ThemeManager palette colors to the panel, title, and separator.
 func _apply_theme(is_dark: bool) -> void:
 	var p := ThemeManager.palette()
 
@@ -53,12 +89,15 @@ func _apply_theme(is_dark: bool) -> void:
 
 # ── Filter buttons ─────────────────────────────────────────────────────────────
 
+# Rebuilds the subject filter button row from scratch using all unique subjects
+# found across both the high scores and fastest times boards.
+# Always adds an "All" button first, then one button per unique subject.
 func _build_filter_buttons() -> void:
 	for child in filter_row.get_children():
 		filter_row.remove_child(child)
 		child.free()
 
-	# Collect unique subjects across both boards
+	# Collect unique subjects across both boards.
 	var subjects: Array[String] = []
 	var all_entries: Array = []
 	all_entries.append_array(LeaderboardManager.get_high_scores())
@@ -75,6 +114,10 @@ func _build_filter_buttons() -> void:
 		_add_filter_btn(subject, subject, group)
 
 
+# Creates a single toggle-mode filter button and adds it to the filter_row.
+# label:        display text shown on the button.
+# filter_value: the subject string to match against (empty string = show all).
+# group:        shared ButtonGroup so only one filter is active at a time.
 func _add_filter_btn(label: String, filter_value: String, group: ButtonGroup) -> void:
 	var btn := Button.new()
 	btn.text = label
@@ -86,17 +129,21 @@ func _add_filter_btn(label: String, filter_value: String, group: ButtonGroup) ->
 	filter_row.add_child(btn)
 
 
+# Sets the active subject filter and re-populates both lists.
 func _set_filter(subject: String) -> void:
 	_active_filter = subject
 	_populate()
 
 
+# Re-populates rows whenever the search text changes.
 func _on_search_changed(_text: String) -> void:
 	_populate()
 
 
 # ── Populate ──────────────────────────────────────────────────────────────────
 
+# Clears both lists and rebuilds them using the current filter and search text.
+# Shows a placeholder label if no entries match the current filters.
 func _populate() -> void:
 	_clear_list(score_list)
 	_clear_list(time_list)
@@ -116,6 +163,8 @@ func _populate() -> void:
 			time_list.add_child(_make_row(i + 1, times[i], true))
 
 
+# Filters an entry array by the active subject filter and the current search text.
+# Search matches against player name or quiz name (case-insensitive).
 func _get_filtered(entries: Array) -> Array:
 	var search := search_edit.text.strip_edges().to_lower()
 	var result: Array = []
@@ -132,6 +181,7 @@ func _get_filtered(entries: Array) -> Array:
 	return result
 
 
+# Removes and frees all child nodes from a list container, ready for a fresh populate.
 func _clear_list(container: VBoxContainer) -> void:
 	for child in container.get_children():
 		child.queue_free()
@@ -139,6 +189,9 @@ func _clear_list(container: VBoxContainer) -> void:
 
 # ── Row builder ───────────────────────────────────────────────────────────────
 
+# Builds a single leaderboard row HBoxContainer with fixed-width columns:
+#   rank | name | score | time | hints used | quiz name | date
+# time_primary: if true the time column is highlighted (used for the Fastest Times tab).
 func _make_row(rank: int, entry: Dictionary, time_primary: bool) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
@@ -158,6 +211,10 @@ func _make_row(rank: int, entry: Dictionary, time_primary: bool) -> HBoxContaine
 	return row
 
 
+# Creates a single fixed-width Label for use as a column inside a leaderboard row.
+# text:      the display string.
+# min_width: minimum pixel width for alignment.
+# color:     font color for this column.
 func _col(text: String, min_width: int, color: Color) -> Label:
 	var lbl := Label.new()
 	lbl.text = text
@@ -168,6 +225,7 @@ func _col(text: String, min_width: int, color: Color) -> Label:
 	return lbl
 
 
+# Creates a centered placeholder label shown when no entries match the current filters.
 func _make_empty_label(msg: String) -> Label:
 	var lbl := Label.new()
 	lbl.text = msg
@@ -177,20 +235,24 @@ func _make_empty_label(msg: String) -> Label:
 	return lbl
 
 
+# Formats a raw seconds value into "M:SS" display format (e.g. 125 → "2:05").
 func _fmt_time(seconds: int) -> String:
 	return "%d:%02d" % [seconds / 60, seconds % 60]
 
 
+# Truncates a string to max_len characters and appends an ellipsis if needed.
 func _truncate(text: String, max_len: int) -> String:
 	if text.length() <= max_len:
 		return text
 	return text.substr(0, max_len - 1) + "…"
 
 
+# Closes the panel when the X button is pressed.
 func _on_close_button_pressed() -> void:
 	close()
 
 
+# Closes the panel when the player clicks on the darkened overlay outside the panel.
 func _on_overlay_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not panel.get_global_rect().has_point(event.global_position):

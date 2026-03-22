@@ -1,3 +1,20 @@
+# GeneralRoom.gd
+# Controls the Questionhints scene — an essay-answer escape room.
+# The player reads a clue note, types a free-text answer into a terminal,
+# and the answer is graded by the AI via answer_http_request.gd.
+# On a correct answer the room reveals a 4-digit keypad code; the player
+# must enter the code to open the door and advance to the next room.
+#
+# Room phases (RoomPhase enum):
+#   LOCKED           — initial state before the clue note is inspected.
+#   CLUE_DISCOVERED  — clue visible, terminal active, keypad locked.
+#   ACCESS_GRANTED   — correct answer submitted, keypad code revealed.
+#   TRANSITIONING    — door opening animation playing, inputs disabled.
+#
+# Professor system:
+#   One of three professors (Vex, Hale, Mira) is selected via Global.selected_professor.
+#   Each professor has dialogue lines for: intro, hint, success, wrong, defeat.
+#   All professor speech goes through _speak() which runs the typewriter effect and TTS.
 extends Node2D
 
 # TTS_RATE: controls how fast the professor speaks.
@@ -5,11 +22,13 @@ extends Node2D
 # To change speed: adjust the number below (range: 0.1 – 10.0)
 const TTS_RATE := 1.5
 
+# Audio asset paths loaded at startup by _configure_audio().
 const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
 const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
 const LEVEL_TRANSITION_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
 const BACKGROUND_MUSIC_PATH := "res://Audio/New Sounds/Background music/Background.mp3"
 
+# Tracks which interactive phase the room is currently in.
 enum RoomPhase {
 	LOCKED,
 	CLUE_DISCOVERED,
@@ -17,7 +36,9 @@ enum RoomPhase {
 	TRANSITIONING
 }
 
+# The question text displayed in the clue note. Set by _load_room_data() from Global.rooms.
 @export var currentQuestion: String = "What does this chamber require?"
+# The correct answer string used for AI grading. Set by _load_room_data() from Global.rooms.
 @export var expectedAnswer: String = ""
 
 @onready var meta_label: Label = $Control2/MetaLabel
@@ -60,25 +81,42 @@ enum RoomPhase {
 @onready var countdown_timer: Timer = $Control2/CountdownTimer
 @onready var exit_button: Button = $Control2/ExitButton
 
+# Dynamically created AudioStreamPlayer nodes for each sound category.
 var background_music_player: AudioStreamPlayer
 var correct_player: AudioStreamPlayer
 var wrong_player: AudioStreamPlayer
 var transition_player: AudioStreamPlayer
 
+# Current phase of the room — controls which inputs are active.
 var room_phase := RoomPhase.LOCKED
+# Prevents the defeat/timeout sequence from triggering more than once.
 var end_state_triggered := false
+# The professor dictionary selected for this session (name, portrait, dialogue lines).
 var current_professor: Dictionary = {}
+# World position of the player marker at room start, used to reset between rooms.
 var player_start_position := Vector2.ZERO
+# World position the player marker animates to when passing through the door.
 var player_exit_position := Vector2.ZERO
+# The currently running room animation tween. Killed before starting a new one.
 var active_room_tween: Tween
+# Offset values defining the closed door panel position.
 var door_closed_top := 14.0
 var door_closed_bottom := -14.0
+# Tween that makes the professor portrait bounce while speaking.
 var _portrait_bounce_tween: Tween = null
+# Resting Y position of the professor portrait, restored when bouncing stops.
 var _portrait_rest_y: float = 0.0
+# The randomly generated 4-digit code revealed on a correct answer.
 var keypad_code := ""
+# The digits the player has entered on the keypad so far.
 var keypad_input := ""
+# All digit buttons collected into an array for bulk enable/disable.
 var keypad_buttons: Array[Button] = []
 
+# Local professor dialogue data for this scene.
+# Each professor has five dialogue categories: intro, hint, success, wrong, defeat.
+# A random line from the matching category is chosen each time _professor_line() is called.
+# The active professor is selected by _select_professor() using Global.selected_professor.
 var professors := [
 	{
 		"name": "Professor Vex",
@@ -170,6 +208,8 @@ var professors := [
 ]
 
 
+# Sets up audio, connects the countdown timer and all interactive buttons,
+# loads room data from Global.rooms, and plays the entrance animation.
 func _ready() -> void:
 	_configure_audio()
 	if not countdown_timer.timeout.is_connected(on_timer_timeout):
@@ -191,6 +231,7 @@ func _ready() -> void:
 	_play_entrance_animation()
 
 
+# Updates the meta label every frame with the current chamber index and formatted trial time.
 func _process(_delta: float) -> void:
 	meta_label.text = "Chamber %d/%d   Trial Timer %s" % [
 		Global.index + 1,
@@ -199,6 +240,10 @@ func _process(_delta: float) -> void:
 	]
 
 
+# Reads the current room's question and expected answer from Global.rooms[Global.index]
+# and writes them to currentQuestion and expectedAnswer.
+# Also propagates these values to any child nodes that expose matching properties
+# (e.g. answer_http_request.gd reads currentQuestion/expectedAnswer from its parent).
 func _load_room_data() -> void:
 	if not Global.rooms.is_empty() and Global.index >= 0 and Global.index < Global.rooms.size():
 		var room: Dictionary = Global.rooms[Global.index]
@@ -215,6 +260,9 @@ func _load_room_data() -> void:
 			child.expectedAnswer = expectedAnswer
 
 
+# Resets all room UI and state to the initial LOCKED condition.
+# Selects and displays the professor, generates a new keypad code,
+# fires TTS for the intro line, and sets phase to CLUE_DISCOVERED.
 func _load_current_room() -> void:
 	end_state_triggered = false
 	room_phase = RoomPhase.LOCKED
@@ -253,6 +301,9 @@ func _load_current_room() -> void:
 	room_phase = RoomPhase.CLUE_DISCOVERED
 
 
+# Reveals the full clue text when the player clicks the clue note button.
+# Updates the professor line with a hint and focuses the terminal input.
+# Does nothing if the room is already transitioning or completed.
 func _on_clue_note_pressed() -> void:
 	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
 		return
@@ -263,6 +314,9 @@ func _on_clue_note_pressed() -> void:
 	terminal_input.grab_focus()
 
 
+# Called by answer_http_request.gd when the AI grades the student's answer as correct.
+# Reveals the 4-digit keypad code, plays the correct sound, and begins the door-open animation.
+# Called externally — must be public (no underscore prefix).
 func handle_answer_correct() -> void:
 	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
 		return
@@ -279,6 +333,10 @@ func handle_answer_correct() -> void:
 	keypad_display.text = "READY"
 
 
+# Called by answer_http_request.gd when the AI grades the answer as wrong.
+# Displays the AI-generated hint, flashes the door lock light red, and plays the wrong sound.
+# hint: the hint string returned by the AI in the second API call.
+# Called externally — must be public.
 func handle_answer_wrong(hint: String) -> void:
 	if room_phase == RoomPhase.TRANSITIONING or room_phase == RoomPhase.ACCESS_GRANTED:
 		return
@@ -292,6 +350,8 @@ func handle_answer_wrong(hint: String) -> void:
 	flash_tween.tween_property(door_lock_light, "color", Color("c53a2f"), 0.25)
 
 
+# Appends a digit to keypad_input when a numpad button is pressed.
+# Ignores input if the room is transitioning or all 4 digits are already entered.
 func _on_keypad_digit_pressed(digit: String) -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -301,6 +361,7 @@ func _on_keypad_digit_pressed(digit: String) -> void:
 	_refresh_code_display()
 
 
+# Clears the current keypad input and resets the code display to "_ _ _ _".
 func _on_keypad_clear_pressed() -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -309,6 +370,9 @@ func _on_keypad_clear_pressed() -> void:
 	_refresh_code_display()
 
 
+# Validates the entered 4-digit code against keypad_code.
+# On match: transitions the room to TRANSITIONING and opens the vault door.
+# On mismatch: flashes DENIED briefly then resets to the previous display state.
 func _on_keypad_enter_pressed() -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -341,6 +405,10 @@ func _on_keypad_enter_pressed() -> void:
 	_advance_after_delay()
 
 
+# Called every second by the countdown timer. Decrements Global.globalTime.
+# When time reaches zero: triggers the defeat sequence, shows the correct answer,
+# waits 4 seconds, then returns to the main menu.
+# Named without underscore because it is connected via signal, not called directly.
 func on_timer_timeout() -> void:
 	Global.globalTime -= 1
 	if Global.globalTime <= 0 and not end_state_triggered:
@@ -359,6 +427,7 @@ func on_timer_timeout() -> void:
 		_return_to_main_after_delay()
 
 
+# Stops the timer, resets Global session state, and navigates back to the main menu scene.
 func _return_to_main_after_delay() -> void:
 	countdown_timer.stop()
 	Global.index = 0
@@ -367,6 +436,7 @@ func _return_to_main_after_delay() -> void:
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+# Handles the Exit button. Stops the timer, clears the session, and returns to the main menu.
 func _on_exit_pressed() -> void:
 	countdown_timer.stop()
 	Global.index = 0
@@ -375,6 +445,8 @@ func _on_exit_pressed() -> void:
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+# Plays the door-opening tween sequence: door color changes to blue/green, panels slide up,
+# and the player marker animates forward and shrinks as it passes through the doorway.
 func _open_vault() -> void:
 	if active_room_tween != null:
 		active_room_tween.kill()
@@ -394,6 +466,8 @@ func _open_vault() -> void:
 	active_room_tween.parallel().tween_property(player_marker, "modulate:a", 0.25, 0.32)
 
 
+# Waits 1.9 seconds for the door animation, then either shows the victory screen
+# (if this was the last room) or increments Global.index and reloads the Questionhints scene.
 func _advance_after_delay() -> void:
 	await get_tree().create_timer(1.9).timeout
 	if Global.rooms.is_empty() or Global.index >= Global.rooms.size() - 1:
@@ -403,6 +477,8 @@ func _advance_after_delay() -> void:
 	get_tree().change_scene_to_file("res://Scenes/Questionhints.tscn")
 
 
+# Displays the "Trial complete" message, stops the timer, and returns to the main menu.
+# Called when the player clears the final room in the session.
 func _show_victory_and_return() -> void:
 	status_label.text = "Trial complete."
 	room_prompt.text = "Every chamber cleared."
@@ -414,6 +490,9 @@ func _show_victory_and_return() -> void:
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+# Creates and configures all AudioStreamPlayer nodes at runtime.
+# Loads each audio file from its resource path and assigns it to the correct bus.
+# Music goes to the "Music" bus; all sound effects go to the "SFX" bus.
 func _configure_audio() -> void:
 	background_music_player = AudioStreamPlayer.new()
 	background_music_player.bus = "Music"
@@ -448,6 +527,10 @@ func _configure_audio() -> void:
 		transition_player.stream = transition_stream
 
 
+# Plays the room intro animation: the professor panel slides in from the left,
+# then the typewriter effect and TTS play on the intro line.
+# The clue note, terminal panel, and door fade in simultaneously.
+# Waits one frame first so the Control layout is fully computed before reading positions.
 func _play_entrance_animation() -> void:
 	# Wait one frame so Control layout is fully computed before reading positions/sizes
 	await get_tree().process_frame
@@ -475,6 +558,9 @@ func _play_entrance_animation() -> void:
 	bg_tw.tween_property(door, "modulate:a", 1.0, 0.45).set_delay(0.1)
 
 
+# Animates the professor_line label's visible_characters from 0 to the full length,
+# creating a typewriter reveal effect. Also triggers the portrait bounce animation.
+# The speed scales with text length at ~0.045 seconds per character.
 func _play_typewriter(label: Label) -> void:
 	label.visible_characters = 0
 	var total: int = label.text.length()
@@ -487,12 +573,19 @@ func _play_typewriter(label: Label) -> void:
 	tw.tween_callback(_stop_portrait_bounce)
 
 
+# Sets the professor line text, plays the typewriter animation, and speaks via TTS.
+# Central entry point for all professor dialogue — call this instead of setting text directly.
 func _speak(text: String) -> void:
 	professor_line.text = text
 	_play_typewriter(professor_line)
 	_tts_speak(text)
 
 
+# Speaks text aloud using Godot's built-in DisplayServer TTS API.
+# Strips the "Professor Name: " prefix so only the dialogue content is spoken.
+# Selects the system voice based on which professor is active (_get_professor_voice_index).
+# Respects AudioManager.tts_enabled and AudioManager.tts_volume.
+# Speed is controlled by the TTS_RATE constant at the top of this file.
 func _tts_speak(text: String) -> void:
 	if not AudioManager.tts_enabled:
 		return
@@ -511,6 +604,9 @@ func _tts_speak(text: String) -> void:
 	DisplayServer.tts_speak(speech_text, voice_id, int(AudioManager.tts_volume * 100), 1.0, TTS_RATE)
 
 
+# Returns a 0-based index into the available TTS voice list based on the current professor.
+# Vex → 0, Hale → 1, Mira → 2. Callers use % voices.size() so it wraps safely
+# on systems with fewer than three English voices installed.
 func _get_professor_voice_index() -> int:
 	match str(current_professor.get("name", "")):
 		"Professor Vex":  return 0  # First available English voice
@@ -519,6 +615,8 @@ func _get_professor_voice_index() -> int:
 	return 0
 
 
+# Starts an infinite looping tween that bobs the professor portrait up and down by 5px
+# while the professor is speaking. Kills any previously running bounce tween first.
 func _start_portrait_bounce() -> void:
 	if _portrait_bounce_tween != null:
 		_portrait_bounce_tween.kill()
@@ -528,6 +626,7 @@ func _start_portrait_bounce() -> void:
 	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
+# Stops the portrait bounce tween and snaps the portrait back to its rest Y position.
 func _stop_portrait_bounce() -> void:
 	if _portrait_bounce_tween != null:
 		_portrait_bounce_tween.kill()
@@ -535,6 +634,8 @@ func _stop_portrait_bounce() -> void:
 	professor_portrait.position.y = _portrait_rest_y
 
 
+# Returns the professor dictionary matching Global.selected_professor.
+# Falls back to cycling through professors by room_index if no name match is found.
 func _select_professor(room_index: int) -> Dictionary:
 	var selected_name := str(Global.selected_professor)
 	for professor in professors:
@@ -544,6 +645,9 @@ func _select_professor(room_index: int) -> Dictionary:
 	return professors[room_index % professors.size()]
 
 
+# Builds a formatted dialogue string: "Professor Name: [random line from kind category]".
+# kind: one of "intro", "hint", "success", "wrong", "defeat".
+# Returns just the professor name if the category has no lines.
 func _professor_line(kind: String) -> String:
 	var professor_name := str(current_professor.get("name", "Professor"))
 	var lines_variant: Variant = current_professor.get(kind, [])
@@ -553,12 +657,15 @@ func _professor_line(kind: String) -> String:
 	return "%s: %s" % [professor_name, _random_line(lines)]
 
 
+# Returns a random string from the given array. Returns empty string if the array is empty.
 func _random_line(lines: Array) -> String:
 	if lines.is_empty():
 		return ""
 	return str(lines[randi() % lines.size()])
 
 
+# Loads the professor's portrait texture from its res:// path and sets it on the portrait node.
+# Does nothing if the portrait path is empty or the texture fails to load.
 func _apply_professor_portrait() -> void:
 	var portrait_path := str(current_professor.get("portrait", ""))
 	if portrait_path.is_empty():
@@ -568,10 +675,14 @@ func _apply_professor_portrait() -> void:
 		professor_portrait.texture = texture
 
 
+# Plays the level transition sound effect (used when the vault door opens).
 func _play_transition_sound() -> void:
 	_play_sound(transition_player)
 
 
+# Stops any currently playing audio on the given player, applies a small random pitch
+# variation (±5%) for variety, then plays the sound.
+# Does nothing if the player or its stream is null.
 func _play_sound(player: AudioStreamPlayer) -> void:
 	if player == null or player.stream == null:
 		return
@@ -580,6 +691,8 @@ func _play_sound(player: AudioStreamPlayer) -> void:
 	player.play()
 
 
+# Trims whitespace from the question text for display in the clue note.
+# Returns a fallback string if the question is empty.
 func _format_clue_text(question_text: String) -> String:
 	var cleaned := question_text.strip_edges()
 	if cleaned.is_empty():
@@ -587,6 +700,8 @@ func _format_clue_text(question_text: String) -> String:
 	return cleaned
 
 
+# Enables or disables all keypad digit buttons, the clear button, and the enter button.
+# Also adjusts modulate alpha so disabled buttons appear faded.
 func _set_keypad_enabled(enabled: bool) -> void:
 	for button in keypad_buttons:
 		button.disabled = not enabled
@@ -597,6 +712,8 @@ func _set_keypad_enabled(enabled: bool) -> void:
 	enter_button.modulate = Color(1, 1, 1, 1) if enabled else Color(1, 1, 1, 0.45)
 
 
+# Updates the code display label to show entered digits and underscores for empty slots.
+# e.g. if keypad_input is "42" it shows "4 2 _ _".
 func _refresh_code_display() -> void:
 	var display_parts: Array[String] = []
 	for index in range(4):
@@ -607,6 +724,8 @@ func _refresh_code_display() -> void:
 	code_display.text = " ".join(display_parts)
 
 
+# Generates a random 4-digit code string (e.g. "3071") revealed when the answer is correct.
+# Each digit is independently random 0–9.
 func _generate_keypad_code() -> String:
 	var code := ""
 	for _i in range(4):
@@ -614,6 +733,8 @@ func _generate_keypad_code() -> String:
 	return code
 
 
+# Converts a raw seconds value to "MM:SS" format for the meta label timer display.
+# Clamps to zero so the display never shows negative time.
 func _format_trial_time(total_seconds: int) -> String:
 	var clamped_seconds: int = maxi(total_seconds, 0)
 	var minutes: int = int(clamped_seconds / 60)

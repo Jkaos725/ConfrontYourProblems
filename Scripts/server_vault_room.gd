@@ -1,3 +1,20 @@
+# server_vault_room.gd
+# Controls the ServerVaultRoom scene — a multiple-choice escape room.
+# The player inspects a clue note then picks one of three labeled buttons (A, B, C).
+# A correct choice reveals a 4-digit keypad code; the player enters it to open the door.
+# Wrong choices consume lives — at zero lives the defeat sequence plays.
+#
+# Room phases (RoomPhase enum):
+#   LOCKED           — initial state, choices disabled until the clue is inspected.
+#   CLUE_DISCOVERED  — clue visible, choices enabled.
+#   ACCESS_GRANTED   — correct choice made, keypad code revealed.
+#   TRANSITIONING    — door-open animation playing, all inputs disabled.
+#
+# Visual theming: each room index cycles through three color palettes (room_palettes array),
+# changing backgrounds, panel colors, and button styles procedurally.
+#
+# Professor system: same three professors as GeneralRoom (Vex, Hale, Mira).
+# All dialogue goes through _speak() which triggers the typewriter effect and TTS.
 extends Control
 
 # TTS_RATE: controls how fast the professor speaks.
@@ -5,7 +22,9 @@ extends Control
 # To change speed: adjust the number below (range: 0.1 – 10.0)
 const TTS_RATE := 1.5
 
+# Default number of lives a session starts with (overridden by Global.selected_lives).
 const START_LIVES := 3
+# Audio asset paths loaded at startup by _configure_audio().
 const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
 const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
 const LEVEL_TRANSITION_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
@@ -68,25 +87,47 @@ enum RoomPhase {
 @onready var hint_label: Label = $HintLabel
 @onready var player_marker: ColorRect = $PlayerMarker
 
+# The loaded room dictionary from Global.rooms[Global.index], or a fallback demo room.
 var current_room: Dictionary = {}
+# Index of the correct answer in the answers array (0=A, 1=B, 2=C).
 var correct_choice := 1
+# True once the player has selected the correct choice and received the keypad code.
 var solved := false
+# Current phase of the room's state machine.
 var room_phase := RoomPhase.LOCKED
+# Pixel offset for the top edge of door_panel in the closed/locked position.
 var door_closed_top := 14.0
+# Pixel offset for the bottom edge of door_panel in the closed/locked position.
 var door_closed_bottom := -14.0
+# Where player_marker rests at the start of the room (recorded in _ready).
 var player_start_position := Vector2.ZERO
+# Target position player_marker moves to when walking through the open door.
 var player_exit_position := Vector2.ZERO
+# Shared Tween used for room transitions and door animation. Killed on room reload.
 var active_room_tween: Tween
+# The selected professor dictionary for the current room (name, portrait, dialogue lines).
 var current_professor: Dictionary = {}
+# Active portrait-bounce tween; null when the portrait is at rest.
 var _portrait_bounce_tween: Tween = null
+# Resting Y position of professor_portrait, recorded before each bounce starts.
 var _portrait_rest_y: float = 0.0
+# AudioStreamPlayer for the correct-answer sound effect (SFX bus).
 var correct_player: AudioStreamPlayer
+# AudioStreamPlayer for the wrong-answer sound effect (SFX bus).
 var wrong_player: AudioStreamPlayer
+# AudioStreamPlayer for the level-transition fanfare (SFX bus).
 var transition_player: AudioStreamPlayer
+# AudioStreamPlayer for background music (Music bus).
 var background_music_player: AudioStreamPlayer
+# The 4-digit code the player must enter after selecting the correct answer.
 var keypad_code := ""
+# Digits the player has typed so far (up to 4 characters).
 var keypad_input := ""
+# All digit buttons collected into an array so they can be enabled/disabled together.
 var keypad_buttons: Array[Button] = []
+# Professor dialogue data. Each entry has a name, portrait path, and five
+# dialogue categories (intro, wrong, hint, success, defeat), each an Array of String lines.
+# The active professor is chosen by _select_professor() and stored in current_professor.
 var professors := [
 	{
 		"name": "Professor Vex",
@@ -191,6 +232,9 @@ var professors := [
 		]
 	}
 ]
+# Three color palettes cycled by room index. Each palette is a Dictionary of named
+# Color values applied to all visual elements by _apply_palette(). Palette index =
+# Global.index % room_palettes.size(), so every third room uses the same color scheme.
 var room_palettes := [
 	{
 		# Midnight Blue / Turquoise
@@ -252,6 +296,8 @@ var room_palettes := [
 ]
 
 
+# Sets up audio, stores player marker positions, connects all button signals,
+# loads the current room from Global.rooms, and plays the entrance animation.
 func _ready() -> void:
 	_configure_audio()
 	player_start_position = player_marker.position
@@ -270,6 +316,10 @@ func _ready() -> void:
 	_play_entrance_animation()
 
 
+# Resets the room to its initial state and loads data from Global.rooms[Global.index].
+# Falls back to a built-in demo room if Global.rooms is empty.
+# Applies the per-room color palette, populates answer button labels,
+# fires TTS for the intro line, and resets lives/phase/UI.
 func _load_current_room() -> void:
 	if active_room_tween != null:
 		active_room_tween.kill()
@@ -341,6 +391,9 @@ func _load_current_room() -> void:
 	exit_button.modulate = Color(1, 1, 1, 1)
 
 
+# Called when the player clicks the clue note button.
+# Advances the phase from LOCKED → CLUE_DISCOVERED, reveals the question text,
+# enables the three choice buttons, and has the professor deliver a hint line.
 func _on_clue_note_pressed() -> void:
 	if room_phase != RoomPhase.LOCKED:
 		return
@@ -361,6 +414,8 @@ func _on_clue_note_pressed() -> void:
 	_speak(_professor_line("hint"))
 
 
+# Appends one digit to keypad_input (max 4) and refreshes the display.
+# Blocked while transitioning so the player cannot type during the exit animation.
 func _on_keypad_digit_pressed(digit: String) -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -370,6 +425,8 @@ func _on_keypad_digit_pressed(digit: String) -> void:
 	_refresh_code_display()
 
 
+# Clears keypad_input and resets the display to "_ _ _ _".
+# Blocked while transitioning.
 func _on_keypad_clear_pressed() -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -378,6 +435,11 @@ func _on_keypad_clear_pressed() -> void:
 	_refresh_code_display()
 
 
+# Validates the 4-digit keypad entry against keypad_code.
+# Correct: advances phase to TRANSITIONING, plays the door-open animation,
+#          and calls _advance_after_delay() to move to the next room.
+# Wrong:   flashes the lock light red, plays the wrong sound, and clears the input.
+# Blocked while transitioning.
 func _on_keypad_enter_pressed() -> void:
 	if room_phase == RoomPhase.TRANSITIONING:
 		return
@@ -411,10 +473,18 @@ func _on_keypad_enter_pressed() -> void:
 	door_click_area.disabled = true
 
 
+# Handles the exit button press. Clears the quiz session and returns to the main menu.
 func _on_exit_pressed() -> void:
 	_return_to_main()
 
 
+# Called when the player presses choice A (0), B (1), or C (2).
+# Correct choice: marks the room solved, issues the keypad code, plays the success line,
+#                 and increments Global.score.
+# Wrong choice:   decrements Global.lives; if lives reach zero the defeat sequence fires
+#                 (reveals the answer, plays defeat line, waits 4 s, returns to main).
+#                 Otherwise plays the wrong line and lets the player try again.
+# Ignored if already solved or not in the CLUE_DISCOVERED phase.
 func _on_choice_pressed(choice_index: int) -> void:
 	if solved or room_phase != RoomPhase.CLUE_DISCOVERED:
 		return
@@ -463,6 +533,8 @@ func _on_choice_pressed(choice_index: int) -> void:
 		_speak(_professor_line("wrong"))
 
 
+# Disables and dims all three choice buttons.
+# Called after a defeat to prevent further input while the defeat dialogue plays.
 func _disable_choices() -> void:
 	choice_a.disabled = true
 	choice_b.disabled = true
@@ -472,6 +544,9 @@ func _disable_choices() -> void:
 	choice_c.modulate = Color(1, 1, 1, 0.45)
 
 
+# Plays the door-open tween sequence.
+# The door panel slides up (offset_top/bottom animate), the doorway color shifts to
+# the success color, and the player marker walks forward and shrinks into the doorway.
 func _open_vault() -> void:
 	active_room_tween = create_tween()
 	active_room_tween.set_trans(Tween.TRANS_SINE)
@@ -489,6 +564,9 @@ func _open_vault() -> void:
 	active_room_tween.parallel().tween_property(player_marker, "modulate:a", 0.25, 0.32)
 
 
+# Called when the player presses the hint button.
+# Increments Global.hints_used, shows the room's hint text in hint_label,
+# and has the professor speak a randomized hint line.
 func _on_hint_pressed() -> void:
 	Global.hints_used += 1
 	hint_label.text = "Clue: %s" % str(current_room.get("hint", "Inspect the machinery more closely."))
@@ -499,6 +577,9 @@ func _on_hint_pressed() -> void:
 		room_prompt.text = "Test a signal."
 
 
+# Waits 1.9 seconds (door animation plays during this time), then either loads the
+# next room by incrementing Global.index and calling _load_current_room(), or shows
+# the victory screen if this was the last room in the session.
 func _advance_after_delay() -> void:
 	await get_tree().create_timer(1.9).timeout
 	if Global.rooms.is_empty() or Global.index >= Global.rooms.size() - 1:
@@ -509,16 +590,23 @@ func _advance_after_delay() -> void:
 	_load_current_room()
 
 
+# Clears the quiz session state in Global and navigates back to the main menu scene.
 func _return_to_main() -> void:
 	Global.clear_quiz_session()
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+# Stores the quiz result as a victory in Global, then transitions to the main menu.
+# The main menu reads the stored result to decide whether to show the leaderboard form.
 func _show_victory_screen() -> void:
 	Global.store_quiz_result("victory")
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+# Creates and adds all AudioStreamPlayer nodes to the scene tree.
+# Loads sound files from the const paths at the top of the file.
+# Background music is assigned to the "Music" bus and started immediately;
+# correct, wrong, and transition sounds are assigned to the "SFX" bus.
 func _configure_audio() -> void:
 	background_music_player = AudioStreamPlayer.new()
 	background_music_player.bus = "Music"
@@ -553,10 +641,15 @@ func _configure_audio() -> void:
 		transition_player.stream = stream
 
 
+# Plays the level-transition fanfare through transition_player.
+# Called when the correct keypad code is confirmed.
 func _play_transition_sound() -> void:
 	_play_sound(transition_player)
 
 
+# Plays the given AudioStreamPlayer with a slight random pitch variation (±5%).
+# Stops any currently playing sound on the player first to avoid overlap.
+# Silently skips if the player node or its stream is null.
 func _play_sound(player: AudioStreamPlayer) -> void:
 	if player == null or player.stream == null:
 		return
@@ -565,6 +658,9 @@ func _play_sound(player: AudioStreamPlayer) -> void:
 	player.play()
 
 
+# Applies the color palette for the given room_index to every visual element.
+# room_index is wrapped with % room_palettes.size() so the cycle repeats indefinitely.
+# Palette colors cover background/wall/floor geometry, panels, labels, and choice buttons.
 func _apply_palette(room_index: int) -> void:
 	var palette: Dictionary = room_palettes[room_index % room_palettes.size()]
 	# Background elements
@@ -608,6 +704,9 @@ func _apply_palette(room_index: int) -> void:
 		btn_hover.border_color = palette["button_border"]
 
 
+# Word-wraps choice text to a maximum of 24 characters per line.
+# Returns the original string unchanged if it is already 24 characters or fewer.
+# Splits on word boundaries to avoid breaking words across lines.
 func _format_choice_text(choice_text: String) -> String:
 	if choice_text.length() <= 24:
 		return choice_text
@@ -630,6 +729,8 @@ func _format_choice_text(choice_text: String) -> String:
 	return "\n".join(lines)
 
 
+# Strips boilerplate prefixes ("Which topic matches this clue?", etc.) that the AI
+# sometimes prepends to the question, leaving only the meaningful clue content.
 func _format_clue_text(question_text: String) -> String:
 	var cleaned := question_text.strip_edges()
 	var module_prefix := "Which topic matches this clue?"
@@ -642,6 +743,8 @@ func _format_clue_text(question_text: String) -> String:
 	return cleaned
 
 
+# Enables or disables all digit, clear, and enter buttons on the keypad.
+# Disabled buttons are also dimmed to 45% opacity for a clear visual cue.
 func _set_keypad_enabled(enabled: bool) -> void:
 	for button in keypad_buttons:
 		button.disabled = not enabled
@@ -652,6 +755,8 @@ func _set_keypad_enabled(enabled: bool) -> void:
 	enter_button.modulate = Color(1, 1, 1, 1) if enabled else Color(1, 1, 1, 0.45)
 
 
+# Updates code_display to show entered digits separated by spaces, with underscores
+# for the remaining empty slots (e.g. "3 _ _ _" after one digit is entered).
 func _refresh_code_display() -> void:
 	var display_parts: Array[String] = []
 	for index in range(4):
@@ -662,6 +767,8 @@ func _refresh_code_display() -> void:
 	code_display.text = " ".join(display_parts)
 
 
+# Generates a random 4-digit string (e.g. "0731") used as the keypad unlock code.
+# A new code is generated each time _load_current_room() is called.
 func _generate_keypad_code() -> String:
 	var code := ""
 	for _i in range(4):
@@ -669,6 +776,8 @@ func _generate_keypad_code() -> String:
 	return code
 
 
+# Refreshes the HUD status strip showing chamber number, total rooms, remaining
+# lives, and vault progress (correct answers). Called after score/lives change.
 func _refresh_meta_label() -> void:
 	meta_label.text = "Chamber %d/%d   Attempts %d   Vault Progress %d" % [
 		Global.index + 1,
@@ -677,6 +786,10 @@ func _refresh_meta_label() -> void:
 		Global.score
 	]
 
+# Plays the room-entry animation when the scene first loads.
+# The professor panel slides in from the left (TRANS_BACK ease-out), then the typewriter
+# starts on the intro line. The clue note, terminal panel, and door fade in concurrently.
+# Waits one process frame before starting so Control layout is fully computed.
 func _play_entrance_animation() -> void:
 	# Wait one frame so Control layout is fully computed before reading positions/sizes
 	await get_tree().process_frame
@@ -704,6 +817,9 @@ func _play_entrance_animation() -> void:
 	bg_tw.tween_property(door, "modulate:a", 1.0, 0.45).set_delay(0.1)
 
 
+# Animates visible_characters on a Label from 0 to its full length at ~22 chars/sec
+# (each character takes 0.045 s). Starts the portrait bounce while typing and stops
+# it when the tween finishes. No-ops if the label text is empty.
 func _play_typewriter(label: Label) -> void:
 	label.visible_characters = 0
 	var total: int = label.text.length()
@@ -716,12 +832,23 @@ func _play_typewriter(label: Label) -> void:
 	tw.tween_callback(_stop_portrait_bounce)
 
 
+# Sets professor_line text, plays the typewriter animation, and fires TTS.
+# Use this for all mid-game professor dialogue (wrong, hint, success, defeat).
+# Do NOT use for the intro line set in _load_current_room() — that line uses a
+# direct text assignment + separate _tts_speak() call to avoid double-typewriter
+# conflict with _play_entrance_animation().
 func _speak(text: String) -> void:
 	professor_line.text = text
 	_play_typewriter(professor_line)
 	_tts_speak(text)
 
 
+# Sends text to the OS text-to-speech engine via DisplayServer.tts_speak().
+# Strips any "Professor Name: " prefix so the voice only reads the dialogue.
+# Selects a voice based on the current professor (see _get_professor_voice_index()).
+# Volume is sourced from AudioManager.tts_volume (0.0–1.0 → 0–100 int range).
+# Speed is controlled by the TTS_RATE constant at the top of this file.
+# Does nothing if AudioManager.tts_enabled is false or no English voices are available.
 func _tts_speak(text: String) -> void:
 	if not AudioManager.tts_enabled:
 		return
@@ -740,6 +867,9 @@ func _tts_speak(text: String) -> void:
 	DisplayServer.tts_speak(speech_text, voice_id, int(AudioManager.tts_volume * 100), 1.0, TTS_RATE)
 
 
+# Returns 0, 1, or 2 to index into the available English voice list.
+# Vex → 0, Hale → 1, Mira → 2. The index is wrapped with % voices.size()
+# in _tts_speak() so it is safe on systems with fewer than 3 installed voices.
 func _get_professor_voice_index() -> int:
 	match str(current_professor.get("name", "")):
 		"Professor Vex":  return 0  # First available English voice
@@ -748,6 +878,9 @@ func _get_professor_voice_index() -> int:
 	return 0
 
 
+# Starts a looping vertical bounce tween on professor_portrait (±5 px, 0.28 s per half).
+# Records the rest Y position before starting so _stop_portrait_bounce() can restore it.
+# Kills any existing bounce tween before starting a new one.
 func _start_portrait_bounce() -> void:
 	if _portrait_bounce_tween != null:
 		_portrait_bounce_tween.kill()
@@ -757,6 +890,8 @@ func _start_portrait_bounce() -> void:
 	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
+# Kills the portrait bounce tween and snaps the portrait back to its rest Y position.
+# Called by _play_typewriter() when the typewriter animation finishes.
 func _stop_portrait_bounce() -> void:
 	if _portrait_bounce_tween != null:
 		_portrait_bounce_tween.kill()
@@ -764,6 +899,8 @@ func _stop_portrait_bounce() -> void:
 	professor_portrait.position.y = _portrait_rest_y
 
 
+# Returns the professor Dictionary whose "name" matches Global.selected_professor.
+# Falls back to a round-robin choice (room_index % professors.size()) if no match is found.
 func _select_professor(room_index: int) -> Dictionary:
 	var selected_name := str(Global.selected_professor)
 	for professor in professors:
@@ -773,6 +910,9 @@ func _select_professor(room_index: int) -> Dictionary:
 	return professors[room_index % professors.size()]
 
 
+# Builds a formatted dialogue string: "Professor Name: <random line from kind category>".
+# kind must be one of "intro", "wrong", "hint", "success", or "defeat".
+# Falls back to just the professor name if the category array is empty.
 func _professor_line(kind: String) -> String:
 	var professor_name := str(current_professor.get("name", "Professor"))
 	var lines_variant: Variant = current_professor.get(kind, [])
@@ -782,6 +922,8 @@ func _professor_line(kind: String) -> String:
 	return "%s: %s" % [professor_name, _random_line(lines)]
 
 
+# Loads the current professor's portrait texture from its res:// path and assigns it
+# to professor_portrait. Silently skips if the path is empty or the resource is not a Texture2D.
 func _apply_professor_portrait() -> void:
 	var portrait_path := str(current_professor.get("portrait", ""))
 	if portrait_path.is_empty():
@@ -791,6 +933,8 @@ func _apply_professor_portrait() -> void:
 		professor_portrait.texture = texture
 
 
+# Returns a uniformly random element from lines as a String.
+# Returns an empty string if lines is empty.
 func _random_line(lines: Array) -> String:
 	if lines.is_empty():
 		return ""
