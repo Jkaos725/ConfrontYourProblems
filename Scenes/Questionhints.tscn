@@ -1,21 +1,19 @@
 [gd_scene format=3 uid="uid://cgjlxhbirlucc"]
 
-[ext_resource type="Script" uid="uid://bt5dv8gnhndc2" path="res://Scripts/GeneralRoom.gd" id="1_njm8b"]
-[ext_resource type="Script" uid="uid://c6vhvg71l1cqe" path="res://Scripts/hint_http_request.gd" id="3_k2xw1"]
-[ext_resource type="Texture2D" uid="uid://deefk8e4wk63g" path="res://Images/angryBot.png" id="3_vjxhn"]
-[ext_resource type="Script" path="res://Scenes/gpu_particles_2d.gd" id="4_aojbq"]
-[ext_resource type="Script" uid="uid://bt0levoe8igpn" path="res://Scripts/hint_1.gd" id="5_c0yxv"]
-[ext_resource type="Script" uid="uid://j1nkab67m1np" path="res://Scripts/feed_back_prompt.gd" id="5_ek5xw"]
-[ext_resource type="PackedScene" uid="uid://p2d4ebj45p5a" path="res://Scenes/Components/timer_label.tscn" id="6_njm8b"]
-[ext_resource type="Script" uid="uid://c3jk6gyupdlsm" path="res://Scripts/question_label.gd" id="7_ydjff"]
-[ext_resource type="PackedScene" uid="uid://oendc58u8gm6" path="res://Scenes/Components/answer_http_request.tscn" id="8_aojbq"]
+[ext_resource type="Script" path="res://Scripts/GeneralRoom.gd" id="1_room"]
+[ext_resource type="Script" path="res://Scripts/hint_http_request.gd" id="2_hint"]
+[ext_resource type="Texture2D" path="res://Images/angryBot.png" id="3_prof"]
+[ext_resource type="Script" path="res://Scripts/hint_1.gd" id="4_hintbtn"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/timer_label.tscn" id="5_timer"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/answer_http_request.tscn" id="6_answer"]
+[ext_resource type="Script" path="res://Scripts/feed_back_prompt.gd" id="7_feedback"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ambient"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1, 1, 1)
 direction = Vector3(0, -1, 0)
-spread = 15.0
+spread = 18.0
 initial_velocity_min = 15.0
 initial_velocity_max = 35.0
 gravity = Vector3(0, 0, 0)
@@ -35,25 +33,11 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.5, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ek5xw"]
-content_margin_left = 26.0
-content_margin_top = 24.0
-content_margin_right = 26.0
-content_margin_bottom = 24.0
-bg_color = Color(0.13725491, 0.09411765, 0.05882353, 0.5803922)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.698039, 0.521569, 0.278431, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0.0509804, 0.0235294, 0.00392157, 0.45)
-shadow_size = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_krahm"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_room_panel"]
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
 bg_color = Color(0.192157, 0.137255, 0.0823529, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -67,352 +51,201 @@ corner_radius_bottom_left = 14
 shadow_color = Color(0.054902, 0.027451, 0.0117647, 0.35)
 shadow_size = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aojbq"]
-content_margin_left = 18.0
-content_margin_top = 16.0
-content_margin_right = 18.0
-content_margin_bottom = 16.0
-bg_color = Color(0.439216, 0.337255, 0.223529, 0.92)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_terminal"]
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.611765, 0.447059, 0.211765, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_terminal_input"]
+bg_color = Color(0.329412, 0.25098, 0.164706, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.686275, 0.509804, 0.231373, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_textedit"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.165, 0.118, 0.071, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.58, 0.43, 0.2, 0.85)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0bw7"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.47451, 0.333333, 0.176471, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mj1qt"]
-bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.8, 0.611765, 0.313726, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jdan8"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
 bg_color = Color(0.25098, 0.176471, 0.101961, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.686275, 0.509804, 0.231373, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ab12h"]
-content_margin_left = 18.0
-content_margin_top = 18.0
-content_margin_right = 18.0
-content_margin_bottom = 18.0
-bg_color = Color(0.152941, 0.105882, 0.0627451, 0.97)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_feedback"]
+content_margin_left = 26.0
+content_margin_top = 24.0
+content_margin_right = 26.0
+content_margin_bottom = 24.0
+bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.6, 0.44, 0.2, 0.65)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 6
+border_color = Color(0.698039, 0.521569, 0.278431, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.0509804, 0.0235294, 0.00392157, 0.45)
+shadow_size = 18
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_byvrh"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
+[node name="Question1" type="Node2D"]
+script = ExtResource("1_room")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp8a8"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_aojbq"]
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mp8a8"]
-particle_flag_disable_z = true
-emission_shape = 1
-emission_sphere_radius = 1.0
-angle_min = -1483.0
-angle_max = 1397.0
-inherit_velocity_ratio = 1.0
-direction = Vector3(0, -30, 0)
-spread = 180.0
-initial_velocity_min = 305.75
-initial_velocity_max = 485.61
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcvg4"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4acn0"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hrsk6"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_odnec"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="LabelSettings" id="LabelSettings_njm8b"]
-font_size = 26
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u0fk7"]
-bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.47451, 0.333333, 0.176471, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vwdc"]
-bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.8, 0.611765, 0.313726, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_10hbk"]
-bg_color = Color(0.25098, 0.176471, 0.101961, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.686275, 0.509804, 0.231373, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[node name="Question1" type="Node2D" unique_id=433438692]
-script = ExtResource("1_njm8b")
-
-[node name="Control2#AmbientParticles" type="GPUParticles2D" parent="." unique_id=123456789]
-modulate = Color(1, 0.9, 0.7, 0.55)
+[node name="AmbientParticles" type="GPUParticles2D" parent="."]
+modulate = Color(1, 0.9, 0.7, 0.3)
 position = Vector2(576, 322)
 amount = 80
 lifetime = 8.0
 process_material = SubResource("ParticleProcessMaterial_ambient")
 
-[node name="Control2" type="Control" parent="." unique_id=1999696929]
+[node name="Control2" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
-offset_bottom = 645.0
+offset_bottom = 648.0
 
-[node name="Background" type="ColorRect" parent="Control2" unique_id=1800686952]
+[node name="Background" type="ColorRect" parent="Control2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-color = Color(0.101961, 0.0588235, 0.0313726, 1)
+color = Color(0.0823529, 0.0509804, 0.027451, 1)
 
-[node name="VignetteOverlay" type="TextureRect" parent="Control2" unique_id=987654321]
-modulate = Color(1, 1, 1, 0.5)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = SubResource("GradientTexture2D_vignette")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="BackgroundTexture" type="TextureRect" parent="Control2" unique_id=295311144]
-visible = false
-modulate = Color(1, 0.690196, 0.352941, 0.08)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
-
-[node name="TopGlow" type="ColorRect" parent="Control2" unique_id=200000001]
+[node name="TopGlow" type="ColorRect" parent="Control2"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 90.0
+offset_bottom = 160.0
 grow_horizontal = 2
-color = Color(0.827451, 0.560784, 0.258824, 0.11)
+color = Color(0.827451, 0.560784, 0.258824, 0.12)
 
-[node name="ArchLeft" type="ColorRect" parent="Control2" unique_id=200000002]
+[node name="BackWallBand" type="ColorRect" parent="Control2"]
 layout_mode = 1
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_right = 3.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 160.0
+offset_bottom = 440.0
 grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.72549, 0.54902, 0.26, 0.55)
+color = Color(0.160784, 0.101961, 0.054902, 0.9)
 
-[node name="ArchRight" type="ColorRect" parent="Control2" unique_id=200000003]
+[node name="Floor" type="ColorRect" parent="Control2"]
 layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
+anchors_preset = 14
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -3.0
-grow_horizontal = 0
-grow_vertical = 2
-color = Color(0.72549, 0.54902, 0.26, 0.55)
-
-[node name="Walkway" type="ColorRect" parent="Control2" unique_id=200000004]
-layout_mode = 1
-anchors_preset = 13
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -55.0
-offset_right = 55.0
+offset_top = -130.0
 grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.223529, 0.152941, 0.0823529, 0.4)
+grow_vertical = 0
+color = Color(0.101961, 0.0627451, 0.0313726, 1)
 
-[node name="ExamDoor" type="ColorRect" parent="Control2" unique_id=200000005]
+[node name="CenterPath" type="ColorRect" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -314.0
-offset_right = 80.0
-offset_bottom = -250.0
+offset_left = -52.0
+offset_top = -12.0
+offset_right = 52.0
+offset_bottom = 326.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.241176, 0.156863, 0.0862745, 0.78)
+
+[node name="DoorShadow" type="ColorRect" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -196.0
+offset_right = 110.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.18)
+
+[node name="Door" type="ColorRect" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -96.0
+offset_top = -250.0
+offset_right = 96.0
+offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.227451, 0.145098, 0.0784314, 1)
 
-[node name="Doorway" type="ColorRect" parent="Control2/ExamDoor" unique_id=200000006]
+[node name="Doorway" type="ColorRect" parent="Control2/Door"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0470588, 0.0313726, 0.0156863, 1)
 
-[node name="DoorPanel" type="ColorRect" parent="Control2/ExamDoor" unique_id=200000007]
+[node name="DoorPanel" type="ColorRect" parent="Control2/Door"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 18.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = -18.0
+offset_left = 14.0
+offset_top = 14.0
+offset_right = -14.0
+offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.345098, 0.223529, 0.121569, 1)
 
-[node name="DoorLabel" type="Label" parent="Control2/ExamDoor" unique_id=200000008]
+[node name="DoorLabel" type="Label" parent="Control2/Door"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -420,72 +253,169 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 24
 text = "EXIT"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Step3" type="ColorRect" parent="Control2" unique_id=200000009]
+[node name="DoorLockLight" type="ColorRect" parent="Control2/Door"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -90.0
-offset_top = 246.0
-offset_right = 90.0
-offset_bottom = 266.0
+offset_left = -14.0
+offset_top = -82.0
+offset_right = 14.0
+offset_bottom = -54.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.364706, 0.247059, 0.133333, 0.95)
+color = Color(0.772549, 0.227451, 0.184314, 1)
 
-[node name="Step2" type="ColorRect" parent="Control2" unique_id=200000010]
+[node name="MetaLabel" type="Label" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -122.0
-offset_top = 266.0
-offset_right = 122.0
-offset_bottom = 290.0
+offset_left = -260.0
+offset_top = -300.0
+offset_right = 260.0
+offset_bottom = -272.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.32549, 0.219608, 0.117647, 0.95)
+theme_override_colors/font_color = Color(0.94902, 0.862745, 0.721569, 1)
+theme_override_font_sizes/font_size = 14
+text = "Chamber 1/4   Trial Timer 180"
+horizontal_alignment = 1
 
-[node name="Step1" type="ColorRect" parent="Control2" unique_id=200000011]
+[node name="ProfessorPanel" type="PanelContainer" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -158.0
-offset_top = 290.0
-offset_right = 158.0
-offset_bottom = 322.5
+offset_left = -480.0
+offset_top = -224.0
+offset_right = -334.0
+offset_bottom = -110.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.290196, 0.192157, 0.105882, 0.98)
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="PlayerMarker" type="ColorRect" parent="Control2" unique_id=200000012]
+[node name="ProfessorBox" type="VBoxContainer" parent="Control2/ProfessorPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ProfessorPortrait" type="TextureRect" parent="Control2/ProfessorPanel/ProfessorBox"]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+texture = ExtResource("3_prof")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ProfessorLine" type="Label" parent="Control2/ProfessorPanel/ProfessorBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
+theme_override_font_sizes/font_size = 11
+text = "Professor Vex: One lock. Three chances."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Desk" type="ColorRect" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -18.0
-offset_top = 176.0
-offset_right = 18.0
-offset_bottom = 246.0
+offset_left = -468.0
+offset_top = 186.0
+offset_right = -258.0
+offset_bottom = 306.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.239216, 0.14902, 0.0823529, 0.92)
+
+[node name="ClueNote" type="PanelContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -424.0
+offset_top = 212.0
+offset_right = -294.0
+offset_bottom = 278.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
+
+[node name="ClueText" type="Label" parent="Control2/ClueNote"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.945098, 0.847059, 1)
+theme_override_font_sizes/font_size = 12
+text = "CLUE NOTE\nInspect to reveal."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ClueNoteButton" type="Button" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -424.0
+offset_top = 212.0
+offset_right = -294.0
+offset_bottom = 278.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+text = ""
+
+[node name="StatusLabel" type="Label" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = 150.0
+offset_right = 260.0
+offset_bottom = 176.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.94902, 0.862745, 0.721569, 1)
+theme_override_font_sizes/font_size = 14
+text = "Inspect the note or enter your response."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="PlayerMarker" type="ColorRect" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = 210.0
+offset_right = 20.0
+offset_bottom = 294.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.913725, 0.866667, 0.733333, 1)
 
-[node name="Head" type="ColorRect" parent="Control2/PlayerMarker" unique_id=200000013]
+[node name="Head" type="ColorRect" parent="Control2/PlayerMarker"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -495,292 +425,224 @@ anchor_bottom = 0.5
 offset_left = -12.0
 offset_top = -46.0
 offset_right = 12.0
-offset_bottom = -24.0
+offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.976471, 0.898039, 0.780392, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="Control2" unique_id=2014160864]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -108.0
-offset_bottom = 108.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="Control2/MarginContainer" unique_id=2133322384]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_ek5xw")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer" unique_id=1416615820]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_constants/separation = 10
-
-[node name="TopRow" type="HBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=1754729004]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 16
-
-[node name="ProfessorPanel" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1198751331]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_krahm")
-
-[node name="ProfessorBox" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel" unique_id=771899198]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="ProfessorPortrait" type="TextureRect" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox" unique_id=699774552]
-texture_filter = 1
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
-texture = ExtResource("3_vjxhn")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="ProfessorLine" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox" unique_id=206091232]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
-theme_override_font_sizes/font_size = 14
-text = "Vex: No guessing your way out. Earn it."
-horizontal_alignment = 1
-autowrap_mode = 3
-visible_characters = 52
-visible_characters_behavior = 1
-visible_ratio = 1.3333334
-
-[node name="UploadBox" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=1298865747]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="UploadNameLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=261315805]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
-text = "Custom Catalog Name"
-
-[node name="UploadNameInput" type="LineEdit" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1177897039]
-layout_mode = 2
-placeholder_text = "Enter a name for the uploaded module"
-
-[node name="UploadHelp" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/UploadBox" unique_id=1293337152]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.878431, 0.894118, 0.92549, 1)
-text = "Upload TXT or Markdown lecture notes to generate a study quiz, or import a JSON quiz set from the source screen."
-autowrap_mode = 3
-
-[node name="BodyRow" type="HBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer" unique_id=205106739]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 20
-
-[node name="LeftColumn" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow" unique_id=470767527]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 18
-alignment = 1
-
-[node name="QuestionCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=264814051]
-custom_minimum_size = Vector2(0, 110)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_aojbq")
-
-[node name="QuestionLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/QuestionCard" unique_id=725201016]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.968627, 0.913725, 1)
-theme_override_font_sizes/font_size = 22
-text = "Question goes here"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="StatusLabel" type="Label" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=2050364416]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.937255, 0.870588, 0.756863, 1)
-theme_override_font_sizes/font_size = 18
-text = "Type your answer below. Use a hint only if you're stuck."
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="Control" type="Control" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=191274882]
-layout_mode = 2
-
-[node name="TextEdit" type="TextEdit" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control" unique_id=1624157675]
-custom_minimum_size = Vector2(650, 80)
+[node name="TerminalBase" type="ColorRect" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -325.0
-offset_top = -25.0
-offset_right = 325.0
-offset_bottom = 25.0
+offset_left = 118.0
+offset_top = 118.0
+offset_right = 430.0
+offset_bottom = 314.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_textedit")
+color = Color(0.101961, 0.12549, 0.105882, 0.95)
 
-[node name="AnswerButton1" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=1550356470]
-custom_minimum_size = Vector2(200, 44)
+[node name="TerminalPanel" type="PanelContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 132.0
+offset_top = 86.0
+offset_right = 418.0
+offset_bottom = 262.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_terminal")
+
+[node name="TerminalVBox" type="VBoxContainer" parent="Control2/TerminalPanel"]
 layout_mode = 2
-size_flags_horizontal = 6
+theme_override_constants/separation = 8
+
+[node name="TerminalHeader" type="Label" parent="Control2/TerminalPanel/TerminalVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.643137, 0.92549, 0.823529, 1)
+theme_override_font_sizes/font_size = 12
+text = "ACCESS TERMINAL"
+
+[node name="TerminalStatus" type="Label" parent="Control2/TerminalPanel/TerminalVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.894118, 0.882353, 0.796078, 1)
+theme_override_font_sizes/font_size = 12
+text = "INPUT CHANNEL OPEN"
+
+[node name="TerminalButton" type="Button" parent="Control2/TerminalPanel/TerminalVBox"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = ""
+
+[node name="TerminalInput" type="TextEdit" parent="Control2/TerminalPanel/TerminalVBox"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_colors/background_color = Color(0.329412, 0.25098, 0.164706, 1)
+
+[node name="AnswerButton1" type="Button" parent="Control2/TerminalPanel/TerminalVBox"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
 theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_d0bw7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_mj1qt")
-theme_override_styles/hover = SubResource("StyleBoxFlat_jdan8")
-text = "Submit"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "Submit Input"
 
-[node name="RightColumn" type="VBoxContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow" unique_id=1102362458]
-custom_minimum_size = Vector2(270, 0)
-layout_mode = 2
-theme_override_constants/separation = 18
+[node name="HintRack" type="VBoxContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 320.0
+offset_top = -176.0
+offset_right = 472.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
 
-[node name="ThemeCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=964831141]
-custom_minimum_size = Vector2(0, 100)
+[node name="HintCard1" type="PanelContainer" parent="Control2/HintRack"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint1" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard" unique_id=1622545699]
+[node name="Hint1" type="Button" parent="Control2/HintRack/HintCard1"]
 layout_mode = 2
-theme_override_colors/font_disabled_color = Color(16.638432, 16.638432, 16.638432, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_byvrh")
-theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_mp8a8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 disabled = true
-text = "Hint 1"
+text = "Clue 1"
 autowrap_mode = 3
-script = ExtResource("5_c0yxv")
+script = ExtResource("4_hintbtn")
 timePercentage = 0
 
-[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=2138671058]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard1/Hint1"]
 autostart = true
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=1337215448]
-z_index = 1
-material = SubResource("CanvasItemMaterial_aojbq")
-position = Vector2(114, 36)
-emitting = false
-amount = 100
-lifetime = 0.52
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource("ParticleProcessMaterial_mp8a8")
-script = ExtResource("4_aojbq")
-
-[node name="HintCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1162841359]
-custom_minimum_size = Vector2(0, 100)
+[node name="HintCard2" type="PanelContainer" parent="Control2/HintRack"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint2" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard" unique_id=1525138738]
+[node name="Hint2" type="Button" parent="Control2/HintRack/HintCard2"]
 layout_mode = 2
-theme_override_colors/font_disabled_color = Color(18.892157, 18.892157, 18.892157, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_hcvg4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_4acn0")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 disabled = true
-text = "Hint 2"
+text = "Clue 2"
 autowrap_mode = 3
-script = ExtResource("5_c0yxv")
+script = ExtResource("4_hintbtn")
 
-[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=365742750]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard2/Hint2"]
 autostart = true
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=1656579220]
-z_index = 1
-material = SubResource("CanvasItemMaterial_aojbq")
-position = Vector2(126, 40)
-emitting = false
-amount = 100
-lifetime = 0.52
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_mp8a8")
-script = ExtResource("4_aojbq")
-
-[node name="StatusCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1351471532]
-custom_minimum_size = Vector2(0, 100)
+[node name="HintCard3" type="PanelContainer" parent="Control2/HintRack"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
 
-[node name="Hint3" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard" unique_id=845258701]
+[node name="Hint3" type="Button" parent="Control2/HintRack/HintCard3"]
 layout_mode = 2
-theme_override_colors/font_disabled_color = Color(18.892157, 18.892157, 18.892157, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_hrsk6")
-theme_override_styles/hover = SubResource("StyleBoxFlat_byvrh")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_odnec")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 disabled = true
-text = "Hint 3"
+text = "Clue 3"
 autowrap_mode = 3
-script = ExtResource("5_c0yxv")
+script = ExtResource("4_hintbtn")
 timePercentage = 20
 
-[node name="Timer" type="Timer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=876177229]
+[node name="Timer" type="Timer" parent="Control2/HintRack/HintCard3/Hint3"]
 autostart = true
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=2049674297]
-z_index = 1
-material = SubResource("CanvasItemMaterial_aojbq")
-position = Vector2(124, 42)
-emitting = false
-amount = 100
-lifetime = 0.52
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_mp8a8")
-script = ExtResource("4_aojbq")
-
-[node name="TimerLabel" parent="Control2" unique_id=1778605306 instance=ExtResource("6_njm8b")]
-layout_mode = 0
-offset_left = 1045.0
-offset_top = 104.0
-offset_right = 1126.0
-offset_bottom = 140.0
-size_flags_horizontal = 8
-label_settings = SubResource("LabelSettings_njm8b")
-
-[node name="FeedBackPrompt" type="ColorRect" parent="Control2" unique_id=1855606465]
-visible = false
-z_index = 1
-custom_minimum_size = Vector2(300, 240)
+[node name="RoomPrompt" type="Label" parent="Control2"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -120.0
-offset_right = 150.0
-offset_bottom = 120.0
+offset_left = -220.0
+offset_top = 184.0
+offset_right = 260.0
+offset_bottom = 210.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-color = Color(0.4, 0.4, 0.4, 0)
-script = ExtResource("5_ek5xw")
+theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
+theme_override_font_sizes/font_size = 12
+text = "Inspect the note or enter your response."
+horizontal_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="Control2/FeedBackPrompt" unique_id=1977939985]
-z_index = -1
+[node name="HintLabel" type="Label" parent="Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 220.0
+offset_right = 340.0
+offset_bottom = 272.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.933333, 0.854902, 0.658824, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="TimerLabel" parent="Control2" instance=ExtResource("5_timer")]
+visible = false
+offset_left = 1000.0
+offset_top = 26.0
+offset_right = 1128.0
+offset_bottom = 72.0
+
+[node name="CountdownTimer" type="Timer" parent="Control2"]
+wait_time = 1.0
+autostart = false
+
+[node name="FeedBackPrompt" type="ColorRect" parent="Control2"]
+visible = false
+z_index = 1
+custom_minimum_size = Vector2(320, 180)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -90.0
+offset_right = 160.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.4, 0.4, 0.4, 0)
+script = ExtResource("7_feedback")
+
+[node name="PanelContainer" type="PanelContainer" parent="Control2/FeedBackPrompt"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_ek5xw")
+theme_override_styles/panel = SubResource("StyleBoxFlat_feedback")
 
-[node name="Button" type="Button" parent="Control2/FeedBackPrompt" unique_id=637666343]
+[node name="Button" type="Button" parent="Control2/FeedBackPrompt"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -790,128 +652,37 @@ offset_top = 16.0
 offset_right = -20.0
 offset_bottom = 47.0
 grow_horizontal = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_u0fk7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_3vwdc")
-theme_override_styles/hover = SubResource("StyleBoxFlat_10hbk")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "X"
 
-[node name="Label" type="Label" parent="Control2/FeedBackPrompt" unique_id=1555189758]
+[node name="Label" type="Label" parent="Control2/FeedBackPrompt"]
 layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = 25.0
-offset_top = -30.0
-offset_right = -18.0
-offset_bottom = 40.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ContinueButton" type="Button" parent="Control2/FeedBackPrompt" unique_id=300000010]
-visible = false
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -50.0
-offset_right = -20.0
-offset_bottom = -14.0
+offset_left = 24.0
+offset_top = 32.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_d0bw7")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_mj1qt")
-theme_override_styles/hover = SubResource("StyleBoxFlat_jdan8")
-text = "Continue"
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
-visible = false
-texture_filter = 1
-position = Vector2(559, 157)
-scale = Vector2(8, 8)
-texture = ExtResource("3_vjxhn")
-
-[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1494205287 node_paths=PackedStringArray("Hint1", "Hint2", "Hint3")]
-use_threads = true
-script = ExtResource("3_k2xw1")
-Hint1 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1")
-Hint2 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2")
-Hint3 = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3")
-
-[node name="TimerLabel" parent="." unique_id=2013740105 instance=ExtResource("6_njm8b")]
-visible = false
-label_settings = SubResource("LabelSettings_njm8b")
-
-[node name="QuestionLabel" type="Label" parent="." unique_id=1937359125]
-visible = false
-z_index = 1
-offset_left = 226.0
-offset_top = 254.0
-offset_right = 761.0
-offset_bottom = 383.0
-text = "This is a test"
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
-script = ExtResource("7_ydjff")
 
-[node name="ColorRect" type="ColorRect" parent="QuestionLabel" unique_id=660500764]
-visible = false
-z_index = -1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.45071962, 0.45071962, 0.45071962, 1)
+[node name="HTTPRequest" type="HTTPRequest" parent="." node_paths=PackedStringArray("Hint1", "Hint2", "Hint3")]
+use_threads = true
+script = ExtResource("2_hint")
+Hint1 = NodePath("../Control2/HintRack/HintCard1/Hint1")
+Hint2 = NodePath("../Control2/HintRack/HintCard2/Hint2")
+Hint3 = NodePath("../Control2/HintRack/HintCard3/Hint3")
 
-[node name="Control" type="Control" parent="." unique_id=1289547833]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_left = 234.0
-offset_top = 418.0
-offset_right = 758.0
-offset_bottom = 518.0
-
-[node name="TextEdit" type="TextEdit" parent="Control" unique_id=194617503]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="AnswerHTTPRequest" parent="." unique_id=406351491 node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("8_aojbq")]
+[node name="AnswerHTTPRequest" parent="." node_paths=PackedStringArray("AnswerButton", "feedBackPrompt") instance=ExtResource("6_answer")]
 pathToNextScene = "res://Scenes/Questionhints.tscn"
-AnswerButton = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1")
+AnswerButton = NodePath("../Control2/TerminalPanel/TerminalVBox/AnswerButton1")
 feedBackPrompt = NodePath("../Control2/FeedBackPrompt")
 
-[node name="ClickPlayer" type="AudioStreamPlayer" parent="." unique_id=300000001]
-
-[node name="CorrectPlayer" type="AudioStreamPlayer" parent="." unique_id=300000002]
-
-[node name="WrongPlayer" type="AudioStreamPlayer" parent="." unique_id=300000003]
-
-[node name="UnlockPlayer" type="AudioStreamPlayer" parent="." unique_id=300000004]
-
-[node name="WinPlayer" type="AudioStreamPlayer" parent="." unique_id=300000005]
-
-[node name="LosePlayer" type="AudioStreamPlayer" parent="." unique_id=300000006]
-
-[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/GPUParticles2D" method="_on_hint_1_pressed"]
-[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" method="_on_timer_timeout"]
-[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/GPUParticles2D" method="_on_hint_2_pressed"]
-[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" method="_on_timer_timeout"]
-[connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/GPUParticles2D" method="_on_hint_3_pressed"]
-[connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" method="_on_timer_timeout"]
 [connection signal="pressed" from="Control2/FeedBackPrompt/Button" to="Control2/FeedBackPrompt" method="_on_button_pressed"]
 [connection signal="request_completed" from="HTTPRequest" to="HTTPRequest" method="_on_request_completed"]

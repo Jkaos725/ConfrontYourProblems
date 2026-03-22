@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 @onready var overlay: ColorRect = $Overlay
+@onready var panel: PanelContainer = $Overlay/Center/Panel
 @onready var music_toggle: CheckButton = $Overlay/Center/Panel/Margin/VBox/MusicRow/MusicToggle
 @onready var music_slider: HSlider = $Overlay/Center/Panel/Margin/VBox/MusicRow/MusicSlider
 @onready var sfx_toggle: CheckButton = $Overlay/Center/Panel/Margin/VBox/SFXRow/SFXToggle
@@ -13,6 +14,7 @@ func _ready() -> void:
 	sfx_toggle.set_block_signals(true)
 	sfx_slider.set_block_signals(true)
 	hide()
+	_sync_from_audio_manager()
 	music_toggle.set_block_signals(false)
 	music_slider.set_block_signals(false)
 	sfx_toggle.set_block_signals(false)
@@ -68,6 +70,5 @@ func _on_sfx_slider_value_changed(value: float) -> void:
 
 func _on_overlay_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var panel: Control = $Overlay/Center/Panel
 		if not panel.get_global_rect().has_point(event.global_position):
 			close()
