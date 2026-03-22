@@ -1,6 +1,5 @@
 [
   { "id": "programming", "name": "Programming Basics", "description": "Introductory programming and web app questions." },
-  { "id": "godot", "name": "Godot Builder", "description": "Godot concepts, nodes, scenes, and signals." },
   { "id": "math", "name": "Math Escape", "description": "Algebra, fractions, and graph-based puzzle rooms." },
   { "id": "english", "name": "English Challenge", "description": "Grammar, synonyms, and reading comprehension." },
   { "id": "cs", "name": "Computer Science Core", "description": "Algorithms, data structures, and binary thinking." },

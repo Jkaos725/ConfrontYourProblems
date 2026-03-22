@@ -6,12 +6,6 @@
     "description": "Introductory programming and web app escape-room questions."
   },
   {
-    "name": "Godot Builder",
-    "subject": "Godot",
-    "path": "res://Data/godot_rooms.json",
-    "description": "Rooms focused on Godot concepts, nodes, scenes, and signals."
-  },
-  {
     "name": "Math Escape",
     "subject": "Math",
     "path": "res://Data/math_rooms.json",

@@ -1,6 +1,6 @@
 extends Control
 
-const DEFAULT_STATUS := "Choose the right answer to unlock the next room."
+const DEFAULT_STATUS := "Choose the right signal to unlock the next chamber."
 const GROQ_URL := "https://api.groq.com/openai/v1/chat/completions"
 const GROQ_MODEL := "llama-3.3-70b-versatile"
 const GROQ_KEY_FILE_PATH := "res://Data/groq_api_key.txt"
@@ -18,19 +18,10 @@ const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abor
 const UNLOCK_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
 const WIN_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
 const LOSE_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
+const BACKGROUND_MUSIC_PATH := "res://Audio/New Sounds/Background music/Background.mp3"
 const LIVES_OPTIONS := [1, 2, 3, 5]
 const QUESTION_COUNT_OPTIONS := [3, 4, 5, 6, 8]
 const HINT_TIMER_OPTIONS := [60, 120, 180, 300, 600]
-const PROFESSOR_OPTIONS := [
-	{"name": "Professor Vex", "description": "Harsh, intense, and quick to challenge you."},
-	{"name": "Professor Hale", "description": "Calm, neutral, and focused on precision."},
-	{"name": "Professor Mira", "description": "Kind, encouraging, and patient with mistakes."}
-]
-const PROFESSOR_PORTRAITS := {
-	"Professor Vex": "res://Images/angryBot.png",
-	"Professor Hale": "res://Images/neutralface.png",
-	"Professor Mira": "res://Images/happyface.png"
-}
 
 var rooms: Array[Dictionary] = []
 var subjects_db: Array[Dictionary] = []
@@ -61,6 +52,9 @@ var mascot_tween: Tween
 var selected_lives := START_LIVES
 var selected_question_count := SUBJECT_RUN_ROOM_COUNT
 var selected_hint_time := 180
+var professor_manager := ProfessorManager.new()
+var room_loader := RoomLoader.new()
+var ai_room_generator := AIRoomGenerator.new()
 
 @onready var background: ColorRect = $Background
 @onready var background_texture: TextureRect = $BackgroundTexture
@@ -114,6 +108,7 @@ var selected_hint_time := 180
 @onready var unlock_player: AudioStreamPlayer = $UnlockPlayer
 @onready var win_player: AudioStreamPlayer = $WinPlayer
 @onready var lose_player: AudioStreamPlayer = $LosePlayer
+var background_music_player: AudioStreamPlayer
 @onready var timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel
 @onready var mascot: TextureRect = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot
 @onready var mascot_box: CenterContainer = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
@@ -153,9 +148,9 @@ func _start_game() -> void:
 		status_label.text = "No rooms were loaded. Check Data/rooms.json."
 		return
 
-	rooms = _build_session_room_subset(rooms)
+	rooms = room_loader.build_session_room_subset(rooms, selected_question_count, active_subject_id)
 	if rooms.is_empty():
-		status_label.text = "No rooms are available for the selected setup."
+		status_label.text = "No chambers are available for this setup."
 		return
 
 	current_room_index = 0
@@ -203,16 +198,16 @@ func _show_start_screen() -> void:
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	room_title.text = "Start Your Escape"
-	room_description.text = "Upload lecture notes to build a quiz set, or choose a prerecorded subject for instant practice."
-	question_label.text = "Press start when you're ready to study."
+	room_description.text = "Upload lecture notes to build a challenge set, or choose a built-in chamber for instant practice."
+	question_label.text = "Enter when you're ready."
 	theme_badge.text = ""
 	hint_label.text = "The proctor is awake.\nPick a realm.\nSurvive the exam hall."
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Start Quiz Game"
+	primary_button.text = "Enter Trial"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Start Question Hints Game"
+	secondary_button.text = "Enter Clue Trial"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
@@ -235,7 +230,7 @@ func _show_professor_selection() -> void:
 	catalog_title.visible = true
 	catalog_title.text = "Choose A Professor"
 	catalog_help.visible = true
-	catalog_help.text = "Pick the professor who will guide your escape."
+	catalog_help.text = "Pick the professor who will guide your trial."
 	quiz_label.visible = false
 	quiz_option.visible = false
 	catalog_description.visible = true
@@ -284,17 +279,17 @@ func _show_source_selection() -> void:
 	session_setup_box.visible = false
 	upload_name_label.visible = false
 	upload_name_input.visible = false
-	room_title.text = "How do you want to start this study session?"
-	room_description.text = "Choose a prerecorded set or upload your own text file."
-	question_label.text = "Pick the path you want to take for the %s." % ("question hints game" if current_launch_target == "question_hints" else "quiz game")
+	room_title.text = "How will you enter this trial?"
+	room_description.text = "Choose a built-in challenge or upload your own study notes."
+	question_label.text = "Pick the path you want to take for the %s." % ("clue trial" if current_launch_target == "question_hints" else "escape run")
 	theme_badge.text = ""
 	hint_label.text = ""
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Use Prerecorded"
+	primary_button.text = "Use Built-In Challenge"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Upload My Own Text File"
+	secondary_button.text = "Upload Study Notes"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.text = "Back"
@@ -320,7 +315,7 @@ func _show_subject_selection() -> void:
 	hint_card.visible = true
 	catalog_box.visible = true
 	catalog_title.visible = true
-	catalog_title.text = "Choose A Subject"
+	catalog_title.text = "Choose A Chamber"
 	catalog_help.visible = false
 	quiz_label.visible = true
 	quiz_option.visible = true
@@ -339,7 +334,7 @@ func _show_subject_selection() -> void:
 	status_label.text = ""
 	_set_answer_buttons_visible(false)
 	_repopulate_subject_options()
-	primary_button.text = "Start Subject"
+	primary_button.text = "Enter Chamber"
 	primary_button.visible = true
 	primary_button.disabled = subjects_db.is_empty()
 	secondary_button.visible = false
@@ -369,8 +364,8 @@ func _show_room() -> void:
 	upload_name_label.visible = false
 	upload_name_input.visible = false
 	_apply_room_theme(room, current_room_index)
-	title_banner.text = "Escape Room Challenge"
-	meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
+	title_banner.text = "Escape Trial"
+	meta_label.text = "Challenge %s   Chamber %d/%d   Vault Progress %d   Attempts %d   Clues Used %d" % [
 		active_quiz_name,
 		current_room_index + 1,
 		rooms.size(),
@@ -393,19 +388,19 @@ func _show_room() -> void:
 		button.disabled = false
 	
 	question_card.visible = true
-	primary_button.text = "Restart Catalog"
+	primary_button.text = "Restart Challenge"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Show Hint"
+	secondary_button.text = "Inspect Clue"
 	secondary_button.visible = true
 	secondary_button.disabled = false
-	tertiary_button.text = "Next Room"
+	tertiary_button.text = "Enter Next Chamber"
 	tertiary_button.visible = room_cleared
 	tertiary_button.disabled = not room_cleared
 	_set_quaternary_button(false, true)
 
 func _show_escape_room():
-	var session_rooms: Array[Dictionary] = _build_session_room_subset(rooms)
+	var session_rooms: Array[Dictionary] = room_loader.build_session_room_subset(rooms, selected_question_count, active_subject_id)
 	if session_rooms.is_empty():
 		status_label.text = "No rooms are available for the selected setup."
 		return
@@ -440,8 +435,8 @@ func _show_end_screen(did_win: bool) -> void:
 		_play_if_ready(win_player)
 	else:
 		_play_if_ready(lose_player)
-	title_banner.text = "Escape Complete" if did_win else "Try Again"
-	meta_label.text = "Final Score %d   Rooms Cleared %d/%d   Hints Used %d   Subject %s   Quiz %s" % [
+	title_banner.text = "Trial Complete" if did_win else "Seal Broken"
+	meta_label.text = "Vault Progress %d   Chambers Cleared %d/%d   Clues Used %d   Chamber %s   Challenge %s" % [
 		score,
 		current_room_index + int(did_win),
 		rooms.size(),
@@ -449,17 +444,17 @@ func _show_end_screen(did_win: bool) -> void:
 		active_subject,
 		active_quiz_name
 	]
-	room_title.text = "You made it out." if did_win else "The doors sealed shut."
-	room_description.text = "Every lock opened and the story can grow from here." if did_win else "You ran out of lives, but the rooms are ready whenever you want another attempt."
-	question_label.text = "What do you want to do next?"
+	room_title.text = "You cleared the trial." if did_win else "The chamber sealed shut."
+	room_description.text = "Every lock released and the path opened before you." if did_win else "Your attempts ran out, but the chambers will open again when you return."
+	question_label.text = "What will you do next?"
 	theme_badge.text = ""
 	hint_label.text = "Next upgrade idea: add story branches, sound, and per-room art."
 	status_label.text = "You can restart or switch catalogs whenever you want."
 	_set_answer_buttons_visible(false)
-	primary_button.text = "Start Quiz Game"
+	primary_button.text = "Enter Trial"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Start Question Hints Game"
+	secondary_button.text = "Enter Clue Trial"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
@@ -489,22 +484,22 @@ func _show_quiz_victory_screen() -> void:
 	upload_name_input.visible = false
 	_set_answer_buttons_visible(false)
 
-	title_banner.text = "Escape Complete"
-	meta_label.text = "Quiz %s   Score %d/%d" % [
+	title_banner.text = "Trial Complete"
+	meta_label.text = "Challenge %s   Vault Progress %d/%d" % [
 		Global.last_quiz_name if not Global.last_quiz_name.is_empty() else "Escape",
 		Global.last_quiz_score,
 		Global.last_quiz_total
 	]
 	room_title.text = "The final door opens."
 	room_description.text = "You made it through every chamber and escaped %s's trial." % current_professor_name
-	question_label.text = "What do you want to do next?"
-	hint_label.text = "Every solved room becomes part of your archive."
+	question_label.text = "What will you do next?"
+	hint_label.text = "Every cleared chamber becomes part of your record."
 	status_label.text = ""
 
-	primary_button.text = "Start Quiz Game"
+	primary_button.text = "Enter Trial"
 	primary_button.visible = true
 	primary_button.disabled = false
-	secondary_button.text = "Start Question Hints Game"
+	secondary_button.text = "Enter Clue Trial"
 	secondary_button.visible = true
 	secondary_button.disabled = false
 	tertiary_button.visible = false
@@ -616,7 +611,7 @@ func _on_answer_selected(answer_index: int) -> void:
 		score += 1
 		_play_if_ready(correct_player)
 		status_label.text = room["success"]
-		meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
+		meta_label.text = "Challenge %s   Chamber %d/%d   Vault Progress %d   Attempts %d   Clues Used %d" % [
 			active_quiz_name,
 			current_room_index + 1,
 			rooms.size(),
@@ -630,12 +625,12 @@ func _on_answer_selected(answer_index: int) -> void:
 		_play_if_ready(unlock_player)
 		tertiary_button.visible = true
 		tertiary_button.disabled = false
-		tertiary_button.text = "Finish Escape" if current_room_index >= rooms.size() - 1 else "Next Room"
+		tertiary_button.text = "Finish Trial" if current_room_index >= rooms.size() - 1 else "Enter Next Chamber"
 	else:
 		lives_remaining -= 1
 		_play_if_ready(wrong_player)
 		if lives_remaining <= 0:
-			meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
+			meta_label.text = "Challenge %s   Chamber %d/%d   Vault Progress %d   Attempts %d   Clues Used %d" % [
 				active_quiz_name,
 				current_room_index + 1,
 				rooms.size(),
@@ -646,8 +641,8 @@ func _on_answer_selected(answer_index: int) -> void:
 			_show_end_screen(false)
 			return
 
-		status_label.text = "That answer keeps the door locked. Lives remaining: %d." % lives_remaining
-		meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
+		status_label.text = "That signal keeps the door locked. Attempts remaining: %d." % lives_remaining
+		meta_label.text = "Challenge %s   Chamber %d/%d   Vault Progress %d   Attempts %d   Clues Used %d" % [
 			active_quiz_name,
 			current_room_index + 1,
 			rooms.size(),
@@ -750,8 +745,8 @@ func _on_hint_pressed() -> void:
 	hints_used += 1
 	right_column.visible = true
 	hint_card.visible = true
-	hint_label.text = "Hint: %s" % room["hint"]
-	meta_label.text = "Quiz %s   Room %d/%d   Score %d   Lives %d   Hints %d" % [
+	hint_label.text = "Room clue: %s" % room["hint"]
+	meta_label.text = "Challenge %s   Chamber %d/%d   Vault Progress %d   Attempts %d   Clues Used %d" % [
 		active_quiz_name,
 		current_room_index + 1,
 		rooms.size(),
@@ -800,44 +795,6 @@ func _generate_preview_room() -> void:
 		button.text = answers[index]
 		button.disabled = true
 
-
-func _is_valid_generated_room(room: Dictionary) -> bool:
-	if not room.has("title") or not room.has("description") or not room.has("question"):
-		return false
-	if not room.has("answers") or not room.has("correct_index") or not room.has("hint") or not room.has("success"):
-		return false
-
-	var generated_question: String = str(room.get("question", ""))
-	var generated_hint: String = str(room.get("hint", ""))
-	var generated_description: String = str(room.get("description", ""))
-	if _contains_meta_material(generated_question) or _contains_meta_material(generated_hint) or _contains_meta_material(generated_description):
-		return false
-
-	var answers: Array = room["answers"]
-	if answers.size() != 3:
-		return false
-
-	var correct_index: int = int(room["correct_index"])
-	return correct_index >= 0 and correct_index < 3
-
-
-func _normalize_generated_room(room: Dictionary) -> Dictionary:
-	var normalized_success: Variant = room["success"]
-	if normalized_success is bool:
-		normalized_success = "The lock opens and the path forward is clear."
-
-	return {
-		"title": str(room["title"]),
-		"description": str(room["description"]),
-		"question": str(room["question"]),
-		"answers": room["answers"],
-		"correct_index": int(room["correct_index"]),
-		"hint": str(room["hint"]),
-		"success": str(normalized_success),
-		"theme_color": str(room.get("theme_color", "")),
-		"accent_color": str(room.get("accent_color", "")),
-		"background_image": str(room.get("background_image", ""))
-	}
 
 func _apply_room_theme(room: Dictionary, room_index: int) -> void:
 	var fallback_palette := [
@@ -973,24 +930,18 @@ func _update_subject_selection(index: int) -> void:
 
 func _populate_professor_options() -> void:
 	subject_option.clear()
-	for professor in PROFESSOR_OPTIONS:
+	for professor in professor_manager.get_options():
 		subject_option.add_item(str(professor.get("name", "Professor")))
-	var selected_index := 0
-	for index in range(PROFESSOR_OPTIONS.size()):
-		if str(PROFESSOR_OPTIONS[index].get("name", "")) == current_professor_name:
-			selected_index = index
-			break
+	var selected_index := professor_manager.get_selected_index(current_professor_name)
 	subject_option.select(selected_index)
 	_update_professor_selection(selected_index)
 
 
 func _update_professor_selection(index: int) -> void:
-	if index < 0 or index >= PROFESSOR_OPTIONS.size():
-		return
-	var professor: Dictionary = PROFESSOR_OPTIONS[index]
+	var professor: Dictionary = professor_manager.get_professor(index)
 	current_professor_name = str(professor.get("name", "Professor Vex"))
 	Global.selected_professor = current_professor_name
-	catalog_description.text = str(professor.get("description", ""))
+	catalog_description.text = professor_manager.get_description(current_professor_name)
 	_apply_selected_professor_visual()
 	_start_mascot_motion()
 
@@ -1013,7 +964,7 @@ func _repopulate_subject_options() -> void:
 
 
 func _apply_selected_professor_visual() -> void:
-	var portrait_path := str(PROFESSOR_PORTRAITS.get(current_professor_name, "res://Images/angryBot.png"))
+	var portrait_path := professor_manager.get_portrait_path(current_professor_name)
 	var texture: Variant = load(portrait_path)
 	if texture is Texture2D:
 		mascot.texture = texture
@@ -1094,7 +1045,7 @@ func _load_selected_catalog() -> void:
 		selected_quiz_index = 0
 	_update_quiz_selection(selected_quiz_index)
 	active_catalog_name = "%s - %s" % [active_subject, active_quiz_name]
-	_build_rooms_for_subject(active_subject_id, active_quiz_id)
+	rooms = room_loader.build_rooms_for_subject(active_subject_id, active_quiz_id, questions_db, answers_db)
 
 
 func _on_question_file_selected(path: String) -> void:
@@ -1169,7 +1120,7 @@ func _on_question_file_selected(path: String) -> void:
 	active_quiz_id = "uploaded_module"
 	room_title.text = "Escape Room Is Ready"
 	room_description.text = ""
-	question_label.text = "Press Start when you're ready."
+	question_label.text = "Enter when you're ready."
 	theme_badge.text = ""
 	upload_help.text = ""
 	hint_label.text = ""
@@ -1199,62 +1150,11 @@ func _load_rooms_from_path(path: String) -> void:
 		return
 
 	for entry in parsed:
-		if entry is Dictionary and _is_valid_generated_room(entry):
-			rooms.append(_normalize_generated_room(entry))
+		if entry is Dictionary and room_loader.is_valid_generated_room(entry):
+			rooms.append(room_loader.normalize_generated_room(entry))
 
 	if rooms.is_empty():
 		push_error("No valid rooms were loaded from %s" % path)
-
-
-func _build_rooms_for_subject(subject_id: String, quiz_id: String) -> void:
-	var subject_rooms: Array[Dictionary] = []
-
-	for question in questions_db:
-		if str(question.get("subject_id", "")) != subject_id:
-			continue
-		var quiz_info: Dictionary = _get_quiz_info_for_question(question)
-		if str(quiz_info.get("id", "quiz_1")) != quiz_id:
-			continue
-
-		var room_answers: Array = []
-		var correct_index := -1
-		for answer in answers_db:
-			if str(answer.get("question_id", "")) != str(question.get("id", "")):
-				continue
-			room_answers.append(str(answer.get("text", "")))
-			if bool(answer.get("is_correct", false)):
-				correct_index = room_answers.size() - 1
-
-		if room_answers.size() == 3 and correct_index >= 0:
-			var room := {
-				"title": str(question.get("title", "")),
-				"description": str(question.get("description", "")),
-				"question": str(question.get("question", "")),
-				"answers": room_answers,
-				"correct_index": correct_index,
-				"hint": str(question.get("hint", "")),
-				"success": str(question.get("success", "")),
-				"theme_color": str(question.get("theme_color", "")),
-				"accent_color": str(question.get("accent_color", "")),
-				"background_image": str(question.get("background_image", ""))
-			}
-			subject_rooms.append(_normalize_generated_room(room))
-
-	subject_rooms.shuffle()
-	rooms = subject_rooms
-
-
-func _build_session_room_subset(source_rooms: Array[Dictionary]) -> Array[Dictionary]:
-	var trimmed_rooms: Array[Dictionary] = source_rooms.duplicate(true)
-	if trimmed_rooms.is_empty():
-		return trimmed_rooms
-
-	var limit := mini(selected_question_count, trimmed_rooms.size())
-	if active_subject_id.is_empty():
-		return trimmed_rooms.slice(0, limit)
-
-	trimmed_rooms.shuffle()
-	return trimmed_rooms.slice(0, limit)
 
 
 func _populate_session_setup_options() -> void:
@@ -1276,12 +1176,12 @@ func _populate_session_setup_options() -> void:
 
 
 func _configure_session_setup_box() -> void:
-	session_setup_title.text = "Session Setup"
+	session_setup_title.text = "Trial Setup"
 	if current_launch_target == "question_hints":
-		session_setup_help.text = "Choose question count and total time."
+		session_setup_help.text = "Choose chamber count and the lockdown timer."
 		lives_label.visible = false
 		lives_option.visible = false
-		hint_timer_label.text = "Time Limit"
+		hint_timer_label.text = "Lockdown Timer"
 		hint_timer_label.visible = true
 		hint_timer_option.visible = true
 		question_card.custom_minimum_size = Vector2(0, 120)
@@ -1289,7 +1189,7 @@ func _configure_session_setup_box() -> void:
 		room_description.add_theme_font_size_override("font_size", 16)
 		question_label.add_theme_font_size_override("font_size", 18)
 	else:
-		session_setup_help.text = "Choose how many questions and lives you want for this quiz run."
+		session_setup_help.text = "Choose how many chambers and attempts you want for this trial."
 		lives_label.visible = true
 		lives_option.visible = true
 		hint_timer_label.visible = false
@@ -1400,7 +1300,7 @@ func _build_rooms_from_module_text(module_text: String, catalog_name: String) ->
 			"accent_color": accent_palette[index % accent_palette.size()],
 			"background_image": ""
 		}
-		built_rooms.append(_normalize_generated_room(room))
+		built_rooms.append(room_loader.normalize_generated_room(room))
 
 	return built_rooms
 
@@ -1489,31 +1389,6 @@ func _join_lines(lines: Array[String]) -> String:
 	return combined
 
 
-func _extract_json_content(content: String) -> String:
-	var cleaned := content.strip_edges()
-	if cleaned.begins_with("```"):
-		var first_newline := cleaned.find("\n")
-		if first_newline != -1:
-			cleaned = cleaned.substr(first_newline + 1)
-		if cleaned.ends_with("```"):
-			cleaned = cleaned.substr(0, cleaned.length() - 3)
-
-	return cleaned.strip_edges()
-
-
-func _extract_generated_rooms(parsed_content: Variant) -> Array:
-	if parsed_content is Array:
-		return parsed_content
-
-	if parsed_content is Dictionary:
-		var parsed_dict: Dictionary = parsed_content
-		var possible_rooms: Variant = parsed_dict.get("rooms", [])
-		if possible_rooms is Array:
-			return possible_rooms
-
-	return []
-
-
 func _generate_module_catalog() -> void:
 	active_catalog_name = upload_name_input.text.strip_edges()
 	if active_catalog_name.is_empty():
@@ -1522,7 +1397,7 @@ func _generate_module_catalog() -> void:
 
 	active_request_kind = "ai_notes_generation"
 	primary_button.disabled = true
-	status_label.text = "Generating quiz questions from notes with AI..."
+	status_label.text = "Building challenge chambers from your notes..."
 	hint_label.text = ""
 
 	var trimmed_text := pending_upload_text.strip_edges()
@@ -1534,33 +1409,8 @@ func _generate_module_catalog() -> void:
 		hint_label.text = "Set GROQ_API_KEY or create Data/groq_api_key.txt to enable hosted AI generation."
 		return
 
-	var prompt := "Return only valid JSON. Prefer either an array of room objects or an object with a rooms array. " \
-		+ "Each room object must include title, description, question, answers, correct_index, hint, success. " \
-		+ "Use exactly 3 answer choices. correct_index must be 0, 1, or 2. " \
-		+ "Keep the quiz at university level and tie it closely to the uploaded notes. " \
-		+ "Make every question about the actual subject matter, concepts, methods, definitions, or problem-solving steps in the notes. " \
-		+ "Do not ask about the author, the book title, chapter names, publisher, edition, intro, preface, acknowledgements, or any other source metadata. " \
-		+ "Do not phrase hints as 'read the book' or 'check the notes'; give a conceptual clue instead. " \
-		+ "Hints must guide the learner without revealing the answer or repeating an answer choice. " \
-		+ "Quiz set name: %s. Uploaded notes:\n%s" % [active_catalog_name, trimmed_text]
-
-	var payload := {
-		"model": GROQ_MODEL,
-		"messages": [
-			{
-				"role": "system",
-				"content": "You turn university study notes into concise multiple-choice quiz rooms for an escape-room study app. Return JSON only. Focus on subject-matter concepts, never book metadata, and never reveal answers inside hints."
-			},
-			{
-				"role": "user",
-				"content": prompt
-			}
-		],
-		"stream": false,
-		"response_format": {
-			"type": "json_object"
-		}
-	}
+	var prompt := ai_room_generator.build_module_prompt(active_catalog_name, trimmed_text)
+	var payload := ai_room_generator.build_payload(GROQ_MODEL, prompt)
 
 	var headers := [
 		"Content-Type: application/json",
@@ -1597,25 +1447,25 @@ func _on_http_request_completed(result: int, response_code: int, headers: Packed
 	var first_choice: Dictionary = choices[0]
 	var message: Dictionary = first_choice.get("message", {})
 	var content: String = str(message.get("content", ""))
-	var parsed_content: Variant = JSON.parse_string(_extract_json_content(content))
+	var parsed_content: Variant = JSON.parse_string(ai_room_generator.extract_json_content(content))
 	if parsed_content == null:
 		_use_local_module_fallback("AI returned unstructured content, so the app used the local notes converter instead.")
 		hint_label.text = content
 		return
 
-	var generated_rooms_variant: Array = _extract_generated_rooms(parsed_content)
+	var generated_rooms_variant: Array = ai_room_generator.extract_generated_rooms(parsed_content)
 	var generated_rooms: Array[Dictionary] = []
 	for room_entry in generated_rooms_variant:
-		if room_entry is Dictionary and _is_valid_generated_room(room_entry):
-			generated_rooms.append(_normalize_generated_room(room_entry))
+		if room_entry is Dictionary and room_loader.is_valid_generated_room(room_entry):
+			generated_rooms.append(room_loader.normalize_generated_room(room_entry))
 
 	if generated_rooms.is_empty():
 		_use_local_module_fallback("AI could not build a usable quiz set from those notes, so the app used the local notes converter instead.")
 		return
 
 	_finalize_generated_module(generated_rooms, true)
-	status_label.text = "AI generated %d questions for %s." % [rooms.size(), active_catalog_name]
-	hint_label.text = "This quiz set was generated from your uploaded notes using Groq."
+	status_label.text = "AI built %d chambers for %s." % [rooms.size(), active_catalog_name]
+	hint_label.text = "This challenge set was forged from your uploaded notes using Groq."
 	active_request_kind = ""
 
 
@@ -1623,7 +1473,7 @@ func _use_local_module_fallback(reason: String) -> void:
 	var generated_rooms := _build_rooms_from_module_text(pending_upload_text, active_catalog_name)
 	if generated_rooms.is_empty():
 		primary_button.disabled = false
-		status_label.text = "The uploaded text needs at least 3 topic sections to build questions."
+		status_label.text = "The uploaded text needs at least 3 topic sections to build chambers."
 		hint_label.text = "Try headings like 'Topic 1: Algorithms', then add a few lines under each topic."
 		active_request_kind = ""
 		return
@@ -1696,9 +1546,9 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	active_subject = "Uploaded Module"
 	active_subject_id = ""
 	status_label.text = ""
-	room_title.text = "Escape Room Is Ready"
+	room_title.text = "The Chamber Is Ready"
 	room_description.text = ""
-	question_label.text = "Press Start when you're ready."
+	question_label.text = "Enter when you're ready."
 	theme_badge.text = ""
 	hint_label.text = ""
 	primary_button.text = "Start"
@@ -1708,6 +1558,7 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 
 
 func _configure_audio_players() -> void:
+	_configure_background_music()
 	click_player.stream = _load_audio(CLICK_SOUND_PATH)
 	correct_player.stream = _load_audio(CORRECT_SOUND_PATH)
 	wrong_player.stream = _load_audio(WRONG_SOUND_PATH)
@@ -1727,9 +1578,28 @@ func _load_audio(path: String) -> AudioStream:
 	return null
 
 
+func _configure_background_music() -> void:
+	if background_music_player == null:
+		background_music_player = AudioStreamPlayer.new()
+		background_music_player.name = "BackgroundMusicPlayer"
+		background_music_player.bus = "Master"
+		background_music_player.volume_db = -14.0
+		add_child(background_music_player)
+
+	if background_music_player.stream == null:
+		background_music_player.stream = _load_audio(BACKGROUND_MUSIC_PATH)
+
+	if background_music_player.stream != null:
+		if background_music_player.stream is AudioStreamMP3:
+			background_music_player.stream.loop = true
+		if not background_music_player.playing:
+			background_music_player.play()
+
+
 func _play_if_ready(player: AudioStreamPlayer) -> void:
 	if player.stream != null:
 		player.stop()
+		player.pitch_scale = randf_range(0.95, 1.05)
 		player.play()
 
 
