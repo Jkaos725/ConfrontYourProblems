@@ -1,0 +1,387 @@
+================================================================================
+                    CONFRONT YOUR PROBLEMS
+                    Game Documentation
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. Project Overview
+2. Scene Structure
+3. Scripts Overview
+4. Game Flow
+5. Components
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+"Confront Your Problems" is an educational escape room game built with Godot 4.
+The game combines quiz-based challenges with an immersive room-escape experience.
+Players can:
+- Take quizzes in multiple-choice format (ServerVaultRoom)
+- Answer AI-generated questions with hints (Questionhints/Clue Trial)
+- Upload their own study notes to generate custom quizzes
+- Compete for high scores and fastest completion times
+- Choose between different AI "professors" with unique personalities
+
+Key Features:
+- Two game modes: Escape Trial (multiple choice) and Clue Trial (text input with AI grading)
+- Text-to-Speech for professor dialogue
+- Dynamic room themes that change with each chamber
+- Leaderboard tracking high scores and fastest times
+- Theme toggle between light and dark modes
+- Audio settings for music, sound effects, and voice
+
+================================================================================
+2. SCENE STRUCTURE
+================================================================================
+
+MAIN SCENES
+-----------
+1. Scenes/main.tscn
+   - The main hub/start screen
+   - Displays the title, mascot, and entry options
+   - Contains settings menu, theme toggle, and leaderboard
+
+2. Scenes/ServerVaultRoom.tscn
+   - The "Escape Trial" game mode (multiple choice)
+   - Players select from 3 answer choices
+   - After selecting correct answer, enter a 4-digit keypad code
+   - Exit button returns to main menu
+
+3. Scenes/Questionhints.tscn
+   - The "Clue Trial" game mode (text input with AI)
+   - Players type answers and submit for AI grading
+   - AI provides progressive hints (3 levels)
+   - After correct answer, enter a 4-digit keypad code
+   - Includes a countdown timer
+   - Exit button returns to main menu
+
+4. Scenes/Multiple_Choice.tscn
+   - Simple multiple choice question display
+   - Shows A, B, C options with images
+
+5. Scenes/EssayQuestion.tscn
+   - Alternative scene for essay-style questions
+   - Uses AI for grading answers
+
+SUPPORTING SCENES (Components)
+-----------------------------
+- Scenes/Components/settings_menu.tscn
+  - Audio settings overlay
+  - Controls: Music toggle/volume, SFX toggle/volume, Voice toggle/volume
+  
+- Scenes/Components/leaderboard_display.tscn
+  - Displays high scores and fastest times
+  - Filterable by subject
+  - Searchable by player name or quiz name
+  
+- Scenes/Components/theme_toggle.tscn
+  - Toggle button for light/dark theme
+  - Uses cogwheel icons for visual feedback
+  
+- Scenes/Components/name_entry.tscn
+  - Name input for leaderboard submission
+  
+- Scenes/Components/timer_label.tscn
+  - Displays countdown timer
+  
+- Scenes/Components/answer_http_request.tscn
+  - Handles AI grading requests
+
+================================================================================
+3. SCRIPTS OVERVIEW
+================================================================================
+
+MANAGERS (Global Systems)
+-------------------------
+
+Scripts/Global.gd
+  Purpose: Central game state manager
+  Why: Stores all global game data that persists across scenes
+  Key Variables:
+  - globalTime: Countdown timer for Clue Trial mode
+  - rooms[]: Array of room/question data
+  - index: Current room index
+  - score: Player's score
+  - lives: Remaining attempts
+  - selected_professor: Currently selected AI professor
+  - last_quiz_score/total/name/result: Stored for victory screen
+  
+  Key Functions:
+  - reset_quiz_session(): Resets game state for new session
+  - clear_quiz_session(): Clears all quiz data
+  - store_quiz_result(): Saves quiz result for display on victory
+
+Scripts/ThemeManager.gd
+  Purpose: Manages light/dark theme switching
+  Why: Centralized theme management for consistent UI across scenes
+  Key Features:
+  - DARK and LIGHT color palettes using Flat UI colors
+  - theme_changed signal for UI updates
+  - Persists theme preference to user settings
+  
+  Key Functions:
+  - palette(): Returns current color palette dictionary
+  - toggle_theme(): Switches between light/dark mode
+  - _save()/_load(): Persist theme to config file
+
+Scripts/AudioManager.gd
+  Purpose: Manages all audio settings
+  Why: Centralized audio control for music, SFX, and TTS
+  Key Variables:
+  - music_volume/sfx_volume: Volume levels (0.0-1.0)
+  - music_muted/sfx_muted: Mute states
+  - tts_enabled/tts_volume: Text-to-speech settings
+  
+  Key Functions:
+  - set_music_volume/sfx_volume(): Update volume levels
+  - set_music_muted/sfx_muted(): Toggle mute states
+  - set_tts_enabled/volume(): Control TTS
+  - _ensure_buses(): Creates audio buses if missing
+  - _save()/_load(): Persist audio settings
+
+Scripts/LeaderboardManager.gd
+  Purpose: Manages high scores and fastest times
+  Why: Tracks player achievements across sessions
+  Key Features:
+  - Stores top 10 high scores
+  - Stores top 10 fastest completion times
+  - Filters by subject
+  - One entry per player name (best result kept)
+  
+  Key Functions:
+  - is_high_score(): Check if score qualifies for leaderboard
+  - is_fastest_time(): Check if time qualifies
+  - submit(): Record a new score/time
+  - get_high_scores()/get_fastest_times(): Retrieve leaderboards
+  - reset_to_defaults(): Clear and re-seed from default scores
+
+Scripts/ProfessorManager.gd
+  Purpose: Manages AI professor data
+  Why: Provides personality variety through different professors
+  Features:
+  - Professor Vex: Harsh, intense, quick to challenge
+  - Professor Hale: Calm, neutral, focused on precision
+  - Professor Mira: Kind, encouraging, patient
+  
+  Each professor has unique portrait (bot face images)
+
+Scripts/RoomLoader.gd
+  Purpose: Builds and validates room data
+  Why: Separates data preparation from game logic
+  Key Functions:
+  - is_valid_generated_room(): Validates room structure
+  - normalize_generated_room(): Ensures consistent data format
+  - build_session_room_subset(): Selects rooms for current session
+  - build_rooms_for_subject(): Creates rooms from database
+  - _contains_meta_material(): Filters out invalid questions
+
+GAME SCENE SCRIPTS
+------------------
+
+Scripts/escape_room.gd
+  Purpose: Main menu and quiz selection logic
+  Why: Handles all menu navigation and game setup
+  Game States:
+  - start_intro: Initial menu screen
+  - professor_select: Choose AI professor
+  - source_select: Choose quiz source (built-in or upload)
+  - subject_select: Choose subject/chamber
+  - module_ready: Module uploaded, ready to generate
+  - upload_ready: JSON uploaded, ready to play
+  - playing: Active gameplay
+  - end: Game over screen
+  
+  Key Functions:
+  - _show_start_screen(): Display main menu
+  - _show_professor_selection(): Professor picker
+  - _show_subject_selection(): Subject/chamber picker
+  - _start_game(): Launch ServerVaultRoom (Escape Trial)
+  - _show_escape_room(): Launch Questionhints (Clue Trial)
+  - _load_subject_database(): Load questions from JSON files
+  - _generate_module_catalog(): Generate rooms from uploaded notes
+
+Scripts/server_vault_room.gd
+  Purpose: Multiple choice escape room gameplay
+  Why: Implements the "Escape Trial" game mode mechanics
+  Room Phases:
+  - LOCKED: Initial state, must inspect clue
+  - CLUE_DISCOVERED: Clue viewed, choices enabled
+  - ACCESS_GRANTED: Correct answer selected, keypad enabled
+  - TRANSITIONING: Moving to next room
+  
+  Key Features:
+  - Professor portrait with typewriter text animation
+  - Text-to-Speech dialogue for professors
+  - Color palettes that change per room
+  - Player marker animation through door
+  - 4-digit keypad code system
+  - Lives system with game over on 0
+  
+  Key Functions:
+  - _load_current_room(): Initialize room state
+  - _on_clue_note_pressed(): Reveal question
+  - _on_choice_pressed(): Handle answer selection
+  - _on_keypad_enter_pressed(): Validate keypad code
+  - _open_vault(): Animate door opening
+  - _apply_palette(): Apply room-specific colors
+  - _tts_speak(): Text-to-speech for dialogue
+
+Scripts/GeneralRoom.gd
+  Purpose: Clue Trial gameplay (text input with AI)
+  Why: Implements the "Clue Trial" game mode
+  Key Differences from ServerVaultRoom:
+  - Text input instead of multiple choice
+  - AI grading via HTTP requests
+  - Countdown timer (Global.globalTime)
+  - No lives system - time-based challenge
+  
+  Key Features:
+  - Countdown timer with timeout handling
+  - AI hint requests via Groq API
+  - 4-digit keypad code system
+  - Exit button always available
+  
+  Key Functions:
+  - handle_answer_correct(): Called by AI when answer graded correct
+  - handle_answer_wrong(): Called by AI with generated hint
+  - on_timer_timeout(): Handle countdown completion
+  - _on_exit_pressed(): Return to main menu
+
+Scripts/hint_http_request.gd
+  Purpose: AI hint generation via Groq API
+  Why: Provides progressive hints without revealing answers
+  Features:
+  - 3 hint levels (broad → narrow → closest)
+  - Banned words list from expected answer
+  - Sanitizes output to prevent answer leakage
+  
+  Key Functions:
+  - _on_button_pressed(): Trigger hint generation
+  - _build_banned_words(): Create banned word list
+  - _sanitize_hint_text(): Clean AI response
+
+Scripts/answer_http_request.gd
+  Purpose: AI answer grading via Groq API
+  Why: Grades free-text answers intelligently
+  Features:
+  - Returns 1/0 for correct/wrong
+  - Accepts synonyms and paraphrases
+  - Falls back to hint generation on wrong answer
+  - Banned words prevent answer leakage
+  
+  Key Functions:
+  - _on_answer_button(): Submit answer for grading
+  - _build_grade_prompt(): Create grading prompt
+  - _send_hint_request(): Get hint on wrong answer
+
+UI COMPONENT SCRIPTS
+---------------------
+
+Scripts/settings_menu.gd
+  Purpose: Settings overlay panel
+  Why: Provides UI for audio configuration
+  Controls:
+  - Music toggle and volume slider
+  - SFX toggle and volume slider
+  - Voice (TTS) toggle and volume slider
+  
+  Key Functions:
+  - open()/close(): Show/hide overlay
+  - _sync_from_audio_manager(): Update UI to match settings
+  - _apply_theme(): Theme colors for overlay
+
+Scripts/leaderboard_display.gd
+  Purpose: Leaderboard overlay panel
+  Why: Shows player achievements
+  Features:
+  - Two tabs: High Scores and Fastest Times
+  - Filter buttons by subject
+  - Search by name or quiz name
+  
+  Key Functions:
+  - open(): Populate and show leaderboard
+  - _build_filter_buttons(): Create subject filters
+  - _populate(): Fill lists with filtered data
+
+Scripts/theme_toggle.gd
+  Purpose: Theme toggle button
+  Why: Quick access to theme switching
+  Key Functions:
+  - _on_pressed(): Toggle theme via ThemeManager
+  - _on_theme_changed(): Update icon for new theme
+  - _update(): Switch between light_on_icon and light_off_icon
+
+Scripts/feed_back_prompt.gd
+  Purpose: Feedback overlay for AI responses
+  Why: Display AI hints and grading feedback
+  Features:
+  - Shows wrong answer feedback
+  - Displays AI hints
+  - Dismissible via button or clicking outside
+
+================================================================================
+4. GAME FLOW
+================================================================================
+
+MAIN MENU FLOW:
+1. Title Screen → Choose "Enter Trial" or "Enter Clue Trial"
+2. Professor Selection → Choose professor personality
+3. Source Selection → Built-in or Upload Study Notes
+4. Subject Selection → Choose topic area
+5. Session Setup → Configure lives/rooms/timer
+6. Enter Game Mode
+
+ESCAPE TRIAL FLOW (ServerVaultRoom):
+1. View room → See professor introduction
+2. Inspect clue note → Reveals question
+3. Select answer choice → A, B, or C
+4. Correct: Get 4-digit code → Enter code on keypad
+5. Wrong: Lose a life → Try again or game over
+6. All rooms cleared → Victory → Leaderboard (if qualifying)
+
+CLUE TRIAL FLOW (Questionhints):
+1. View room → See professor introduction
+2. Inspect clue note → Reveals question
+3. Type answer → Submit for AI grading
+4. AI correct: Get 4-digit code → Enter code on keypad
+5. AI wrong: Get progressive hint → Try again
+6. Timer expires → Game Over
+7. All rooms cleared → Victory → Leaderboard (if qualifying)
+
+================================================================================
+5. COMPONENTS
+================================================================================
+
+AUDIO SYSTEM
+- Music: Background ambient music
+- SFX: Button clicks, correct/wrong sounds, door sounds
+- TTS: Professor voice synthesis via Godot's DisplayServer
+
+THEME SYSTEM
+- Light Mode: Bright backgrounds, blue accents
+- Dark Mode: Dark blue backgrounds, turquoise accents
+- Persisted to user://display_settings.cfg
+
+GROQ API INTEGRATION
+- Used for hint generation (hint_http_request.gd)
+- Used for answer grading (answer_http_request.gd)
+- API key stored in res://config.cfg or Data/groq_api_key.txt
+- Model: llama-3.3-70b-versatile
+
+DATA FILES (Data/)
+- rooms.json: Pre-built room data
+- subjects.json: Subject categories
+- questions.json: Question database
+- answers.json: Answer options and correct indices
+
+IMAGES (Images/)
+- angryBot.png: Professor Vex portrait
+- neutralface.png: Professor Hale portrait
+- happyface.png: Professor Mira portrait
+- cogwheel icons: Theme toggle buttons
+
+================================================================================
+                              END OF DOCUMENTATION
+================================================================================
