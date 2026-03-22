@@ -10,6 +10,10 @@ var groq_api_key = ""
 var currentQuestion := ""
 var expectedAnswer := ""
 
+# Tracks whether we're waiting for a grade (1/0) or a hint response.
+var _waiting_for_grade: bool = false
+var _last_student_answer: String = ""
+
 
 func _ready() -> void:
 	AnswerButton.pressed.connect(_on_answer_button)
@@ -45,52 +49,86 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 	var content: String = str(response["choices"][0]["message"]["content"]).strip_edges()
 	print("Response: ", content)
 
-	if content == "1":
-		if Global.index >= Global.rooms.size() - 1:
-			_show_end_overlay("Victory!\nYou escaped every room.", "res://Scenes/main.tscn", false)
+	if _waiting_for_grade:
+		_waiting_for_grade = false
+		if content == "1":
+			if Global.index >= Global.rooms.size() - 1:
+				_show_end_overlay("Victory!\nYou escaped every room.", "res://Scenes/main.tscn", false)
+			else:
+				_show_end_overlay("Victory!\nThe next room opens.", pathToNextScene, true)
 		else:
-			_show_end_overlay("Victory!\nThe next room opens.", pathToNextScene, true)
-		return
+			# Grade came back wrong — ask for a hint in a separate call that
+			# does NOT include the expected answer, so it can't be leaked.
+			_send_hint_request()
+	else:
+		# This is the hint response.
+		var hint: String = content if not content.is_empty() else "Think about the core concept."
+		feedBackPrompt.visible = true
+		feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % hint
 
-	feedBackPrompt.visible = true
-	feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % content
 
-
-func _build_answer_check_prompt(student_answer: String) -> String:
-	var prompt_text: String = "You are grading a university student's answer in an escape-room study game.\n"
+func _build_grade_prompt(student_answer: String) -> String:
+	var prompt_text: String = "You are grading a student's answer in an escape-room study game.\n"
 	prompt_text += "Question: %s\n" % currentQuestion
 	prompt_text += "Expected answer or key idea: %s\n" % expectedAnswer
 	prompt_text += "Student answer: %s\n\n" % student_answer
 	prompt_text += "Rules:\n"
-	prompt_text += "- Respond with only 1 if the student's answer is correct or close enough.\n"
+	prompt_text += "- Reply with exactly '1' if the student's answer is correct or close enough.\n"
 	prompt_text += "- Treat synonyms, paraphrases, near-equivalent wording, and conceptually correct shortened answers as correct.\n"
-	prompt_text += "- Examples of close-enough answers include synonym swaps like fast/rapid, easy/simple, correct/accurate when the intended meaning matches.\n"
-	prompt_text += "- If the student is partially right but missing a necessary idea, do not mark it correct.\n"
-	prompt_text += "- If the answer is wrong, return one short hint only.\n"
-	prompt_text += "- If the answer is empty, return 'You need to provide an answer'.\n"
-	prompt_text += "- Do not repeat hints.\n"
-	prompt_text += "- Do not say to reread the book or notes.\n"
-	prompt_text += "- Never reveal the final answer or a full solution.\n"
-	prompt_text += "- Keep the hint under 60 characters.\n"
+	prompt_text += "- Reply with exactly '0' if the answer is wrong or incomplete.\n"
+	prompt_text += "- Reply with exactly '0' if the answer is empty.\n"
+	prompt_text += "- Do not output anything other than '1' or '0'.\n"
 	return prompt_text
 
 
-func _submit_answer() -> void:
-	var student_answer: String = $"../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control/TextEdit".text.strip_edges()
-	var prompt_text: String = _build_answer_check_prompt(student_answer)
+func _build_hint_prompt() -> String:
+	# Build a banned-word list from the expected answer so the LLM
+	# cannot simply rephrase it. The expected answer itself is NOT
+	# included in this prompt — only the question and the banned words.
+	var answer_words: PackedStringArray = expectedAnswer.to_lower().split(" ", false)
+	var banned: Array[String] = []
+	for word in answer_words:
+		var clean: String = word.strip_edges()
+		if clean.length() > 2:
+			banned.append(clean)
 
+	var banned_str: String = ", ".join(banned) if banned.size() > 0 else expectedAnswer.to_lower()
+
+	var prompt_text: String = "You are giving a hint to a student in an escape-room study game.\n"
+	prompt_text += "Question: %s\n\n" % currentQuestion
+	prompt_text += "BANNED WORDS — never use these words or any synonym of them: %s\n\n" % banned_str
+	prompt_text += "Rules:\n"
+	prompt_text += "- Write exactly one hint line.\n"
+	prompt_text += "- Describe a property, behavior, or relationship that leads the student to the concept.\n"
+	prompt_text += "- Do not mention books, notes, chapters, authors, or publishers.\n"
+	prompt_text += "- Keep it under 60 characters.\n"
+	prompt_text += "- Do not state or imply the answer directly.\n"
+	return prompt_text
+
+
+func _send_request(prompt_text: String, max_tokens: int) -> void:
 	var body: String = JSON.stringify({
 		"model": "llama-3.3-70b-versatile",
 		"messages": [{"role": "user", "content": prompt_text}],
-		"max_tokens": 40,
+		"max_tokens": max_tokens,
 		"temperature": 0.2
 	})
-
 	var headers: PackedStringArray = ["Content-Type: application/json", "Authorization: Bearer " + groq_api_key]
 	print(prompt_text)
 	var request_result: int = request(groq_url, headers, HTTPClient.METHOD_POST, body)
 	if request_result != OK:
 		print("Error starting request")
+
+
+func _send_hint_request() -> void:
+	_send_request(_build_hint_prompt(), 50)
+
+
+func _submit_answer() -> void:
+	var student_answer: String = $"../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control/TextEdit".text.strip_edges()
+	_last_student_answer = student_answer
+	_waiting_for_grade = true
+	_send_request(_build_grade_prompt(student_answer), 5)
 
 
 func _show_end_overlay(message: String, next_scene: String, advance_index: bool) -> void:

@@ -474,6 +474,7 @@ timePercentage = 0
 autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" unique_id=1337215448]
+z_index = 1
 material = SubResource("CanvasItemMaterial_aojbq")
 position = Vector2(114, 36)
 emitting = false
@@ -504,6 +505,7 @@ script = ExtResource("5_c0yxv")
 autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/HintCard/Hint2" unique_id=1656579220]
+z_index = 1
 material = SubResource("CanvasItemMaterial_aojbq")
 position = Vector2(126, 40)
 emitting = false
@@ -534,6 +536,7 @@ timePercentage = 20
 autostart = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/StatusCard/Hint3" unique_id=2049674297]
+z_index = 1
 material = SubResource("CanvasItemMaterial_aojbq")
 position = Vector2(124, 42)
 emitting = false
