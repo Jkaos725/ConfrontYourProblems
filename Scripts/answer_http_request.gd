@@ -1,5 +1,9 @@
 extends HTTPRequest
 
+signal answer_graded_correct(is_final_room: bool)
+signal answer_graded_wrong
+signal ready_to_advance(next_scene: String)
+
 var groq_url = "https://api.groq.com/openai/v1/chat/completions"
 var groq_api_key = ""
 
@@ -52,11 +56,14 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 	if _waiting_for_grade:
 		_waiting_for_grade = false
 		if content == "1":
-			if Global.index >= Global.rooms.size() - 1:
+			var is_final: bool = Global.index >= Global.rooms.size() - 1
+			answer_graded_correct.emit(is_final)
+			if is_final:
 				_show_end_overlay("Victory!\nYou escaped every room.", "res://Scenes/main.tscn", false)
 			else:
 				_show_end_overlay("Victory!\nThe next room opens.", pathToNextScene, true)
 		else:
+			answer_graded_wrong.emit()
 			# Grade came back wrong — ask for a hint in a separate call that
 			# does NOT include the expected answer, so it can't be leaked.
 			_send_hint_request()
@@ -139,13 +146,8 @@ func _show_end_overlay(message: String, next_scene: String, advance_index: bool)
 	else:
 		Global.index = 0
 		Global.rooms.clear()
-		Global.globalTime = 180
-	_transition_after_delay(next_scene)
-
-
-func _transition_after_delay(next_scene: String) -> void:
-	await get_tree().create_timer(1.4).timeout
-	get_tree().change_scene_to_file(next_scene)
+		Global.globalTime = Global.selected_hint_time
+	ready_to_advance.emit(next_scene)
 
 
 func _on_button_pressed() -> void:

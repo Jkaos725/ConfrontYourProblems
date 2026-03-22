@@ -40,7 +40,7 @@ content_margin_left = 26.0
 content_margin_top = 24.0
 content_margin_right = 26.0
 content_margin_bottom = 24.0
-bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.95)
+bg_color = Color(0.13725491, 0.09411765, 0.05882353, 0.5803922)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -77,6 +77,22 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_textedit"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.165, 0.118, 0.071, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.58, 0.43, 0.2, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0bw7"]
 bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
@@ -119,11 +135,18 @@ content_margin_left = 18.0
 content_margin_top = 18.0
 content_margin_right = 18.0
 content_margin_bottom = 18.0
-bg_color = Color(0.203922, 0.141176, 0.0862745, 0.96)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+bg_color = Color(0.152941, 0.105882, 0.0627451, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.44, 0.2, 0.65)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_byvrh"]
 content_margin_left = 4.0
@@ -255,7 +278,7 @@ corner_radius_bottom_left = 5
 script = ExtResource("1_njm8b")
 
 [node name="Control2#AmbientParticles" type="GPUParticles2D" parent="." unique_id=123456789]
-modulate = Color(1, 0.9, 0.7, 0.3)
+modulate = Color(1, 0.9, 0.7, 0.55)
 position = Vector2(576, 322)
 amount = 80
 lifetime = 8.0
@@ -306,6 +329,177 @@ size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 6
 
+[node name="TopGlow" type="ColorRect" parent="Control2" unique_id=200000001]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 90.0
+grow_horizontal = 2
+color = Color(0.827451, 0.560784, 0.258824, 0.11)
+
+[node name="ArchLeft" type="ColorRect" parent="Control2" unique_id=200000002]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_right = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.72549, 0.54902, 0.26, 0.55)
+
+[node name="ArchRight" type="ColorRect" parent="Control2" unique_id=200000003]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+grow_horizontal = 0
+grow_vertical = 2
+color = Color(0.72549, 0.54902, 0.26, 0.55)
+
+[node name="Walkway" type="ColorRect" parent="Control2" unique_id=200000004]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -55.0
+offset_right = 55.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.223529, 0.152941, 0.0823529, 0.4)
+
+[node name="ExamDoor" type="ColorRect" parent="Control2" unique_id=200000005]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -314.0
+offset_right = 80.0
+offset_bottom = -250.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.227451, 0.145098, 0.0784314, 1)
+
+[node name="Doorway" type="ColorRect" parent="Control2/ExamDoor" unique_id=200000006]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0470588, 0.0313726, 0.0156863, 1)
+
+[node name="DoorPanel" type="ColorRect" parent="Control2/ExamDoor" unique_id=200000007]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.345098, 0.223529, 0.121569, 1)
+
+[node name="DoorLabel" type="Label" parent="Control2/ExamDoor" unique_id=200000008]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
+theme_override_font_sizes/font_size = 16
+text = "EXIT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Step3" type="ColorRect" parent="Control2" unique_id=200000009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = 246.0
+offset_right = 90.0
+offset_bottom = 266.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.364706, 0.247059, 0.133333, 0.95)
+
+[node name="Step2" type="ColorRect" parent="Control2" unique_id=200000010]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.0
+offset_top = 266.0
+offset_right = 122.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.32549, 0.219608, 0.117647, 0.95)
+
+[node name="Step1" type="ColorRect" parent="Control2" unique_id=200000011]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -158.0
+offset_top = 290.0
+offset_right = 158.0
+offset_bottom = 322.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.290196, 0.192157, 0.105882, 0.98)
+
+[node name="PlayerMarker" type="ColorRect" parent="Control2" unique_id=200000012]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -18.0
+offset_top = 176.0
+offset_right = 18.0
+offset_bottom = 246.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.913725, 0.866667, 0.733333, 1)
+
+[node name="Head" type="ColorRect" parent="Control2/PlayerMarker" unique_id=200000013]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -46.0
+offset_right = 12.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.976471, 0.898039, 0.780392, 1)
+
 [node name="MarginContainer" type="MarginContainer" parent="Control2" unique_id=2014160864]
 layout_mode = 1
 anchors_preset = 15
@@ -355,7 +549,7 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
 theme_override_font_sizes/font_size = 14
-text = "Professor Vex: One lock. Three chances."
+text = "Vex: No guessing your way out. Earn it."
 horizontal_alignment = 1
 autowrap_mode = 3
 visible_characters = 52
@@ -391,11 +585,11 @@ theme_override_constants/separation = 20
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 32
+theme_override_constants/separation = 18
 alignment = 1
 
 [node name="QuestionCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=264814051]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_aojbq")
@@ -413,16 +607,15 @@ autowrap_mode = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.937255, 0.870588, 0.756863, 1)
 theme_override_font_sizes/font_size = 18
-text = "Choose the right answer to unlock the next room."
+text = "Type your answer below. Use a hint only if you're stuck."
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="Control" type="Control" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=191274882]
-custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
 [node name="TextEdit" type="TextEdit" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/Control" unique_id=1624157675]
-custom_minimum_size = Vector2(650, 100)
+custom_minimum_size = Vector2(650, 80)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -435,10 +628,10 @@ offset_right = 325.0
 offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/background_color = Color(0.30897447, 0.23211238, 0.14893678, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_textedit")
 
 [node name="AnswerButton1" type="Button" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn" unique_id=1550356470]
-custom_minimum_size = Vector2(200, 56)
+custom_minimum_size = Vector2(200, 44)
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
@@ -454,7 +647,7 @@ layout_mode = 2
 theme_override_constants/separation = 18
 
 [node name="ThemeCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=964831141]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
 
@@ -486,7 +679,7 @@ process_material = SubResource("ParticleProcessMaterial_mp8a8")
 script = ExtResource("4_aojbq")
 
 [node name="HintCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1162841359]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
 
@@ -516,7 +709,7 @@ process_material = SubResource("ParticleProcessMaterial_mp8a8")
 script = ExtResource("4_aojbq")
 
 [node name="StatusCard" type="PanelContainer" parent="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn" unique_id=1351471532]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ab12h")
 
@@ -558,7 +751,7 @@ label_settings = SubResource("LabelSettings_njm8b")
 [node name="FeedBackPrompt" type="ColorRect" parent="Control2" unique_id=1855606465]
 visible = false
 z_index = 1
-custom_minimum_size = Vector2(300, 200)
+custom_minimum_size = Vector2(300, 240)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -566,9 +759,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -150.0
-offset_top = -100.0
+offset_top = -120.0
 offset_right = 150.0
-offset_bottom = 100.0
+offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -609,13 +802,33 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = 25.0
-offset_top = -11.5
+offset_top = -30.0
 offset_right = -18.0
-offset_bottom = 56.5
+offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="Control2/FeedBackPrompt" unique_id=300000010]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -50.0
+offset_right = -20.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_d0bw7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_mj1qt")
+theme_override_styles/hover = SubResource("StyleBoxFlat_jdan8")
+text = "Continue"
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1082526881]
 visible = false
@@ -681,6 +894,18 @@ grow_vertical = 2
 pathToNextScene = "res://Scenes/Questionhints.tscn"
 AnswerButton = NodePath("../Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/LeftColumn/AnswerButton1")
 feedBackPrompt = NodePath("../Control2/FeedBackPrompt")
+
+[node name="ClickPlayer" type="AudioStreamPlayer" parent="." unique_id=300000001]
+
+[node name="CorrectPlayer" type="AudioStreamPlayer" parent="." unique_id=300000002]
+
+[node name="WrongPlayer" type="AudioStreamPlayer" parent="." unique_id=300000003]
+
+[node name="UnlockPlayer" type="AudioStreamPlayer" parent="." unique_id=300000004]
+
+[node name="WinPlayer" type="AudioStreamPlayer" parent="." unique_id=300000005]
+
+[node name="LosePlayer" type="AudioStreamPlayer" parent="." unique_id=300000006]
 
 [connection signal="pressed" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/GPUParticles2D" method="_on_hint_1_pressed"]
 [connection signal="timeout" from="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1/Timer" to="Control2/MarginContainer/PanelContainer/VBoxContainer/BodyRow/RightColumn/ThemeCard/Hint1" method="_on_timer_timeout"]

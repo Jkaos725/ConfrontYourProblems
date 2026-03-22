@@ -5,7 +5,7 @@ var waitTime
 
 func _ready() -> void:
 	waitTime = int(Global.globalTime * 0.01 * timePercentage)
-	text = name + " - " + str(waitTime)
+	text = "Hint in " + str(waitTime)
 	pressed.connect(_on_pressed)
 
 
@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 
 func _on_timer_timeout() -> void:
 	waitTime -= 1
-	text = name + " - " + str(waitTime)
+	text ="Hint in " + str(waitTime)
 	if (waitTime < 0):
 		$Timer.stop()
 		disabled = false
