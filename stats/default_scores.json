@@ -1,0 +1,69 @@
+{
+  "config": {
+    "max_entries": 25,
+    "seed_on_first_run": true,
+    "seed_always": false
+  },
+  "high_scores": [
+    { "name": "CipherBot",    "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 98,  "hints_used": 0, "date": "2026-01-15" },
+    { "name": "DataDrifter",  "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 187, "hints_used": 2, "date": "2026-02-01" },
+    { "name": "CellSlog",     "score": 3, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 225, "hints_used": 2, "date": "2026-02-15" },
+    { "name": "BioBlunder",   "score": 2, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 262, "hints_used": 3, "date": "2026-02-20" },
+    { "name": "GenomeLag",    "score": 1, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 310, "hints_used": 3, "date": "2026-02-22" },
+
+    { "name": "NeuralNova",   "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 112, "hints_used": 1, "date": "2026-01-18" },
+    { "name": "AlgoAce",      "score": 3, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 74,  "hints_used": 0, "date": "2026-01-22" },
+    { "name": "LoopLurker",   "score": 3, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 178, "hints_used": 2, "date": "2026-02-16" },
+    { "name": "ByteBoggle",   "score": 2, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 228, "hints_used": 3, "date": "2026-02-21" },
+    { "name": "NullNovice",   "score": 1, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 285, "hints_used": 3, "date": "2026-02-23" },
+
+    { "name": "LogicLord",    "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 145, "hints_used": 0, "date": "2026-01-20" },
+    { "name": "BrainWave",    "score": 3, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 210, "hints_used": 3, "date": "2026-02-10" },
+    { "name": "ChronoCrawl",  "score": 3, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 248, "hints_used": 2, "date": "2026-02-17" },
+    { "name": "HistoryHaze",  "score": 2, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 295, "hints_used": 3, "date": "2026-02-24" },
+    { "name": "PastGlitch",   "score": 1, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 342, "hints_used": 3, "date": "2026-02-26" },
+
+    { "name": "QuizKing99",   "score": 3, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 101, "hints_used": 1, "date": "2026-02-05" },
+    { "name": "CodeCracker",  "score": 2, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 120, "hints_used": 1, "date": "2026-02-08" },
+    { "name": "ReactionLag",  "score": 2, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 175, "hints_used": 2, "date": "2026-02-18" },
+    { "name": "LabCrawl",     "score": 2, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 228, "hints_used": 3, "date": "2026-02-25" },
+    { "name": "MoleSlog",     "score": 1, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 275, "hints_used": 3, "date": "2026-02-27" },
+
+    { "name": "SpeedRun42",   "score": 3, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 88,  "hints_used": 0, "date": "2026-01-30" },
+    { "name": "SyntaxSage",   "score": 2, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 165, "hints_used": 2, "date": "2026-02-12" },
+    { "name": "EquaLurch",    "score": 2, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 210, "hints_used": 2, "date": "2026-02-19" },
+    { "name": "ProofPlod",    "score": 1, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 258, "hints_used": 3, "date": "2026-02-28" },
+    { "name": "NumberNumb",   "score": 1, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 305, "hints_used": 3, "date": "2026-03-01" }
+  ],
+  "fastest_times": [
+    { "name": "CipherBot",    "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 98,  "hints_used": 0, "date": "2026-01-15" },
+    { "name": "DataDrifter",  "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 187, "hints_used": 2, "date": "2026-02-01" },
+    { "name": "CellCrawler",  "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 225, "hints_used": 2, "date": "2026-02-15" },
+    { "name": "BioDrifter",   "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 268, "hints_used": 3, "date": "2026-02-20" },
+    { "name": "LabLagger",    "score": 4, "total": 4, "quiz_name": "Intro to Biology",  "subject": "Biology",          "time_seconds": 315, "hints_used": 3, "date": "2026-02-22" },
+
+    { "name": "NeuralNova",   "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 112, "hints_used": 1, "date": "2026-01-18" },
+    { "name": "CodeCrawl",    "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 195, "hints_used": 2, "date": "2026-02-16" },
+    { "name": "LoopLagger",   "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 243, "hints_used": 2, "date": "2026-02-21" },
+    { "name": "ByteSlow",     "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 285, "hints_used": 3, "date": "2026-02-23" },
+    { "name": "NullDrift",    "score": 4, "total": 4, "quiz_name": "CS Fundamentals",   "subject": "Computer Science", "time_seconds": 330, "hints_used": 3, "date": "2026-03-01" },
+
+    { "name": "Flashpoint",   "score": 4, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 127, "hints_used": 0, "date": "2026-01-25" },
+    { "name": "MixMaster",    "score": 4, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 198, "hints_used": 1, "date": "2026-02-17" },
+    { "name": "ReactionSlow", "score": 4, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 245, "hints_used": 2, "date": "2026-02-24" },
+    { "name": "LabBlunder",   "score": 4, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 290, "hints_used": 3, "date": "2026-02-26" },
+    { "name": "MoleLagger",   "score": 4, "total": 4, "quiz_name": "Chemistry",          "subject": "Chemistry",        "time_seconds": 338, "hints_used": 3, "date": "2026-03-02" },
+
+    { "name": "LogicLord",    "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 145, "hints_used": 0, "date": "2026-01-20" },
+    { "name": "HistoPlod",    "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 215, "hints_used": 2, "date": "2026-02-18" },
+    { "name": "EpochSlow",    "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 260, "hints_used": 2, "date": "2026-02-25" },
+    { "name": "ChronoDrift",  "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 305, "hints_used": 3, "date": "2026-02-27" },
+    { "name": "TimeLagger",   "score": 4, "total": 4, "quiz_name": "World History",      "subject": "History",          "time_seconds": 352, "hints_used": 3, "date": "2026-03-03" },
+
+    { "name": "MathRacer",    "score": 4, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 135, "hints_used": 0, "date": "2026-01-28" },
+    { "name": "CalcCrawl",    "score": 4, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 185, "hints_used": 1, "date": "2026-02-19" },
+    { "name": "NumDrift",     "score": 4, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 240, "hints_used": 2, "date": "2026-02-28" },
+    { "name": "ProofSlow",    "score": 4, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 288, "hints_used": 3, "date": "2026-03-01" },
+    { "name": "EquaLagger",   "score": 4, "total": 4, "quiz_name": "Calculus I",         "subject": "Math",             "time_seconds": 335, "hints_used": 3, "date": "2026-03-04" }
+  ]
+}

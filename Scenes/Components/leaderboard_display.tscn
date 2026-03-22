@@ -1,0 +1,173 @@
+[gd_scene format=3 uid="uid://eb86ytd24cy"]
+
+[ext_resource type="Script" path="res://Scripts/leaderboard_display.gd" id="1_ldsp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 28.0
+content_margin_top = 20.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+bg_color = Color(0.137255, 0.0941176, 0.0588235, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.698039, 0.521569, 0.278431, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_normal"]
+bg_color = Color(0.152941, 0.105882, 0.0627451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.47451, 0.333333, 0.176471, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_hover"]
+bg_color = Color(0.25098, 0.176471, 0.101961, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.686275, 0.509804, 0.231373, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_pressed"]
+bg_color = Color(0.101961, 0.0705882, 0.0392157, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.611765, 0.313726, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="LeaderboardDisplay" type="CanvasLayer"]
+layer = 12
+script = ExtResource("1_ldsp")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+mouse_filter = 0
+
+[node name="Center" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Overlay/Center"]
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="Overlay/Center/Panel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleRow" type="HBoxContainer" parent="Overlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Overlay/Center/Panel/Margin/VBox/TitleRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_font_sizes/font_size = 24
+text = "Leaderboard"
+vertical_alignment = 1
+
+[node name="TitleSpacer" type="Control" parent="Overlay/Center/Panel/Margin/VBox/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="Overlay/Center/Panel/Margin/VBox/TitleRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.933333, 0.784314, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_close_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_close_pressed")
+text = "X"
+
+[node name="Sep" type="HSeparator" parent="Overlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+modulate = Color(0.698039, 0.521569, 0.278431, 0.6)
+
+[node name="SearchRow" type="HBoxContainer" parent="Overlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SearchLabel" type="Label" parent="Overlay/Center/Panel/Margin/VBox/SearchRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.960784, 0.941176, 0.858824, 1)
+theme_override_font_sizes/font_size = 15
+text = "Search:"
+vertical_alignment = 1
+
+[node name="SearchEdit" type="LineEdit" parent="Overlay/Center/Panel/Margin/VBox/SearchRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Name or quiz…"
+
+[node name="FilterScroll" type="ScrollContainer" parent="Overlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 38)
+vertical_scroll_mode = 2
+
+[node name="FilterRow" type="HBoxContainer" parent="Overlay/Center/Panel/Margin/VBox/FilterScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Tabs" type="TabContainer" parent="Overlay/Center/Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 340)
+theme_override_constants/side_margin = 0
+
+[node name="HighScores" type="ScrollContainer" parent="Overlay/Center/Panel/Margin/VBox/Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScoreList" type="VBoxContainer" parent="Overlay/Center/Panel/Margin/VBox/Tabs/HighScores"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="FastestTimes" type="ScrollContainer" parent="Overlay/Center/Panel/Margin/VBox/Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TimeList" type="VBoxContainer" parent="Overlay/Center/Panel/Margin/VBox/Tabs/FastestTimes"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[connection signal="pressed" from="Overlay/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_close_button_pressed"]

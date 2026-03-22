@@ -19,6 +19,8 @@ var last_quiz_score = 0
 var last_quiz_total = 0
 var last_quiz_name = ""
 var last_result = ""
+var last_quiz_time_seconds: int = 0
+var session_start_time: float = 0.0
 
 
 func reset_quiz_session() -> void:
@@ -27,6 +29,7 @@ func reset_quiz_session() -> void:
 	lives = selected_lives
 	hints_used = 0
 	globalTime = selected_hint_time
+	session_start_time = Time.get_ticks_msec()
 
 
 func clear_quiz_session() -> void:
@@ -41,6 +44,7 @@ func store_quiz_result(result: String) -> void:
 	last_quiz_total = max(rooms.size(), 0)
 	last_quiz_name = active_quiz_name
 	last_result = result
+	last_quiz_time_seconds = int((Time.get_ticks_msec() - session_start_time) / 1000.0)
   
 func _ready():  
 	add_child(timer)

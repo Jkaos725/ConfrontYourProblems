@@ -109,9 +109,11 @@ var ai_room_generator := AIRoomGenerator.new()
 @onready var win_player: AudioStreamPlayer = $WinPlayer
 @onready var lose_player: AudioStreamPlayer = $LosePlayer
 var background_music_player: AudioStreamPlayer
-@onready var timer_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel
+@onready var timer_label: Label = get_node_or_null("MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/TimerLabel")
 @onready var mascot: TextureRect = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox/Mascot
 @onready var mascot_box: CenterContainer = $MarginContainer/PanelContainer/VBoxContainer/TopRow/MascotBox
+@onready var leaderboard_display: CanvasLayer = $LeaderboardDisplay
+@onready var name_entry: CanvasLayer = $NameEntry
 
 func _ready() -> void:
 	if not String(Global.selected_professor).is_empty():
@@ -139,6 +141,7 @@ func _ready() -> void:
 	_start_mascot_motion()
 	ThemeManager.theme_changed.connect(_apply_theme)
 	_apply_theme(ThemeManager.is_dark_mode)
+	name_entry.submitted.connect(_on_name_entry_submitted)
 	if Global.last_result == "victory":
 		_show_quiz_victory_screen()
 	else:
@@ -507,6 +510,11 @@ func _show_quiz_victory_screen() -> void:
 	secondary_button.disabled = false
 	tertiary_button.visible = false
 	_set_quaternary_button(false, true)
+
+	var _qualifies_score := LeaderboardManager.is_high_score(Global.last_quiz_score, Global.last_quiz_total, Global.last_quiz_time_seconds)
+	var _qualifies_time  := LeaderboardManager.is_fastest_time(Global.last_quiz_score, Global.last_quiz_total, Global.last_quiz_time_seconds)
+	if _qualifies_score or _qualifies_time:
+		name_entry.open(Global.last_quiz_score, Global.last_quiz_total, Global.last_quiz_time_seconds)
 
 	Global.last_result = ""
 
@@ -1562,6 +1570,20 @@ func _finalize_generated_module(generated_rooms: Array[Dictionary], used_ai: boo
 	question_card.visible = true
 
 
+func _on_name_entry_submitted(player_name: String) -> void:
+	var quiz: String = Global.last_quiz_name if not Global.last_quiz_name.is_empty() else Global.active_quiz_name
+	LeaderboardManager.submit(
+		player_name,
+		Global.last_quiz_score,
+		Global.last_quiz_total,
+		quiz,
+		Global.active_subject,
+		Global.last_quiz_time_seconds,
+		Global.hints_used
+	)
+	leaderboard_display.open()
+
+
 func _apply_theme(is_dark: bool = true) -> void:
 	var p := ThemeManager.palette()
 
@@ -1610,6 +1632,13 @@ func _apply_theme(is_dark: bool = true) -> void:
 	for btn in answers_container.get_children():
 		if btn is Button:
 			btn.add_theme_color_override("font_color", p["text_primary"])
+
+	var settings_btn := get_node_or_null("%SettingsButton") as Button
+	if settings_btn:
+		settings_btn.add_theme_color_override("font_color", p["text_primary"])
+	var leaderboard_btn := get_node_or_null("%LeaderboardButton") as Button
+	if leaderboard_btn:
+		leaderboard_btn.add_theme_color_override("font_color", p["text_primary"])
 
 
 func _configure_audio_players() -> void:
