@@ -1,5 +1,7 @@
 extends Node2D
 
+const BACKGROUND_MUSIC_PATH := "res://Audio/New Sounds/Background music/Background.mp3"
+
 @export var currentQuestion = "What is the derivative of sin(x)x^2"
 @export var expectedAnswer = ""
 @onready var professor_line: Label = $Control2/MarginContainer/PanelContainer/VBoxContainer/TopRow/ProfessorPanel/ProfessorBox/ProfessorLine
@@ -9,6 +11,7 @@ extends Node2D
 
 var end_state_triggered := false
 var _typewriter_label: Label
+var background_music_player: AudioStreamPlayer
 
 var current_professor: Dictionary = {}
 var professors := [
@@ -117,6 +120,7 @@ var professors := [
 ]
 
 func _ready() -> void:
+	_configure_background_music()
 	var timer = get_tree().get_first_node_in_group("GlobalTimer")
 	if timer != null:
 		timer.timeout.connect(on_timer_timeout)
@@ -276,3 +280,15 @@ func _on_typewriter_tick() -> void:
 
 func _on_typewriter_complete() -> void:
 	pass
+
+
+func _configure_background_music() -> void:
+	background_music_player = AudioStreamPlayer.new()
+	add_child(background_music_player)
+	var stream: Variant = load(BACKGROUND_MUSIC_PATH)
+	if stream is AudioStream:
+		background_music_player.stream = stream
+		if background_music_player.stream is AudioStreamMP3:
+			background_music_player.stream.loop = true
+		background_music_player.volume_db = -14.0
+		background_music_player.play()

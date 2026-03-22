@@ -1,6 +1,10 @@
 extends Control
 
 const START_LIVES := 3
+const CORRECT_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-fast-notification-953.wav"
+const WRONG_SOUND_PATH := "res://Audio/New Sounds/Wrong sounds/tunetank.com_abort-operation.wav"
+const LEVEL_TRANSITION_SOUND_PATH := "res://Audio/New Sounds/New Correct sound/mixkit-correct-answer-notification-947.wav"
+const BACKGROUND_MUSIC_PATH := "res://Audio/New Sounds/Background music/Background.mp3"
 
 @onready var title_label: Label = $TitleLabel
 @onready var meta_label: Label = $MetaLabel
@@ -35,12 +39,16 @@ var player_start_position := Vector2.ZERO
 var player_exit_position := Vector2.ZERO
 var active_room_tween: Tween
 var current_professor: Dictionary = {}
+var correct_player: AudioStreamPlayer
+var wrong_player: AudioStreamPlayer
+var transition_player: AudioStreamPlayer
+var background_music_player: AudioStreamPlayer
 var professors := [
 	{
 		"name": "Professor Vex",
 		"portrait": "res://Images/angryBot.png",
 		"intro": [
-			"Answer correctly and I may let you pass.",
+			"Release the right lock and I may let you pass.",
 			"One lock. One clue. Do not embarrass yourself.",
 			"The door listens only to sharp minds.",
 			"Solve it quickly, or remain in my hall."
@@ -48,7 +56,7 @@ var professors := [
 		"wrong": [
 			"Wrong. Look closer.",
 			"No. Think before you touch the lock.",
-			"Careless. Try again.",
+			"Careless. The seal still holds.",
 			"That is not the mechanism I asked for."
 		],
 		"hint": [
@@ -61,7 +69,7 @@ var professors := [
 			"Hm. Acceptable.",
 			"You may proceed.",
 			"Better. The next chamber awaits.",
-			"Correct. Move before I change my mind."
+			"Access granted. Move before I change my mind."
 		],
 		"defeat": [
 			"Then remain here with your mistakes.",
@@ -74,15 +82,15 @@ var professors := [
 		"name": "Professor Hale",
 		"portrait": "res://Images/neutralface.png",
 		"intro": [
-			"Take your time and read the clue carefully.",
+			"Take your time and study the clue carefully.",
 			"This room rewards steady thinking.",
-			"The right answer is here if you follow the pattern.",
+			"The right signal is here if you follow the pattern.",
 			"Stay calm. The door will open for the prepared."
 		],
 		"wrong": [
 			"Not quite. Try another angle.",
 			"Close reading will help here.",
-			"That choice does not fit. Try again.",
+			"That signal does not fit. Try again.",
 			"Almost. Focus on the key idea."
 		],
 		"hint": [
@@ -109,14 +117,14 @@ var professors := [
 		"portrait": "res://Images/happyface.png",
 		"intro": [
 			"You can do this. Start with the clue in front of you.",
-			"Take a breath. One careful answer opens the way.",
+			"Take a breath. One careful choice opens the way.",
 			"The exit is closer than it looks.",
 			"Trust what you know and move step by step."
 		],
 		"wrong": [
-			"Not this one. Try again.",
+			"Not this one. The seal still holds.",
 			"That was a good attempt. Look once more.",
-			"Keep going. The right answer is near.",
+			"Keep going. The right signal is near.",
 			"Almost there. Read the clue again."
 		],
 		"hint": [
@@ -171,6 +179,7 @@ var room_palettes := [
 
 
 func _ready() -> void:
+	_configure_audio()
 	player_start_position = player_marker.position
 	player_exit_position = Vector2(door.position.x + (door.size.x * 0.5) - (player_marker.size.x * 0.35), door.position.y + 110.0)
 	choice_a.pressed.connect(_on_choice_pressed.bind(0))
@@ -188,13 +197,13 @@ func _load_current_room() -> void:
 
 	if Global.rooms.is_empty():
 		current_room = {
-			"title": "The Server Vault",
-			"description": "A brass vault hums in the dark.",
-			"question": "Which structure stores values by key for fast retrieval?",
+			"title": "The Vault Chamber",
+			"description": "A locked chamber hums in the dark.",
+			"question": "Which clue signal unlocks retrieval by key?",
 			"answers": ["Array", "Hash Map", "Stack"],
 			"correct_index": 1,
-			"hint": "Think about key-value lookups.",
-			"success": "The vault unlocks and groans open."
+			"hint": "Focus on key-value retrieval.",
+			"success": "The lock releases and the path opens."
 		}
 	else:
 		Global.index = clamp(Global.index, 0, max(Global.rooms.size() - 1, 0))
@@ -205,7 +214,7 @@ func _load_current_room() -> void:
 	title_label.text = ""
 	title_label.visible = false
 	_refresh_meta_label()
-	clue_label.text = _format_clue_text(str(current_room.get("question", "Which structure stores values by key for fast retrieval?")))
+	clue_label.text = _format_clue_text(str(current_room.get("question", "Which clue signal unlocks retrieval by key?")))
 	var answers: Array = current_room.get("answers", ["Array", "Hash Map", "Stack"])
 	choice_a.text = _format_choice_text(str(answers[0])) if answers.size() > 0 else "Module A"
 	choice_b.text = _format_choice_text(str(answers[1])) if answers.size() > 1 else "Module B"
@@ -236,22 +245,25 @@ func _on_choice_pressed(choice_index: int) -> void:
 		solved = true
 		Global.score += 1
 		_refresh_meta_label()
-		status_label.text = "The exit unlocks. Move through the door to reach the next room."
+		status_label.text = "Access granted. Move through the door to enter the next chamber."
 		professor_line.text = _professor_line("success")
 		_disable_choices()
+		_play_sound(correct_player)
 		_open_vault()
+		_play_transition_sound()
 		_advance_after_delay()
 	else:
 		Global.lives -= 1
 		_refresh_meta_label()
+		_play_sound(wrong_player)
 		if Global.lives <= 0:
-			status_label.text = "The vault seals shut. You are out of time and chances."
+			status_label.text = "The chamber seals shut. Your attempts are spent."
 			professor_line.text = _professor_line("defeat")
 			_disable_choices()
 			await get_tree().create_timer(1.2).timeout
 			_return_to_main()
 			return
-		status_label.text = "Try again."
+		status_label.text = "Access denied."
 		professor_line.text = _professor_line("wrong")
 
 
@@ -304,6 +316,48 @@ func _show_victory_screen() -> void:
 	get_tree().change_scene_to_file("res://Scenes/main.tscn")
 
 
+func _configure_audio() -> void:
+	background_music_player = AudioStreamPlayer.new()
+	add_child(background_music_player)
+	var background_stream: Variant = load(BACKGROUND_MUSIC_PATH)
+	if background_stream is AudioStream:
+		background_music_player.stream = background_stream
+		if background_music_player.stream is AudioStreamMP3:
+			background_music_player.stream.loop = true
+		background_music_player.volume_db = -14.0
+		background_music_player.play()
+
+	correct_player = AudioStreamPlayer.new()
+	add_child(correct_player)
+	var correct_stream: Variant = load(CORRECT_SOUND_PATH)
+	if correct_stream is AudioStream:
+		correct_player.stream = correct_stream
+
+	wrong_player = AudioStreamPlayer.new()
+	add_child(wrong_player)
+	var wrong_stream: Variant = load(WRONG_SOUND_PATH)
+	if wrong_stream is AudioStream:
+		wrong_player.stream = wrong_stream
+
+	transition_player = AudioStreamPlayer.new()
+	add_child(transition_player)
+	var stream: Variant = load(LEVEL_TRANSITION_SOUND_PATH)
+	if stream is AudioStream:
+		transition_player.stream = stream
+
+
+func _play_transition_sound() -> void:
+	_play_sound(transition_player)
+
+
+func _play_sound(player: AudioStreamPlayer) -> void:
+	if player == null or player.stream == null:
+		return
+	player.stop()
+	player.pitch_scale = randf_range(0.95, 1.05)
+	player.play()
+
+
 func _apply_palette(room_index: int) -> void:
 	var palette: Dictionary = room_palettes[room_index % room_palettes.size()]
 	background.color = palette["background"]
@@ -350,7 +404,7 @@ func _format_clue_text(question_text: String) -> String:
 
 
 func _refresh_meta_label() -> void:
-	meta_label.text = "Room %d/%d   Lives %d   Score %d" % [
+	meta_label.text = "Chamber %d/%d   Attempts %d   Vault Progress %d" % [
 		Global.index + 1,
 		max(Global.rooms.size(), 1),
 		Global.lives,
