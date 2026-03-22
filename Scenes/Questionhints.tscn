@@ -301,6 +301,7 @@ theme_override_font_sizes/font_size = 11
 text = "Professor Vex: One lock. Three chances."
 horizontal_alignment = 1
 autowrap_mode = 3
+visible_characters_behavior = 1
 
 [node name="Desk" type="ColorRect" parent="Control2" unique_id=2003167771]
 layout_mode = 1

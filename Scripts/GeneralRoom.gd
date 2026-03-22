@@ -53,6 +53,8 @@ var player_exit_position := Vector2.ZERO
 var active_room_tween: Tween
 var door_closed_top := 14.0
 var door_closed_bottom := -14.0
+var _portrait_bounce_tween: Tween = null
+var _portrait_rest_y: float = 0.0
 
 var professors := [
 	{
@@ -190,6 +192,8 @@ func _load_current_room() -> void:
 	current_professor = _select_professor(Global.index)
 	_apply_professor_portrait()
 	professor_line.text = _professor_line("intro")
+	professor_line.visible_characters = 0
+	$Control2/ProfessorPanel.modulate.a = 0.0
 	clue_text.text = "CLUE NOTE\nInspect to reveal."
 	status_label.text = ""
 	room_prompt.text = "Inspect the note or enter your response."
@@ -220,7 +224,7 @@ func _on_clue_note_pressed() -> void:
 	clue_text.text = _format_clue_text(currentQuestion)
 	status_label.text = "Clue found."
 	room_prompt.text = "Enter your response."
-	professor_line.text = _professor_line("hint")
+	_speak(_professor_line("hint"))
 	terminal_input.grab_focus()
 
 
@@ -231,7 +235,7 @@ func handle_answer_correct() -> void:
 	status_label.text = "Access granted."
 	room_prompt.text = "Door unlocking..."
 	hint_label.text = ""
-	professor_line.text = _professor_line("success")
+	_speak(_professor_line("success"))
 	terminal_status.text = "ACCESS GRANTED"
 	terminal_input.editable = false
 	submit_button.disabled = true
@@ -248,7 +252,7 @@ func handle_answer_wrong(hint: String) -> void:
 	status_label.text = "Access denied."
 	room_prompt.text = "Refine your response."
 	hint_label.text = "Room clue: %s" % hint
-	professor_line.text = _professor_line("wrong")
+	_speak(_professor_line("wrong"))
 	door_lock_light.color = Color("d14a3a")
 	_play_sound(wrong_player)
 	var flash_tween := create_tween()
@@ -260,7 +264,7 @@ func on_timer_timeout() -> void:
 	if Global.globalTime <= 0 and not end_state_triggered:
 		countdown_timer.stop()
 		end_state_triggered = true
-		professor_line.text = _professor_line("defeat")
+		_speak(_professor_line("defeat"))
 		status_label.text = "Lockdown."
 		room_prompt.text = "The chamber seals shut."
 		terminal_input.editable = false
@@ -351,17 +355,63 @@ func _configure_audio() -> void:
 
 
 func _play_entrance_animation() -> void:
-	var intro_tween := create_tween().set_parallel(true)
-	$Control2/ProfessorPanel.modulate.a = 0.0
-	$Control2/ProfessorPanel.position.x -= 18.0
+	# Wait one frame so Control layout is fully computed before reading positions/sizes
+	await get_tree().process_frame
+
+	var prof_panel := $Control2/ProfessorPanel
+	var rest_x: float = prof_panel.global_position.x
+	# Place professor fully off the left edge, then make it visible
+	prof_panel.global_position.x = -prof_panel.size.x - 20.0
+	prof_panel.modulate.a = 1.0
+	professor_line.visible_characters = 0
+
 	clue_note.modulate.a = 0.0
 	terminal_panel.modulate.a = 0.0
 	door.modulate.a = 0.0
-	intro_tween.tween_property($Control2/ProfessorPanel, "modulate:a", 1.0, 0.4)
-	intro_tween.tween_property($Control2/ProfessorPanel, "position:x", $Control2/ProfessorPanel.position.x + 18.0, 0.4)
-	intro_tween.tween_property(clue_note, "modulate:a", 1.0, 0.5).set_delay(0.1)
-	intro_tween.tween_property(terminal_panel, "modulate:a", 0.45, 0.5).set_delay(0.15)
-	intro_tween.tween_property(door, "modulate:a", 1.0, 0.45)
+
+	# Professor slides in from the left, then typewriter plays
+	var prof_tw := create_tween()
+	prof_tw.tween_property(prof_panel, "global_position:x", rest_x, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	prof_tw.tween_callback(func() -> void: _play_typewriter(professor_line))
+
+	# Other elements fade in alongside the entrance
+	var bg_tw := create_tween().set_parallel(true)
+	bg_tw.tween_property(clue_note, "modulate:a", 1.0, 0.5).set_delay(0.2)
+	bg_tw.tween_property(terminal_panel, "modulate:a", 0.45, 0.5).set_delay(0.25)
+	bg_tw.tween_property(door, "modulate:a", 1.0, 0.45).set_delay(0.1)
+
+
+func _play_typewriter(label: Label) -> void:
+	label.visible_characters = 0
+	var total: int = label.text.length()
+	if total == 0:
+		label.visible_characters = -1
+		return
+	_start_portrait_bounce()
+	var tw := create_tween()
+	tw.tween_property(label, "visible_characters", total, total * 0.045).set_trans(Tween.TRANS_LINEAR)
+	tw.tween_callback(_stop_portrait_bounce)
+
+
+func _speak(text: String) -> void:
+	professor_line.text = text
+	_play_typewriter(professor_line)
+
+
+func _start_portrait_bounce() -> void:
+	if _portrait_bounce_tween != null:
+		_portrait_bounce_tween.kill()
+	_portrait_rest_y = professor_portrait.position.y
+	_portrait_bounce_tween = create_tween().set_loops()
+	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y - 5.0, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_portrait_bounce_tween.tween_property(professor_portrait, "position:y", _portrait_rest_y, 0.28).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _stop_portrait_bounce() -> void:
+	if _portrait_bounce_tween != null:
+		_portrait_bounce_tween.kill()
+		_portrait_bounce_tween = null
+	professor_portrait.position.y = _portrait_rest_y
 
 
 func _select_professor(room_index: int) -> Dictionary:
