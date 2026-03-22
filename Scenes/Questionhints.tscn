@@ -691,6 +691,7 @@ disabled = true
 text = "Clue 2"
 autowrap_mode = 3
 script = ExtResource("4_hintbtn")
+timePercentage = 20
 
 [node name="Timer" type="Timer" parent="Control2/HintRack/HintCard2/Hint2" unique_id=524318572]
 autostart = true
@@ -708,7 +709,7 @@ disabled = true
 text = "Clue 3"
 autowrap_mode = 3
 script = ExtResource("4_hintbtn")
-timePercentage = 20
+timePercentage = 40
 
 [node name="Timer" type="Timer" parent="Control2/HintRack/HintCard3/Hint3" unique_id=759245328]
 autostart = true
