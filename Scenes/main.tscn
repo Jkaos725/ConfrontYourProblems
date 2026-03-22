@@ -176,7 +176,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="SettingsButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=1138294793]
-custom_minimum_size = Vector2(80, 36)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 size_flags_vertical = 4
 icon = ExtResource("3_6bp64")
@@ -184,7 +184,7 @@ flat = true
 expand_icon = true
 
 [node name="ThemeToggle" parent="MarginContainer/PanelContainer/VBoxContainer/TopRow" unique_id=488511460 instance=ExtResource("4_ttog")]
-custom_minimum_size = Vector2(120, 36)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 flat = true
 expand_icon = false
