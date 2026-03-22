@@ -39,22 +39,6 @@ corner_radius_bottom_left = 14
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_terminal"]
-content_margin_left = 16.0
-content_margin_top = 14.0
-content_margin_right = 16.0
-content_margin_bottom = 14.0
-bg_color = Color(0.055, 0.122, 0.102, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.086, 0.627, 0.522, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.204, 0.286, 0.369, 1)
 border_width_left = 1
@@ -78,6 +62,22 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_terminal"]
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.055, 0.122, 0.102, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.086, 0.627, 0.522, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_feedback"]
 content_margin_left = 26.0
@@ -249,6 +249,160 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.906, 0.298, 0.235, 1)
 
+[node name="KeypadPanel" type="PanelContainer" parent="Control2" unique_id=463425408]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 155.0
+offset_top = -271.0
+offset_right = 351.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
+
+[node name="KeypadVBox" type="VBoxContainer" parent="Control2/KeypadPanel" unique_id=772696822]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="KeypadTitle" type="Label" parent="Control2/KeypadPanel/KeypadVBox" unique_id=2023324239]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.925, 0.941, 0.945, 1)
+theme_override_font_sizes/font_size = 12
+text = "WALL KEYPAD"
+horizontal_alignment = 1
+
+[node name="KeypadDisplay" type="Label" parent="Control2/KeypadPanel/KeypadVBox" unique_id=1358399232]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.988235, 0.929412, 0.768627, 1)
+theme_override_font_sizes/font_size = 18
+text = "LOCKED"
+horizontal_alignment = 1
+
+[node name="CodeDisplay" type="Label" parent="Control2/KeypadPanel/KeypadVBox" unique_id=46302565]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.878431, 0.960784, 0.823529, 1)
+theme_override_font_sizes/font_size = 16
+text = "_ _ _ _"
+horizontal_alignment = 1
+
+[node name="NumpadGrid" type="GridContainer" parent="Control2/KeypadPanel/KeypadVBox" unique_id=378652139]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Digit1" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=409081966]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "1"
+
+[node name="Digit2" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=46475958]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "2"
+
+[node name="Digit3" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1885692707]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "3"
+
+[node name="Digit4" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1739746605]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "4"
+
+[node name="Digit5" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=380416308]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "5"
+
+[node name="Digit6" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1418751228]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "6"
+
+[node name="Digit7" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=772207801]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "7"
+
+[node name="Digit8" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=2066431993]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "8"
+
+[node name="Digit9" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=2046112186]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "9"
+
+[node name="ClearButton" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=256939466]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "CLR"
+
+[node name="Digit0" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1285438794]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "0"
+
+[node name="EnterButton" type="Button" parent="Control2/KeypadPanel/KeypadVBox/NumpadGrid" unique_id=989604022]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "ENT"
+
 [node name="MetaLabel" type="Label" parent="Control2" unique_id=1118235947]
 layout_mode = 1
 anchors_preset = 8
@@ -273,7 +427,6 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 0.0
 offset_left = -156.0
 offset_top = 20.0
 offset_right = -20.0
@@ -342,10 +495,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -424.0
-offset_top = 212.0
-offset_right = -294.0
-offset_bottom = 278.0
+offset_left = -545.0
+offset_top = 142.0
+offset_right = -182.0
+offset_bottom = 291.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_room_panel")
@@ -367,9 +520,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -424.0
-offset_top = 212.0
-offset_right = -294.0
+offset_left = -559.0
+offset_top = 121.0
+offset_right = -66.0
 offset_bottom = 278.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -390,7 +543,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
 theme_override_font_sizes/font_size = 14
-text = "Inspect the note or enter your response."
+text = "Inspect the note or answer below."
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -446,10 +599,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 108.0
-offset_top = 58.0
-offset_right = 448.0
-offset_bottom = 306.0
+offset_left = 116.0
+offset_top = 77.0
+offset_right = 456.0
+offset_bottom = 325.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_terminal")
@@ -462,13 +615,13 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.102, 0.737, 0.612, 1)
 theme_override_font_sizes/font_size = 14
-text = "ACCESS TERMINAL"
+text = "RESPONSE"
 
 [node name="TerminalStatus" type="Label" parent="Control2/TerminalPanel/TerminalVBox" unique_id=1900380625]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.741, 0.765, 0.78, 1)
 theme_override_font_sizes/font_size = 13
-text = "INPUT CHANNEL OPEN"
+text = "Type your answer below."
 
 [node name="TerminalButton" type="Button" parent="Control2/TerminalPanel/TerminalVBox" unique_id=314237687]
 visible = false
@@ -490,7 +643,7 @@ theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-text = "Submit Input"
+text = "Submit Response"
 
 [node name="HintRack" type="VBoxContainer" parent="Control2" unique_id=893732283]
 layout_mode = 1
@@ -499,10 +652,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 300.0
-offset_top = -229.0
-offset_right = 452.0
-offset_bottom = -12.0
+offset_left = 389.0
+offset_top = -223.0
+offset_right = 541.0
+offset_bottom = -6.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
@@ -575,7 +728,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.584, 0.647, 0.651, 1)
 theme_override_font_sizes/font_size = 12
-text = "Inspect the note or enter your response."
+text = "Inspect the note or answer below."
 horizontal_alignment = 1
 
 [node name="HintLabel" type="Label" parent="Control2" unique_id=723163797]

@@ -526,10 +526,126 @@ theme_override_font_sizes/font_size = 18
 text = "LOCKED"
 horizontal_alignment = 1
 
-[node name="KeypadButton" type="Button" parent="KeypadPanel/KeypadVBox" unique_id=826564300]
+[node name="CodeDisplay" type="Label" parent="KeypadPanel/KeypadVBox" unique_id=986630888]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.878431, 0.960784, 0.823529, 1)
+theme_override_font_sizes/font_size = 16
+text = "_ _ _ _"
+horizontal_alignment = 1
+
+[node name="NumpadGrid" type="GridContainer" parent="KeypadPanel/KeypadVBox" unique_id=1155865703]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Digit1" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1125565719]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "1"
+
+[node name="Digit2" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=816707375]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "2"
+
+[node name="Digit3" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1512693394]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "3"
+
+[node name="Digit4" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=697985853]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "4"
+
+[node name="Digit5" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1733952362]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "5"
+
+[node name="Digit6" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1205575331]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "6"
+
+[node name="Digit7" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=688065143]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "7"
+
+[node name="Digit8" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1301769502]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "8"
+
+[node name="Digit9" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1307263780]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "9"
+
+[node name="ClearButton" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=406913666]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
-text = "Engage"
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "CLR"
+
+[node name="Digit0" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=1198192890]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "0"
+
+[node name="EnterButton" type="Button" parent="KeypadPanel/KeypadVBox/NumpadGrid" unique_id=140779982]
+custom_minimum_size = Vector2(48, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+text = "ENT"
 
 [node name="RoomPrompt" type="Label" parent="." unique_id=882016120]
 z_index = 7

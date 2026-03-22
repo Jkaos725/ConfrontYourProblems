@@ -51,7 +51,19 @@ enum RoomPhase {
 @onready var keypad_panel: PanelContainer = $KeypadPanel
 @onready var keypad_title: Label = $KeypadPanel/KeypadVBox/KeypadTitle
 @onready var keypad_display: Label = $KeypadPanel/KeypadVBox/KeypadDisplay
-@onready var keypad_button: Button = $KeypadPanel/KeypadVBox/KeypadButton
+@onready var code_display: Label = $KeypadPanel/KeypadVBox/CodeDisplay
+@onready var digit_1: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit1
+@onready var digit_2: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit2
+@onready var digit_3: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit3
+@onready var digit_4: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit4
+@onready var digit_5: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit5
+@onready var digit_6: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit6
+@onready var digit_7: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit7
+@onready var digit_8: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit8
+@onready var digit_9: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit9
+@onready var digit_0: Button = $KeypadPanel/KeypadVBox/NumpadGrid/Digit0
+@onready var clear_button: Button = $KeypadPanel/KeypadVBox/NumpadGrid/ClearButton
+@onready var enter_button: Button = $KeypadPanel/KeypadVBox/NumpadGrid/EnterButton
 @onready var room_prompt: Label = $RoomPrompt
 @onready var hint_label: Label = $HintLabel
 @onready var player_marker: ColorRect = $PlayerMarker
@@ -72,6 +84,9 @@ var correct_player: AudioStreamPlayer
 var wrong_player: AudioStreamPlayer
 var transition_player: AudioStreamPlayer
 var background_music_player: AudioStreamPlayer
+var keypad_code := ""
+var keypad_input := ""
+var keypad_buttons: Array[Button] = []
 var professors := [
 	{
 		"name": "Professor Vex",
@@ -246,7 +261,11 @@ func _ready() -> void:
 	choice_c.pressed.connect(_on_choice_pressed.bind(2))
 	exit_button.pressed.connect(_on_exit_pressed)
 	clue_note_button.pressed.connect(_on_clue_note_pressed)
-	keypad_button.pressed.connect(_on_keypad_pressed)
+	keypad_buttons = [digit_1, digit_2, digit_3, digit_4, digit_5, digit_6, digit_7, digit_8, digit_9, digit_0]
+	for button in keypad_buttons:
+		button.pressed.connect(_on_keypad_digit_pressed.bind(button.text))
+	clear_button.pressed.connect(_on_keypad_clear_pressed)
+	enter_button.pressed.connect(_on_keypad_enter_pressed)
 	_load_current_room()
 	_play_entrance_animation()
 
@@ -286,6 +305,8 @@ func _load_current_room() -> void:
 	hint_label.text = ""
 	correct_choice = int(current_room.get("correct_index", 1))
 	solved = false
+	keypad_code = _generate_keypad_code()
+	keypad_input = ""
 	room_phase = RoomPhase.LOCKED
 	_apply_palette(Global.index)
 	doorway.color = Color(0.055, 0.090, 0.122, 1.0)
@@ -295,12 +316,13 @@ func _load_current_room() -> void:
 	door_lock_light.color = Color("c53a2f")
 	door_click_area.disabled = true
 	terminal_panel.modulate = Color(1, 1, 1, 0.45)
-	terminal_header.text = "ACCESS TERMINAL"
+	terminal_header.text = "CHOICES"
 	terminal_status.text = "CLUE REQUIRED"
 	terminal_button.visible = false
 	terminal_button.disabled = true
-	keypad_button.disabled = true
 	keypad_display.text = "LOCKED"
+	code_display.text = "_ _ _ _"
+	_set_keypad_enabled(true)
 	room_prompt.text = "Inspect the note."
 	player_marker.position = player_start_position
 	player_marker.scale = Vector2.ONE
@@ -327,20 +349,56 @@ func _on_clue_note_pressed() -> void:
 	clue_text.text = _format_clue_text(str(current_room.get("question", "Which clue signal unlocks retrieval by key?")))
 	clue_note.modulate = Color(1, 1, 1, 1)
 	terminal_panel.modulate = Color(1, 1, 1, 0.95)
-	terminal_status.text = "SIGNAL TEST READY"
+	terminal_status.text = "CHOICES READY"
 	choice_a.disabled = false
 	choice_b.disabled = false
 	choice_c.disabled = false
 	choice_a.modulate = Color(1, 1, 1, 1)
 	choice_b.modulate = Color(1, 1, 1, 1)
 	choice_c.modulate = Color(1, 1, 1, 1)
-	room_prompt.text = "Test a signal."
+	room_prompt.text = "Choose a choice."
 	status_label.text = "Clue found."
 	_speak(_professor_line("hint"))
 
 
-func _on_keypad_pressed() -> void:
-	if room_phase != RoomPhase.ACCESS_GRANTED:
+func _on_keypad_digit_pressed(digit: String) -> void:
+	if room_phase == RoomPhase.TRANSITIONING:
+		return
+	if keypad_input.length() >= 4:
+		return
+	keypad_input += digit
+	_refresh_code_display()
+
+
+func _on_keypad_clear_pressed() -> void:
+	if room_phase == RoomPhase.TRANSITIONING:
+		return
+	keypad_input = ""
+	status_label.text = "Enter the code."
+	_refresh_code_display()
+
+
+func _on_keypad_enter_pressed() -> void:
+	if room_phase == RoomPhase.TRANSITIONING:
+		return
+	if keypad_input.length() < 4:
+		status_label.text = "Enter all 4 digits."
+		return
+	if keypad_input != keypad_code:
+		keypad_input = ""
+		_refresh_code_display()
+		status_label.text = "Wrong code."
+		keypad_display.text = "DENIED"
+		door_lock_light.color = Color("d14a3a")
+		_play_sound(wrong_player)
+		var deny_tween := create_tween()
+		var reset_light := Color("6fdc74") if room_phase == RoomPhase.ACCESS_GRANTED else Color("c53a2f")
+		var reset_display := "READY" if room_phase == RoomPhase.ACCESS_GRANTED else "LOCKED"
+		deny_tween.tween_property(door_lock_light, "color", reset_light, 0.25)
+		deny_tween.finished.connect(func() -> void:
+			if room_phase != RoomPhase.TRANSITIONING:
+				keypad_display.text = reset_display
+		)
 		return
 
 	room_phase = RoomPhase.TRANSITIONING
@@ -366,11 +424,12 @@ func _on_choice_pressed(choice_index: int) -> void:
 		Global.score += 1
 		_refresh_meta_label()
 		room_phase = RoomPhase.ACCESS_GRANTED
-		status_label.text = "Lock released."
+		keypad_input = ""
+		_refresh_code_display()
+		status_label.text = "Door code: %s" % keypad_code
 		_speak(_professor_line("success"))
-		room_prompt.text = "Engage the keypad."
-		terminal_status.text = "ACCESS GRANTED"
-		keypad_button.disabled = false
+		room_prompt.text = "Enter the 4-digit code."
+		terminal_status.text = "CODE ISSUED %s" % keypad_code
 		keypad_display.text = "READY"
 		door_lock_light.color = Color("6fdc74")
 		choice_a.disabled = true
@@ -386,14 +445,21 @@ func _on_choice_pressed(choice_index: int) -> void:
 		_play_sound(wrong_player)
 		door_lock_light.color = Color("d14a3a")
 		if Global.lives <= 0:
-			status_label.text = "The chamber seals shut. Your attempts are spent."
+			var correct_answers: Array = current_room.get("answers", [])
+			var revealed_answer := ""
+			if correct_choice >= 0 and correct_choice < correct_answers.size():
+				revealed_answer = str(correct_answers[correct_choice])
+			if revealed_answer.is_empty():
+				revealed_answer = "The right choice remains hidden."
+			status_label.text = "Out of attempts. Answer: %s" % revealed_answer
+			hint_label.text = "The chamber seals shut."
 			_speak(_professor_line("defeat"))
 			_disable_choices()
-			await get_tree().create_timer(1.2).timeout
+			await get_tree().create_timer(4.0).timeout
 			_return_to_main()
 			return
 		status_label.text = "Access denied."
-		room_prompt.text = "Test a signal."
+		room_prompt.text = "Choose a choice."
 		_speak(_professor_line("wrong"))
 
 
@@ -574,6 +640,33 @@ func _format_clue_text(question_text: String) -> String:
 	if cleaned.begins_with("Which answer is correct?"):
 		cleaned = cleaned.trim_prefix("Which answer is correct?").strip_edges()
 	return cleaned
+
+
+func _set_keypad_enabled(enabled: bool) -> void:
+	for button in keypad_buttons:
+		button.disabled = not enabled
+		button.modulate = Color(1, 1, 1, 1) if enabled else Color(1, 1, 1, 0.45)
+	clear_button.disabled = not enabled
+	clear_button.modulate = Color(1, 1, 1, 1) if enabled else Color(1, 1, 1, 0.45)
+	enter_button.disabled = not enabled
+	enter_button.modulate = Color(1, 1, 1, 1) if enabled else Color(1, 1, 1, 0.45)
+
+
+func _refresh_code_display() -> void:
+	var display_parts: Array[String] = []
+	for index in range(4):
+		if index < keypad_input.length():
+			display_parts.append(keypad_input.substr(index, 1))
+		else:
+			display_parts.append("_")
+	code_display.text = " ".join(display_parts)
+
+
+func _generate_keypad_code() -> String:
+	var code := ""
+	for _i in range(4):
+		code += str(randi_range(0, 9))
+	return code
 
 
 func _refresh_meta_label() -> void:

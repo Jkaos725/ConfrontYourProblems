@@ -69,6 +69,7 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 		var room_controller: Node = get_parent()
 		if room_controller != null and room_controller.has_method("handle_answer_wrong"):
 			room_controller.handle_answer_wrong(hint)
+			
 		else:
 			feedBackPrompt.visible = true
 			feedBackPrompt.textBox.text = "Wrong. Try again.\nHint: %s" % hint
